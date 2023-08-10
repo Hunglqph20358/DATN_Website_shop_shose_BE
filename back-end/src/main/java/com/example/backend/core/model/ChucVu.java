@@ -14,8 +14,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "mau_sac")
-public class MauSac implements Serializable {
+@Table(name = "chuc_vu")
+public class ChucVu implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -14,16 +14,16 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "mau_sac")
-public class MauSac implements Serializable {
+@Table(name = "kick_co")
+public class KichCo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "ma")
     private String ma;
-    @Column(name = "ten")
-    private String ten;
+    @Column(name = "sokichco")
+    private String soKichCo;
     @Column(name = "ngay_tao")
     private Instant ngayTao;
     @Column(name = "ngay_sua")

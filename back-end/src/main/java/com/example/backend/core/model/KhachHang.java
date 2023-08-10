@@ -1,5 +1,6 @@
 package com.example.backend.core.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,22 +9,33 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "mau_sac")
-public class MauSac implements Serializable {
+@Table(name = "khach_hang")
+public class KhachHang implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "ma")
     private String ma;
-    @Column(name = "ten")
-    private String ten;
+    @Column(name = "ho_ten")
+    private String hoTen;
+    @Column(name = "ngay_sinh")
+    private Date ngaySinh;
+    @Column(name = "sdt")
+    private String sdt;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "gioi_tinh")
+    private Boolean gioiTinh;
+    @Column(name = "anh")
+    private String linkAnh;
     @Column(name = "ngay_tao")
     private Instant ngayTao;
     @Column(name = "ngay_sua")

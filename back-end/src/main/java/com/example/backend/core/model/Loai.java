@@ -1,5 +1,6 @@
 package com.example.backend.core.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,11 +12,11 @@ import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(name = "mau_sac")
-public class MauSac implements Serializable {
+@Table(name = "Loai")
+public class Loai implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
