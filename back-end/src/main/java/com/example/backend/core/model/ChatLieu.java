@@ -1,5 +1,6 @@
 package com.example.backend.core.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +15,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "mau_sac")
-public class MauSac implements Serializable {
+@Table(name = "chat_lieu")
+public class ChatLieu implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -24,10 +25,13 @@ public class MauSac implements Serializable {
     private String ma;
     @Column(name = "ten")
     private String ten;
+    @Column(name = "mo_ta")
+    private String moTa;
     @Column(name = "ngay_tao")
     private Instant ngayTao;
     @Column(name = "ngay_sua")
     private Instant ngaySua;
     @Column(name = "trang_thai")
     private Integer trangThai;
+
 }

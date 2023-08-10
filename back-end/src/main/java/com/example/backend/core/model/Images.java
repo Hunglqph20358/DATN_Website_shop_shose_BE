@@ -11,19 +11,19 @@ import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(name = "mau_sac")
-public class MauSac implements Serializable {
+@Table(name = "images")
+public class Images implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "ma")
     private String ma;
-    @Column(name = "ten")
-    private String ten;
+    @Column(name = "linkanh")
+    private String linkAnh;
     @Column(name = "ngay_tao")
     private Instant ngayTao;
     @Column(name = "ngay_sua")
