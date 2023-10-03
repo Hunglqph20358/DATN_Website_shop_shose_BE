@@ -14,19 +14,24 @@ import java.time.Instant;
 @Setter
 @Getter
 @Entity
-@Table(name = "images")
-public class Images implements Serializable {
+@Table(name = "product")
+public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "id_product")
-    private Long id_product;
-    @Column(name = "image_name")
-    private String image_name;
+    @Column(name = "code")
+    private String code;
+    @Column(name = "name")
+    private String name;
     @Column(name = "create_date")
     private Instant create_date;
     @Column(name = "update_date")
     private Instant update_date;
-
+    @Column(name = "description")
+    private String description;
+    @Column(name = "status")
+    private Integer status;
+    @Column(name = "idel")
+    private Integer idel;
 }

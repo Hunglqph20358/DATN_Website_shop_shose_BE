@@ -1,5 +1,6 @@
 package com.example.backend.core.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,19 +15,22 @@ import java.time.Instant;
 @Setter
 @Getter
 @Entity
-@Table(name = "images")
-public class Images implements Serializable {
+@Table(name = "category")
+public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "id_product")
-    private Long id_product;
-    @Column(name = "image_name")
-    private String image_name;
+    @Column(name = "code")
+    private String code;
+    @Column(name = "name")
+    private String name;
     @Column(name = "create_date")
     private Instant create_date;
     @Column(name = "update_date")
     private Instant update_date;
-
+    @Column(name = "status")
+    private Integer status;
+    @Column(name = "idel")
+    private Integer idel;
 }
