@@ -21,13 +21,13 @@ public class PromotionDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "id_product_detail")
-    private Integer id_product_detail;
+    private Integer idProductDetail;
     @Column(name = "id_promotion")
-    private Integer id_promotion;
+    private Integer idPromotion;
     @Column(name = "reduced_value")
-    private BigDecimal reduced_value;
+    private BigDecimal reducedValue;
     @Column(name = "promotion_type")
-    private Integer promotion_type;
+    private Integer promotionType;
     @Column(name = "status")
     private Integer status;
 

@@ -35,9 +35,9 @@ public class Customer implements Serializable {
     @Column(name = "gender")
     private String gender;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "update_date")
-    private Instant update_date;
+    private Instant updateDate;
     @Column(name = "username")
     private String username;
     @Column(name = "password")

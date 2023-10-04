@@ -23,13 +23,13 @@ public class Sole implements Serializable {
     @Column(name = "code")
     private String code;
     @Column(name = "sole_height")
-    private String sole_height;
+    private String soleHeight;
     @Column(name = "sole_material")
-    private String sole_material;
+    private String soleMaterial;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "update_date")
-    private Instant update_date;
+    private Instant updateDate;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

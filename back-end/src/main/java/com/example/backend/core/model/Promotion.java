@@ -26,9 +26,9 @@ public class Promotion {
     @Column(name = "name")
     private String name;
     @Column(name = "start_date")
-    private Instant start_date;
+    private Instant startDate;
     @Column(name = "end_date")
-    private Instant end_date;
+    private Instant endDate;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

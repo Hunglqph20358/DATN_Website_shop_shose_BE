@@ -25,31 +25,31 @@ public class Order implements Serializable {
     @Column(name = "code")
     private String code;
     @Column(name = "id_customer")
-    private Long id_customer;
+    private Long idCustomer;
     @Column(name = "id_staff")
-    private Long id_staff;
+    private Long idStaff;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "payment_date")
-    private Instant payment_date;
+    private Instant paymentDate;
     @Column(name = "delivery_date")
-    private Instant delivery_date;
+    private Instant deliveryDate;
     @Column(name = "received_date")
-    private Instant received_date;
+    private Instant receivedDate;
     @Column(name = "shipper_phone")
-    private String shipper_phone;
+    private String shipperPhone;
     @Column(name = "receiver_phone")
-    private String receiver_phone;
+    private String receiverPhone;
     @Column(name = "receiver")
     private String receiver;
     @Column(name = "ship_price")
-    private BigDecimal ship_price;
+    private BigDecimal shipPrice;
     @Column(name = "total_price")
-    private BigDecimal total_price;
+    private BigDecimal totalPrice;
     @Column(name = "total_payment")
-    private BigDecimal total_payment;
+    private BigDecimal totalPayment;
     @Column(name = "payment_type")
-    private Integer payment_type;
+    private Integer paymentType;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

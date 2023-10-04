@@ -26,9 +26,9 @@ public class Category implements Serializable {
     @Column(name = "name")
     private String name;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "update_date")
-    private Instant update_date;
+    private Instant updateDate;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")

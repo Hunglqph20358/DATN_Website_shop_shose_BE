@@ -23,15 +23,15 @@ public class OrderDetail implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "id_order")
-    private Long id_order;
+    private Long idOrder;
     @Column(name = "id_product_detail")
-    private Long id_product_detail;
+    private Long idProductDetail;
     @Column(name = "quantity")
     private Integer quantity;
     @Column(name = "price")
     private BigDecimal price;
     @Column(name = "code_promotion")
-    private String code_promotion;
+    private String codePromotion;
     @Column(name = "status")
     private Integer status;
 }

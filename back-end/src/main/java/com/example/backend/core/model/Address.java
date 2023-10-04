@@ -24,11 +24,11 @@ public class Address implements Serializable {
     @Column(name = "code")
     private String code;
     @Column(name ="id_customer")
-    private Long id_customer;
+    private Long idCustomer;
     @Column(name = "name_address")
-    private String name_address;
+    private String nameAddress;
     @Column(name = "detailed_description")
-    private String detailed_description;
+    private String detailedDescription;
     @Column(name = "province")
     private String province;
     @Column(name = "district")

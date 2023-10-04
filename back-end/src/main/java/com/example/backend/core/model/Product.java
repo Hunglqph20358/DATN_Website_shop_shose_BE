@@ -25,9 +25,9 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "update_date")
-    private Instant update_date;
+    private Instant updateDate;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

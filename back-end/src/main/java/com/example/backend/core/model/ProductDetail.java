@@ -20,29 +20,29 @@ public class ProductDetail implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "id_product")
-    private Long id_product;
+    private Long idProduct;
     @Column(name = "id_color")
-    private Long id_color;
+    private Long idColor;
     @Column(name = "id_brand")
-    private Long id_brand;
+    private Long idBrand;
     @Column(name = "id_category")
-    private Long id_category;
+    private Long idCategory;
     @Column(name = "id_size")
-    private Long id_size;
+    private Long idSize;
     @Column(name = "id_material")
-    private Long id_material;
+    private Long idMaterial;
     @Column(name = "quantity")
     private Integer quantity;
     @Column(name = "listed_price")
-    private BigDecimal listed_price;
+    private BigDecimal listedPrice;
     @Column(name = "price")
     private BigDecimal price;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "update_date")
-    private Instant update_date;
+    private Instant updateDate;
     @Column(name = "shoe_collar")
-    private String shoe_collar;
+    private String shoeCollar;
     @Column(name = "id_sole")
-    private Long id_sole;
+    private Long idSole;
 }

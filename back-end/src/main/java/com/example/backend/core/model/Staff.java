@@ -33,7 +33,7 @@ public class Staff implements Serializable {
     @Column(name = "phone")
     private String phone;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "description")
     private String description;
     @Column(name = "username")

@@ -21,12 +21,12 @@ public class Images implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "id_product")
-    private Long id_product;
+    private Long idProduct;
     @Column(name = "image_name")
-    private String image_name;
+    private String imageName;
     @Column(name = "create_date")
-    private Instant create_date;
+    private Instant createDate;
     @Column(name = "update_date")
-    private Instant update_date;
+    private Instant updateDate;
 
 }
