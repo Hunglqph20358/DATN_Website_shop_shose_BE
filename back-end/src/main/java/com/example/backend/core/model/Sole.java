@@ -11,22 +11,27 @@ import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @Entity
-@Table(name = "images")
-public class Images implements Serializable {
+@Table(name = "sole")
+public class Sole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "id_product")
-    private Long idProduct;
-    @Column(name = "image_name")
-    private String imageName;
+    @Column(name = "code")
+    private String code;
+    @Column(name = "sole_height")
+    private String soleHeight;
+    @Column(name = "sole_material")
+    private String soleMaterial;
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "update_date")
     private Instant updateDate;
-
+    @Column(name = "description")
+    private String description;
+    @Column(name = "status")
+    private Integer status;
 }

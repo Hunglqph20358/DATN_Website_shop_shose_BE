@@ -14,20 +14,20 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "nha_cung_cap")
-public class NhaCungCap implements Serializable {
+@Table(name = "size")
+public class Size implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "ma")
-    private String ma;
-    @Column(name = "ten")
-    private String ten;
-    @Column(name = "ngay_tao")
-    private Instant ngayTao;
-    @Column(name = "ngay_sua")
-    private Instant ngaySua;
-    @Column(name = "trang_thai")
-    private Integer trangThai;
+    @Column(name = "code")
+    private String code;
+    @Column(name = "size_number")
+    private String sizeNumber;
+    @Column(name = "create_date")
+    private Instant createDate;
+    @Column(name = "update_date")
+    private Instant updateDate;
+    @Column(name = "status")
+    private Integer status;
 }

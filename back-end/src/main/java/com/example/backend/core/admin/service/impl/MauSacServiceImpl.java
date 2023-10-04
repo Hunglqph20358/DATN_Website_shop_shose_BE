@@ -6,10 +6,9 @@ import com.example.backend.core.admin.repository.MauSacRepository;
 import com.example.backend.core.admin.service.MauSacService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
-import com.example.backend.core.model.MauSac;
+import com.example.backend.core.model.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class MauSacServiceImpl implements MauSacService {
     @Override
     public Page<MauSacDTO> getAllMauSac(Integer i) {
         Pageable pageable = PageRequest.of(i, AppConstant.PAGE_SIZE);
-        Page<MauSac> page = mauSacRepository.findAll(pageable);
+        Page<Color> page = mauSacRepository.findAll(pageable);
         return page.map(mauSacMapper::toDto);
     }
 
