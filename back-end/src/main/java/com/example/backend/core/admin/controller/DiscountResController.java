@@ -1,7 +1,7 @@
 package com.example.backend.core.admin.controller;
 
-import com.example.backend.core.admin.dto.PromotionDTO;
-import com.example.backend.core.admin.service.PromotionService;
+import com.example.backend.core.admin.dto.DiscountDTO;
+import com.example.backend.core.admin.service.DiscountService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,23 +9,23 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
-public class PromotionResController {
+public class DiscountResController {
     @Autowired
-    private PromotionService khuyenMaiService;
+    private DiscountService khuyenMaiService;
     @GetMapping("/khuyen-mai")
     public ResponseEntity<?> getAllKhuyenMai(){
         return ResponseEntity.ok(khuyenMaiService.getAll());
     }
     @PostMapping("/khuyen-mai")
-    public ResponseEntity<?> createKhuyenMai(@Valid @RequestBody PromotionDTO khuyenMaiDTO){
+    public ResponseEntity<?> createKhuyenMai(@Valid @RequestBody DiscountDTO khuyenMaiDTO){
         return ResponseEntity.ok(khuyenMaiService.createKhuyenMai(khuyenMaiDTO));
     }
     @PutMapping("/khuyen-mai")
-    public ResponseEntity<?> updateKhuyenMai(@Valid @RequestBody PromotionDTO khuyenMaiDTO){
+    public ResponseEntity<?> updateKhuyenMai(@Valid @RequestBody DiscountDTO khuyenMaiDTO){
         return ResponseEntity.ok(khuyenMaiService.createKhuyenMai(khuyenMaiDTO));
     }
     @DeleteMapping("/khuyen-mai")
-    public ResponseEntity<?> deleteKhuyenMai(@Valid @RequestBody PromotionDTO khuyenMaiDTO){
+    public ResponseEntity<?> deleteKhuyenMai(@Valid @RequestBody DiscountDTO khuyenMaiDTO){
         return ResponseEntity.ok(khuyenMaiService.createKhuyenMai(khuyenMaiDTO));
     }
 }
