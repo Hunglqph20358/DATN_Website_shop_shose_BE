@@ -46,4 +46,6 @@ public class Staff implements Serializable {
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
+    @Column(name = "isdn")
+    private String isdn;
 }

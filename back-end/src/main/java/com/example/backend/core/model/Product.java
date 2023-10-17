@@ -28,10 +28,22 @@ public class Product implements Serializable {
     private Instant createDate;
     @Column(name = "update_date")
     private Instant updateDate;
+    @Column(name = "create_name")
+    private String createName;
+    @Column(name = "update_name")
+    private String updateName;
+    @Column(name = "id_brand")
+    private Long idBrand;
+    @Column(name = "id_category")
+    private Long idCategory;
+    @Column(name = "id_material")
+    private Long idMaterial;
     @Column(name = "description")
     private String description;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
+    @Column(name = "id_sole")
+    private Long idSole;
 }

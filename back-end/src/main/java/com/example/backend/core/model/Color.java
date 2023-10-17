@@ -21,13 +21,9 @@ public class Color implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "code")
-    private String code;
     @Column(name = "name")
     private String name;
     @Column(name = "create_date")
     private Instant createDate;
-    @Column(name = "update_date")
-    private Instant updateDate;
 
 }

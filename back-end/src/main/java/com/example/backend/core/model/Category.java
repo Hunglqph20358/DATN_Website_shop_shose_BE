@@ -21,8 +21,6 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "code")
-    private String code;
     @Column(name = "name")
     private String name;
     @Column(name = "create_date")
@@ -32,5 +30,5 @@ public class Category implements Serializable {
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")
-    private Integer idel;
+    private Integer isDel;
 }

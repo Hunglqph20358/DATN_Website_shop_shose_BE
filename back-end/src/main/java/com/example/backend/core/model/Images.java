@@ -26,7 +26,5 @@ public class Images implements Serializable {
     private String imageName;
     @Column(name = "create_date")
     private Instant createDate;
-    @Column(name = "update_date")
-    private Instant updateDate;
 
 }

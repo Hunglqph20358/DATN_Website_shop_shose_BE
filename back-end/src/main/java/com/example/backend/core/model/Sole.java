@@ -20,8 +20,6 @@ public class Sole implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "code")
-    private String code;
     @Column(name = "sole_height")
     private String soleHeight;
     @Column(name = "sole_material")
