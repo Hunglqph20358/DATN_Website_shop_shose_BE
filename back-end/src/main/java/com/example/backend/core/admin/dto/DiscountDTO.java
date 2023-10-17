@@ -1,6 +1,5 @@
 package com.example.backend.core.admin.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 
-public class PromotionDTO {
+public class DiscountDTO {
     private Long id;
     private Integer idProductDetail;
 
