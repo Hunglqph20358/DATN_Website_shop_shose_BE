@@ -16,13 +16,11 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "promotion")
-public class Promotion {
+public class Discount {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "code")
-    private String code;
     @Column(name = "name")
     private String name;
     @Column(name = "start_date")

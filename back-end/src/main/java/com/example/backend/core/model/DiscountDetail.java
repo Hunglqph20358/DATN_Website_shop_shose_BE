@@ -15,19 +15,19 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "promotion_detail")
-public class PromotionDetail {
+public class DiscountDetail {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "id_product_detail")
-    private Integer idProductDetail;
-    @Column(name = "id_promotion")
-    private Integer idPromotion;
+    @Column(name = "id_product")
+    private Integer idProduct;
+    @Column(name = "id_discount")
+    private Integer idDiscount;
     @Column(name = "reduced_value")
     private BigDecimal reducedValue;
-    @Column(name = "promotion_type")
-    private Integer promotionType;
+    @Column(name = "discount_type")
+    private Integer discountType;
     @Column(name = "status")
     private Integer status;
 
