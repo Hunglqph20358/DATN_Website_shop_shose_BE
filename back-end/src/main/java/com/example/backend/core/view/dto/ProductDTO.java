@@ -25,7 +25,7 @@ public class ProductDTO {
     private Integer idel;
     private BigDecimal listedPrice;
     private BigDecimal price;
-
+    private Integer totalQuantity;
     private List<ProductDetailDTO> productDetailDTOList;
 
     public List<ProductDetailDTO> getProductDetailDTOList() {
@@ -34,6 +34,14 @@ public class ProductDTO {
 
     public void setProductDetailDTOList(List<ProductDetailDTO> productDetailDTOList) {
         this.productDetailDTOList = productDetailDTOList;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 
     public String getCreateName() {

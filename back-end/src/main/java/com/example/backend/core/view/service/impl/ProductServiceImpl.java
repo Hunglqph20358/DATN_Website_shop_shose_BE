@@ -65,6 +65,7 @@ public class ProductServiceImpl implements ProductService {
     public ServiceResult<ProductDTO> getDetailProduct(Long idProduct) {
         Optional<Product> product = productRepository.findById(idProduct);
         ServiceResult<ProductDTO> result = new ServiceResult<>();
+        Integer totalQuantity = 0;
         if (!product.isPresent()) {
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Product không tồn tại !");
@@ -82,12 +83,16 @@ public class ProductServiceImpl implements ProductService {
         SoleDTO soleDTO = soleMapper.toDto(sole.get());
         CategoryDTO categoryDTO = categoryMapper.toDto(category.get());
         BrandDTO brandDTO = brandMapper.toDto(brand.orElse(null));
+        for (ProductDetail pd: listProductDetail) {
+            totalQuantity += pd.getQuantity();
+        }
         productDTO.setProductDetailDTOList(productDetailMapper.toDto(listProductDetail));
         productDTO.setImagesDTOList(imagesMapper.toDto(imageList));
         productDTO.setBrandDTO(brandDTO);
         productDTO.setMaterialDTO(materialDTO);
         productDTO.setSoleDTO(soleDTO);
         productDTO.setCategoryDTO(categoryDTO);
+        productDTO.setTotalQuantity(totalQuantity);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
         result.setData(productDTO);
