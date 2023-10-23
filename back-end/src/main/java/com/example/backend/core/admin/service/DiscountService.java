@@ -10,4 +10,6 @@ public interface DiscountService {
     Page<DiscountDTO> getAllKhuyenMai(Integer page);
     List<DiscountDTO> getAll();
     ServiceResult<DiscountDTO> createKhuyenMai(DiscountDTO khuyenMaiDTO);
+    ServiceResult<DiscountDTO> updateKhuyenMai(DiscountDTO khuyenMaiDTO);
+    ServiceResult<Void> deleteKhuyenMai(Long khuyenMaiId);
 }

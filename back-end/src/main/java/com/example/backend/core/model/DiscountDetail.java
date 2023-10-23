@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "promotion_detail")
+@Table(name = "discount_detail")
 public class DiscountDetail {
     @Id
     @Column(name = "id")

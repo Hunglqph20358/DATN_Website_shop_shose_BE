@@ -11,21 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin")
 public class DiscountResController {
     @Autowired
-    private DiscountService khuyenMaiService;
+    private DiscountService discountService;
     @GetMapping("/khuyen-mai")
     public ResponseEntity<?> getAllKhuyenMai(){
-        return ResponseEntity.ok(khuyenMaiService.getAll());
+        return ResponseEntity.ok(discountService.getAll());
     }
     @PostMapping("/khuyen-mai")
     public ResponseEntity<?> createKhuyenMai(@Valid @RequestBody DiscountDTO khuyenMaiDTO){
-        return ResponseEntity.ok(khuyenMaiService.createKhuyenMai(khuyenMaiDTO));
+        return ResponseEntity.ok(discountService.createKhuyenMai(khuyenMaiDTO));
     }
     @PutMapping("/khuyen-mai")
     public ResponseEntity<?> updateKhuyenMai(@Valid @RequestBody DiscountDTO khuyenMaiDTO){
-        return ResponseEntity.ok(khuyenMaiService.createKhuyenMai(khuyenMaiDTO));
+        return ResponseEntity.ok(discountService.createKhuyenMai(khuyenMaiDTO));
     }
     @DeleteMapping("/khuyen-mai")
     public ResponseEntity<?> deleteKhuyenMai(@Valid @RequestBody DiscountDTO khuyenMaiDTO){
-        return ResponseEntity.ok(khuyenMaiService.createKhuyenMai(khuyenMaiDTO));
+        return ResponseEntity.ok(discountService.createKhuyenMai(khuyenMaiDTO));
     }
 }
