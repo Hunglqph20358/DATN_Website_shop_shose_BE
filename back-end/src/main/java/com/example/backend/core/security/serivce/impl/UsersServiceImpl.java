@@ -38,5 +38,14 @@ public class UsersServiceImpl implements UserService {
         return repository.save(users);
     }
 
+    @Override
+    public boolean isUser(String username) {
+        Users users = repository.findByUsername(username);
+        if (users.getRole()==null){
+            return false;
+        }
+        return true;
+    }
+
 
 }

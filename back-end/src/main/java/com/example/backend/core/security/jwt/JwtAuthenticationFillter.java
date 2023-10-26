@@ -1,6 +1,11 @@
 package com.example.backend.core.security.jwt;
 
+import com.example.backend.core.model.Customer;
 import com.example.backend.core.security.config.custom.CustomUserDetailService;
+import com.example.backend.core.security.config.custom.CustomerUserDetailService;
+import com.example.backend.core.security.config.custom.CustomerUserDetails;
+import com.example.backend.core.security.serivce.CustomerSPService;
+import com.example.backend.core.security.serivce.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,10 +16,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+@Component
 
 @Slf4j
 public class JwtAuthenticationFillter extends OncePerRequestFilter {
@@ -22,6 +29,16 @@ public class JwtAuthenticationFillter extends OncePerRequestFilter {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private CustomUserDetailService customUserDetailService;
+
+    @Autowired
+    private CustomerUserDetailService customerUserDetailService;
+
+    @Autowired
+    private CustomerSPService customerSPService;
+
+    @Autowired
+    private UserService userService;
+
     private String getJwtFromRequest(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer")) {
@@ -37,14 +54,28 @@ public class JwtAuthenticationFillter extends OncePerRequestFilter {
                 //lay userName tu chuoi jwt
                 String userName = jwtTokenProvider.getUserNameFromJwt(jwt);
                 //lay thong tin nguoi dung tu userName
-                UserDetails userDetails = customUserDetailService.loadUserByUsername(userName);
-                if(userDetails != null){
-                    // Neu nguoi dung hop le set thong tin cho security context
-                    UsernamePasswordAuthenticationToken authentication
-                            = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                String uri = request.getRequestURI();
+                if (uri.contains("customer")){
+                    UserDetails userDetails = customerUserDetailService.loadUserByUsername(userName);
+                    if(userDetails != null){
+                        // Neu nguoi dung hop le set thong tin cho security context
+                        UsernamePasswordAuthenticationToken authentication
+                                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
+                if (uri.contains("admin")){
+                    UserDetails userDetails = customUserDetailService.loadUserByUsername(userName);
+                    if(userDetails != null){
+                        // Neu nguoi dung hop le set thong tin cho security context
+                        UsernamePasswordAuthenticationToken authentication
+                                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
+
             }
         }catch (Exception ex){
             log.error("fail on set user authentication", ex);
