@@ -50,7 +50,7 @@ public class webConfig{
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(customUserDetailService);
-        provider.setUserDetailsService(customUserDetailService);
+        provider.setUserDetailsService(customerUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
@@ -64,7 +64,7 @@ public class webConfig{
                         .requestMatchers("/admin/api/sign-up").permitAll()
                         .requestMatchers("/view/api/sign-up").permitAll()
                         .requestMatchers("/view/api/sign-in").permitAll()
-                        .requestMatchers(AppConstant.API_VIEW).permitAll()
+                        .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
                         .requestMatchers(AppConstant.API_ADMIN).hasAnyAuthority("ADMIN")
                         .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
                         .and().exceptionHandling()
