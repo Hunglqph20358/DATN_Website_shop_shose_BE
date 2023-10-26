@@ -8,7 +8,12 @@ public class AppConstant {
         public static final String[] API_STAFF = {
                 "/api/staff/home"
         };
-        public static final String[] API_VIEW = {
-                "api/view"
+        public static final String[] API_VIEW_PERMIT = {
+                "/view/api/get-product-noi-bat",
+                "/view/api/get-detail-product/*",
+                "/view/api/get-all-size",
+                "/view/api/get-all-color",
+                "/view/api/cart",
+                "/view/api/create-payment"
         };
 }

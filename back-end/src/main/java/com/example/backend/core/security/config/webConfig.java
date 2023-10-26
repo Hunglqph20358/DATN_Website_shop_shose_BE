@@ -56,9 +56,10 @@ public class webConfig {
             try {
                 author.requestMatchers("/sign-in").permitAll()
                         .requestMatchers("/sign-up").permitAll()
+                        .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
                         .requestMatchers(AppConstant.API_ADMIN).hasAnyAuthority("ADMIN")
                         .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
-                        .requestMatchers(AppConstant.API_VIEW).hasAnyAuthority("STAFF","ADMIN","CUSTOMER")
+//                        .requestMatchers(AppConstant.API_VIEW).hasAnyAuthority("STAFF","ADMIN","CUSTOMER")
                         .and().exceptionHandling()
                         .authenticationEntryPoint(jwtEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             } catch (Exception e) {
