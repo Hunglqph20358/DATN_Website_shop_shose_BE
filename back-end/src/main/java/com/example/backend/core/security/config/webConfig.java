@@ -22,9 +22,12 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class webConfig {
+public class webConfig{
     @Autowired
     private CustomUserDetailService customUserDetailService;
+
+    @Autowired
+    private CustomerUserDetailService customerUserDetailService;
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
@@ -46,9 +49,11 @@ public class webConfig {
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(customUserDetailService);
+        provider.setUserDetailsService(customUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(c -> c.disable()).csrf(cf -> cf.disable());
@@ -57,6 +62,10 @@ public class webConfig {
                 author.requestMatchers("/sign-in").permitAll()
                         .requestMatchers("/sign-up").permitAll()
                         .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
+                author.requestMatchers("/admin/api/sign-in").permitAll()
+                        .requestMatchers("/admin/api/sign-up").permitAll()
+                        .requestMatchers("/view/api/sign-up").permitAll()
+                        .requestMatchers("/view/api/sign-in").permitAll()
                         .requestMatchers(AppConstant.API_ADMIN).hasAnyAuthority("ADMIN")
                         .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
 //                        .requestMatchers(AppConstant.API_VIEW).hasAnyAuthority("STAFF","ADMIN","CUSTOMER")

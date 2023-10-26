@@ -2,10 +2,7 @@ package com.example.backend.core.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -17,6 +14,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "customer")
+@Builder
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

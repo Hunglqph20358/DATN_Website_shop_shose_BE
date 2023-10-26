@@ -8,13 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/staff")
+@RequestMapping("/api/admin")
 public class HelloController {
     @GetMapping("/home")
     public String hello(){
-       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println(customUserDetails);
         return "Hello Word";
     }
 }
