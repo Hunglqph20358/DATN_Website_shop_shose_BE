@@ -2,6 +2,8 @@ package com.example.backend.core.view.dto;
 
 
 
+import jakarta.persistence.Column;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -15,17 +17,21 @@ public class ProductDTO {
     private Instant updateDate;
     private String createName;
     private String updateName;
-    private BrandDTO brandDTO;
-    private CategoryDTO categoryDTO;
-    private MaterialDTO materialDTO;
-    private SoleDTO soleDTO;
+    private Long idBrand;
+    private Long idCategory;
+    private Long idMaterial;
+    private Long idSole;
     private String description;
     private Integer status;
     private List<ImagesDTO> imagesDTOList;
     private Integer idel;
+    private BrandDTO brandDTO;
+    private CategoryDTO categoryDTO;
+    private MaterialDTO materialDTO;
+    private SoleDTO soleDTO;
     private BigDecimal listedPrice;
     private BigDecimal price;
-
+    private Integer totalQuantity;
     private List<ProductDetailDTO> productDetailDTOList;
 
     public List<ProductDetailDTO> getProductDetailDTOList() {
@@ -34,6 +40,46 @@ public class ProductDTO {
 
     public void setProductDetailDTOList(List<ProductDetailDTO> productDetailDTOList) {
         this.productDetailDTOList = productDetailDTOList;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public Long getIdBrand() {
+        return idBrand;
+    }
+
+    public void setIdBrand(Long idBrand) {
+        this.idBrand = idBrand;
+    }
+
+    public Long getIdCategory() {
+        return idCategory;
+    }
+
+    public void setIdCategory(Long idCategory) {
+        this.idCategory = idCategory;
+    }
+
+    public Long getIdMaterial() {
+        return idMaterial;
+    }
+
+    public void setIdMaterial(Long idMaterial) {
+        this.idMaterial = idMaterial;
+    }
+
+    public Long getIdSole() {
+        return idSole;
+    }
+
+    public void setIdSole(Long idSole) {
+        this.idSole = idSole;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 
     public String getCreateName() {
