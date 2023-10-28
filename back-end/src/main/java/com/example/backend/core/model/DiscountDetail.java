@@ -20,10 +20,11 @@ public class DiscountDetail {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "id_product")
     private Integer idProduct;
     @Column(name = "id_discount")
-    private Integer idDiscount;
+    private Long idDiscount;
     @Column(name = "reduced_value")
     private BigDecimal reducedValue;
     @Column(name = "discount_type")
