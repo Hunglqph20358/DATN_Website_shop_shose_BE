@@ -24,8 +24,8 @@ public class UsersServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByPhone(String phone) {
-        return repository.existsByPhone(phone);
+    public boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
     }
 
     @Override

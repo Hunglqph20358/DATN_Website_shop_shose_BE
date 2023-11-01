@@ -9,6 +9,7 @@ public class AppConstant {
                 "/api/admin/voucher",
                 "/api/admin/voucher/*",
                 "/api/admin/product",
+                "admin/api/staff",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -19,6 +20,8 @@ public class AppConstant {
                 "/view/api/get-all-size",
                 "/view/api/get-all-color",
                 "/view/api/cart",
-                "/view/api/create-payment"
+                "/view/api/create-payment",
+                "/view/api/staff/finbyId/*",
+                "/view/api/customer/finbyId/*",
         };
 }
