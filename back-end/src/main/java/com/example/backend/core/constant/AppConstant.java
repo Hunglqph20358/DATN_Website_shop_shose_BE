@@ -18,5 +18,9 @@ public class AppConstant {
                 "/view/api/create-payment",
                 "/view/api/staff/finbyId/*",
                 "/view/api/customer/finbyId/*",
+                "/view/api/create-payment",
+                "/view/api/create-order",
+                "/view/api/create-address"
+
         };
 }
