@@ -2,7 +2,6 @@ package com.example.backend.core.security.config;
 
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.security.config.custom.CustomUserDetailService;
-import com.example.backend.core.security.config.custom.CustomerUserDetailService;
 import com.example.backend.core.security.jwt.JwtAuthenticationFillter;
 import com.example.backend.core.security.jwt.JwtEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +23,9 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class webConfig{
-    @Autowired
-    private CustomUserDetailService customUserDetailService;
 
     @Autowired
-    private CustomerUserDetailService customerUserDetailService;
+    public CustomUserDetailService customUserDetailService;
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
@@ -50,7 +47,6 @@ public class webConfig{
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(customUserDetailService);
-        provider.setUserDetailsService(customerUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
@@ -60,13 +56,11 @@ public class webConfig{
         http.cors(c -> c.disable()).csrf(cf -> cf.disable());
         http.authorizeHttpRequests(author -> {
             try {
-                author.requestMatchers("/admin/api/sign-in").permitAll()
-                        .requestMatchers("/admin/api/sign-up").permitAll()
-                        .requestMatchers("/view/api/sign-up").permitAll()
-                        .requestMatchers("/view/api/sign-in").permitAll()
+                author.requestMatchers("/api/sign-in").permitAll()
+                        .requestMatchers("api/sign-up").permitAll()
                         .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
-                        .requestMatchers(AppConstant.API_ADMIN).hasAnyAuthority("ADMIN")
-                        .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
+                        .requestMatchers(AppConstant.API_ADMIN).permitAll()
+                        .requestMatchers(AppConstant.API_STAFF).permitAll()
                         .and().exceptionHandling()
                         .authenticationEntryPoint(jwtEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             } catch (Exception e) {
