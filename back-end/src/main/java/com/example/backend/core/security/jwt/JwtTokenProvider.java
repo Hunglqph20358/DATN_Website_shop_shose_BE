@@ -18,6 +18,7 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date dateExpieed = new Date(now.getTime()+jWT_EXPIRATION);
         // tao chuoi token
+
         return Jwts.builder().setSubject(customUserDetails.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(dateExpieed)

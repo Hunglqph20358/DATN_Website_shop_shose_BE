@@ -52,7 +52,7 @@ public class CustomerController {
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUpCustomer(@Valid @RequestBody SignUpRepquest signUpFormRequest){
         Customer customer = Customer.builder()
-                .code(signUpFormRequest.getCode())
+                .code("KH" + Instant.now().getEpochSecond())
                 .fullname(signUpFormRequest.getFullname())
                 .gender(signUpFormRequest.getGender())
                 .phone(signUpFormRequest.getPhone())
