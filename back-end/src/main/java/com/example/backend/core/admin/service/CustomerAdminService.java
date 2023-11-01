@@ -4,6 +4,6 @@ import com.example.backend.core.model.Customer;
 
 import java.util.Optional;
 
-public interface CustomerService {
+public interface CustomerAdminService {
     Optional<Customer> findById(String id);
 }

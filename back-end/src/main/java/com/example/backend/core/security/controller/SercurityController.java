@@ -20,9 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -56,8 +54,6 @@ public class SercurityController {
             return new ResponseEntity<>(new MessageResponse("The Username is existed"), HttpStatus.OK);
         }
             Users users = Users.builder()
-                    .code(signUpFormRequest.getCode())
-                    .fullname(signUpFormRequest.getFullname())
                     .email(signUpFormRequest.getEmail())
                     .createDate(Instant.now())
                     .username(signUpFormRequest.getUsername())

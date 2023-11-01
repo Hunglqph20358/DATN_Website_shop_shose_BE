@@ -1,6 +1,6 @@
 package com.example.backend.core.admin.controller;
 
-import com.example.backend.core.admin.service.CustomerService;
+import com.example.backend.core.admin.service.CustomerAdminService;
 import com.example.backend.core.admin.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ public class StaffController {
     private StaffService service;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerAdminService customerService;
 
     @GetMapping("/staff")
     public ResponseEntity<?> getallStaff(){
