@@ -9,12 +9,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "staff")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,21 +25,20 @@ public class Users {
     private String code;
     @Column(name = "fullname")
     private String fullname;
-    @Column(name = "birthday")
-    private Instant birthday;
-    @Column(name = "gender")
-    private String gender;
-    @Column(name = "address")
-    private String address;
-    @Column(name = "phone")
-    private String phone;
-    @Column(name = "create_date")
-    private Instant createDate;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "role")
+    @Column(name = "email")
+    private String email;
+    @Column(name = "id_customer")
+    private Integer id_customer;
+    @Column(name = "id_staff")
+    private Integer id_staff ;
+    @Column(name = "update_date")
+    private Integer update_date;
+    @Column(name = "create_date")
+    private Instant createDate;
+    @Column(name = "roles")
     private String role;
-
 }
