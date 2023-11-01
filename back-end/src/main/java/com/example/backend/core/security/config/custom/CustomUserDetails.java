@@ -3,10 +3,7 @@ package com.example.backend.core.security.config.custom;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.security.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class CustomUserDetails implements UserDetails {
     private Long id;
     private String code;

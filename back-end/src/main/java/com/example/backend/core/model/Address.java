@@ -23,17 +23,21 @@ public class Address implements Serializable {
     private Long id;
     @Column(name ="id_customer")
     private Long idCustomer;
-    @Column(name = "name_address")
-    private String nameAddress;
-    @Column(name = "detailed_description")
-    private String detailedDescription;
+    @Column(name ="id_staff")
+    private Long idStaff;
+    @Column(name = "create_date")
+    private Instant createDate;
     @Column(name = "province")
     private String province;
+    @Column(name = "district_id")
+    private String districtId;
     @Column(name = "district")
     private String district;
+    @Column(name = "ward_code")
+    private String wardCode;
     @Column(name = "wards")
     private String wards;
-    @Column(name = "street")
-    private String street;
+    @Column(name = "specific_address")
+    private String specificAddress;
 
 }

@@ -14,6 +14,9 @@ public class AppConstant {
                 "/view/api/get-all-size",
                 "/view/api/get-all-color",
                 "/view/api/cart",
-                "/view/api/create-payment"
+                "/view/api/create-payment",
+                "/view/api/create-order",
+                "/view/api/create-address"
+
         };
 }
