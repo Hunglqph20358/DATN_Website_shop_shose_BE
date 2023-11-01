@@ -18,6 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class CustomUserDetails implements UserDetails {
     private Long id;
     private Integer id_customer;
