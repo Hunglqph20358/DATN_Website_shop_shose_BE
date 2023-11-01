@@ -3,7 +3,8 @@ package com.example.backend.core.constant;
 public class AppConstant {
         public static final Integer PAGE_SIZE = 10;
         public static final  String[] API_ADMIN = {
-                "/api/admin/home"
+                "/api/admin/home",
+                "admin/api/staff",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -14,6 +15,8 @@ public class AppConstant {
                 "/view/api/get-all-size",
                 "/view/api/get-all-color",
                 "/view/api/cart",
-                "/view/api/create-payment"
+                "/view/api/create-payment",
+                "/view/api/staff/finbyId/*",
+                "/view/api/customer/finbyId/*",
         };
 }
