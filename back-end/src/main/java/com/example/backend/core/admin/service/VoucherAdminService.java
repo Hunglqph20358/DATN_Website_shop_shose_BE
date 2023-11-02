@@ -12,6 +12,7 @@ public interface VoucherAdminService {
     List<VoucherAdminDTO> getAll();
 
     ServiceResult<VoucherAdminDTO> createVoucher(VoucherAdminDTO voucherDTO);
-    ServiceResult<VoucherAdminDTO> updateVoucher(VoucherAdminDTO voucherDTO);
+    ServiceResult<VoucherAdminDTO> updateVoucher(Long id, VoucherAdminDTO updatedVoucherAdminDTO);
     ServiceResult<Void> deleteVoucher(Long voucherId);
+    List<VoucherAdminDTO> detailById(Long voucherId);
 }

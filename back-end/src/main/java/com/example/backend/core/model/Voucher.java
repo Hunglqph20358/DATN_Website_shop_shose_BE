@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
@@ -26,26 +27,29 @@ public class Voucher {
     @Column(name = "code")
     private String code;
     @Basic
+    @Column(name = "name")
+    private String name;
+    @Basic
     @Column(name = "create_date")
-    private Instant createDate;
+    private Date createDate;
     @Basic
     @Column(name = "start_date")
-    private Instant startDate;
+    private Date startDate;
     @Basic
     @Column(name = "end_date")
-    private Instant endDate;
+    private Date endDate;
     @Basic
     @Column(name = "description")
     private String description;
+    @Basic
+    @Column(name = "conditions")
+    private BigDecimal conditions;
     @Basic
     @Column(name = "status")
     private int status;
     @Basic
     @Column(name = "idel")
     private int idel;
-    @Basic
-    @Column(name = "update_date")
-    private Instant updateDate;
     @Basic
     @Column(name = "create_name")
     private String createName;
@@ -58,4 +62,7 @@ public class Voucher {
     @Basic
     @Column(name = "reduced_value")
     private BigDecimal reducedValue;
+    @Basic
+    @Column(name = "quantity")
+    private int quantity;
 }

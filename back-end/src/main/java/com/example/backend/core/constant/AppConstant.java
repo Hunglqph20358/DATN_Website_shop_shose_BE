@@ -7,7 +7,8 @@ public class AppConstant {
                 "/api/admin/discount",
                 "/api/admin/discount/*",
                 "/api/admin/voucher",
-                "/api/admin/voucher/*"
+                "/api/admin/voucher/*",
+                "/api/admin/product",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"

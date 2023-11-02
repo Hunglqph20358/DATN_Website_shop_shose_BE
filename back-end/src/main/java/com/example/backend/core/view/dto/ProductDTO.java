@@ -3,11 +3,14 @@ package com.example.backend.core.view.dto;
 
 
 import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-
+@Getter
+@Setter
 public class ProductDTO {
 
     private Long id;
@@ -33,6 +36,7 @@ public class ProductDTO {
     private BigDecimal price;
     private Integer totalQuantity;
     private List<ProductDetailDTO> productDetailDTOList;
+    private BigDecimal totalSold;
 
     public List<ProductDetailDTO> getProductDetailDTOList() {
         return productDetailDTOList;

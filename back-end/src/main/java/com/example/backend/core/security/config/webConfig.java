@@ -60,9 +60,12 @@ public class webConfig {
         http.cors(c -> c.disable()).csrf(cf -> cf.disable());
         http.authorizeHttpRequests(author -> {
             try {
-                author.requestMatchers("/sign-in").permitAll()
-                        .requestMatchers("/sign-up").permitAll()
-                        .requestMatchers(AppConstant.API_ADMIN).hasAnyAuthority("ADMIN")
+                author.requestMatchers("/admin/api/sign-in").permitAll()
+                        .requestMatchers("/admin/api/sign-up").permitAll()
+                        .requestMatchers("/view/api/sign-up").permitAll()
+                        .requestMatchers("/view/api/sign-in").permitAll()
+                        .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
+                        .requestMatchers(AppConstant.API_ADMIN).permitAll()
                         .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
                         .and().exceptionHandling()
                         .authenticationEntryPoint(jwtEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

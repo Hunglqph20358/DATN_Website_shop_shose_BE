@@ -22,7 +22,7 @@ public class DiscountDetail {
     private Long id;
 
     @Column(name = "id_product")
-    private Integer idProduct;
+    private Long idProduct;
     @Column(name = "id_discount")
     private Long idDiscount;
     @Column(name = "reduced_value")

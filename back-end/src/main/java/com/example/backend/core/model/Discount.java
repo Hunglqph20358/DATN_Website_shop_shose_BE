@@ -26,11 +26,11 @@ public class Discount {
     @Column(name = "name")
     private String name;
     @Column(name = "create_date")
-    private Instant createDate;
+    private Date createDate;
     @Column(name = "start_date")
-    private Instant startDate;
+    private Date startDate;
     @Column(name = "end_date")
-    private Instant endDate;
+    private Date endDate;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

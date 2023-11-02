@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
 import java.time.Instant;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -15,10 +17,12 @@ public class DiscountAdminDTO {
     private Long id;
     private String code;
     private String name;
-    private Instant createDate;
-    private Instant startDate;
-    private Instant endDate;
+    private Date createDate;
+    private Date startDate;
+    private Date endDate;
     private String description;
-    private Integer status;
-    private Integer idel;
+    private String status;
+    private String idel;
+    private String startDateStr;
+    private String endDateStr;
 }

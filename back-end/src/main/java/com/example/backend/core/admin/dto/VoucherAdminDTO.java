@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.Instant;
 @Getter
 @Setter
@@ -17,20 +18,20 @@ import java.time.Instant;
 public class VoucherAdminDTO {
     private Long id;
     private String code;
-    private Instant createDate;
-    private Instant startDate;
-    private Instant endDate;
+    private String name;
+    private Date createDate;
+    private Date startDate;
+    private Date endDate;
     private String description;
+    private BigDecimal conditions;
     private int status;
     private int idel;
-    private Instant updateDate;
     private String createName;
     private String updateName;
     private int voucherType;
     private BigDecimal reducedValue;
+    private int quantity;
+    private String startDateStr;
+    private String endDateStr;
 
-    public VoucherAdminDTO(Long id, String code) {
-        this.id = id;
-        this.code = code;
-    }
 }

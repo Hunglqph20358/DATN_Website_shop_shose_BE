@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,12 +17,14 @@ import java.math.BigDecimal;
 
 public class DiscountDetailAdminDTO {
     private Long id;
-    private Integer idProduct;
-    private Integer idDiscount;
-    private BigDecimal reducedValue;
-    private Integer discountType;
-    private Integer status;
+    private String idProduct;
+    private String idDiscount;
+    private String reducedValue;
+    private String discountType;
+    private int status;
     private DiscountAdminDTO discountAdminDTO;
-    private ProductDTO product;
+    private ProductDTO productDTO;
+    private List<ProductDTO> productDTOList;
+
 
 }
