@@ -4,7 +4,14 @@ public class AppConstant {
         public static final Integer PAGE_SIZE = 10;
         public static final  String[] API_ADMIN = {
                 "/api/admin/home",
+                "/api/admin/discount",
+                "/api/admin/product",
+                "/api/admin/discount/*",
+                "/api/admin/voucher",
+                "/api/admin/voucher/*",
+                "/api/admin/home",
                 "admin/api/staff",
+
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"

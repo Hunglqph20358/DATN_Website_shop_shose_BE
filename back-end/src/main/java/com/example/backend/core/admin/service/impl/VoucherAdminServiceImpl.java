@@ -59,7 +59,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setStatus(0);
         voucher.setIdel(0);
         voucher.setCreateName("xuân");
-        voucher.setUpdateName("Ngọc");
+        voucher.setUpdateName("");
 
 //        String startDateStr = voucherAdminDTO.getStartDateStr();
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -94,8 +94,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             existingVoucher.setEndDate(updatedVoucherAdminDTO.getEndDate());
             existingVoucher.setDescription(updatedVoucherAdminDTO.getDescription());
            existingVoucher.setVoucherType(updatedVoucherAdminDTO.getVoucherType());
-           existingVoucher.setConditions(updatedVoucherAdminDTO.getConditions());
-           existingVoucher.setName(updatedVoucherAdminDTO.getName());
+           existingVoucher.setConditionApply(updatedVoucherAdminDTO.getConditionApply());
+//           existingVoucher.set(updatedVoucherAdminDTO.getName());
            existingVoucher.setReducedValue(updatedVoucherAdminDTO.getReducedValue());
            existingVoucher.setQuantity(updatedVoucherAdminDTO.getQuantity());
 
