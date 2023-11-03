@@ -20,6 +20,7 @@ public class AppConstant {
                 "/view/api/customer/finbyId/*",
                 "/view/api/create-payment",
                 "/view/api/create-order",
+                "/view/api/get-all-address",
                 "/view/api/create-address"
 
         };
