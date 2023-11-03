@@ -2,6 +2,7 @@ package com.example.backend.core.view.service.impl;
 
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Address;
+import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.view.dto.AddressDTO;
 import com.example.backend.core.view.mapper.AddressMapper;
 import com.example.backend.core.view.repository.AddressRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,13 +24,17 @@ public class AddressServiceImpl  implements AddressService {
     private AddressMapper addressMapper;
 
     @Override
-    public List<AddressDTO> findByIdCustomer(Long idCustomer) {
-        return addressMapper.toDto(addressRepository.findByIdCustomer(idCustomer));
-    }
-
-    @Override
-    public List<AddressDTO> findByIdStaff(Long idStaff) {
-        return addressMapper.toDto(addressRepository.findByIdStaff(idStaff));
+    public List<AddressDTO> getAllAddress(UsersDTO usersDTO) {
+        List<AddressDTO> lst = new ArrayList<>();
+        if(usersDTO.getId_customer() != null && usersDTO.getId_staff() == null){
+            List<Address> lstAddress = addressRepository.findByIdCustomer(usersDTO.getId_customer().longValue());
+            lst = addressMapper.toDto(lstAddress);
+        }
+        if(usersDTO.getId_customer() == null && usersDTO.getId_staff() != null){
+            List<Address> lstAddress = addressRepository.findByIdStaff(usersDTO.getId_staff().longValue());
+            lst = addressMapper.toDto(lstAddress);
+        }
+        return lst;
     }
 
     @Override
