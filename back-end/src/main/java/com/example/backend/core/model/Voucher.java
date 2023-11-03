@@ -1,68 +1,47 @@
 package com.example.backend.core.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.Objects;
+import java.util.Date;
 
+@Entity
+@Table(name = "`voucher`")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-@Entity
-@Table(name = "voucher")
-public class Voucher {
+@Getter
+@ToString
+public class Voucher implements Serializable {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    @Basic
     @Column(name = "code")
     private String code;
-    @Basic
-    @Column(name = "name")
-    private String name;
-    @Basic
+    @Column(name = "condition_apply")
+    private BigDecimal conditionApply;
     @Column(name = "create_date")
     private Date createDate;
-    @Basic
     @Column(name = "start_date")
     private Date startDate;
-    @Basic
     @Column(name = "end_date")
     private Date endDate;
-    @Basic
-    @Column(name = "description")
-    private String description;
-    @Basic
-    @Column(name = "conditions")
-    private BigDecimal conditions;
-    @Basic
-    @Column(name = "status")
-    private int status;
-    @Basic
-    @Column(name = "idel")
-    private int idel;
-    @Basic
-    @Column(name = "create_name")
+    @Column(name = "createName")
     private String createName;
-    @Basic
-    @Column(name = "update_name")
-    private String updateName;
-    @Basic
     @Column(name = "voucher_type")
-    private int voucherType;
-    @Basic
+    private Integer voucherType;
     @Column(name = "reduced_value")
     private BigDecimal reducedValue;
-    @Basic
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "status")
+    private Integer status;
+    @Column(name = "idel")
+    private Integer isdel;
+
 }

@@ -17,7 +17,6 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class CustomUserDetails implements UserDetails {
     private Long id;
@@ -27,9 +26,8 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
-
-//    private Collection<? extends GrantedAuthority> role;
     private String role;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -48,6 +46,7 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
         this.role = role;
     }
+
     public static CustomUserDetails mapUserToUserDetail(Users users){
         return new CustomUserDetails(
                 users.getId(),

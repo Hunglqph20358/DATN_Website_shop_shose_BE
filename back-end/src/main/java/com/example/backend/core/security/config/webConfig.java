@@ -2,7 +2,6 @@ package com.example.backend.core.security.config;
 
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.security.config.custom.CustomUserDetailService;
-import com.example.backend.core.security.config.custom.CustomerUserDetailService;
 import com.example.backend.core.security.jwt.JwtAuthenticationFillter;
 import com.example.backend.core.security.jwt.JwtEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class webConfig{
+
     @Autowired
     public CustomUserDetailService customUserDetailService;
 
