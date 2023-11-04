@@ -53,38 +53,15 @@ public class SercurityController {
         if(usersService.existsByUsername(signUpFormRequest.getUsername())){
             return new ResponseEntity<>(new MessageResponse("The Username is existed"), HttpStatus.OK);
         }
-            Users users = Users.builder()
-                    .email(signUpFormRequest.getEmail())
-                    .createDate(Instant.now())
-                    .username(signUpFormRequest.getUsername())
-                    .password(passwordEncoder.encode(signUpFormRequest.getPassword())).build();
-            String strRoles = signUpFormRequest.getRole();
-            String roles;
-            try {
-                if(strRoles.equalsIgnoreCase("ADMIN")){
-                    roles = "ADMIN";
-                    users.setId_customer(null);
-                    users.setId_staff(Integer.valueOf(signUpFormRequest.getId_staff()));
-                    users.setRole(roles);
-                } else if (strRoles.equalsIgnoreCase("STAFF")) {
-                    roles = "STAFF";
-                    users.setId_customer(null);
-                    users.setId_staff(Integer.valueOf(signUpFormRequest.getId_staff()));
-                    users.setRole(roles);
-                }else {
-                    roles = "";
-                    users.setId_staff(null);
-                    users.setId_customer(Integer.valueOf(signUpFormRequest.getId_customer()));
-                    users.setRole(roles);
-                }
-                usersService.saveOrUpdate(users);
+        try {
+               return ResponseEntity.ok(usersService.saveOrUpdate(signUpFormRequest));
             }catch (Exception e){
                 e.printStackTrace();
                 return new ResponseEntity<>(new MessageResponse("Error occurred during registration"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-        return new ResponseEntity<>(new MessageResponse("Create Success"), HttpStatus.CREATED);
     }
+
     @PostMapping("/sign-in")
     public ResponseEntity<?> login(@Valid @RequestBody SignInRequet signInRequet, HttpServletRequest request ){
         Authentication authentication = authenticationManager.authenticate(
