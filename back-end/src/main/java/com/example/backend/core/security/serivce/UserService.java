@@ -1,6 +1,8 @@
 package com.example.backend.core.security.serivce;
 
 
+import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.security.dto.request.SignUpRepquest;
 import com.example.backend.core.security.entity.Users;
 
 
@@ -10,7 +12,7 @@ public interface UserService {
     boolean existsByUsername(String userName);
     boolean existsByEmail(String email);
     String findByRole(String role);
-    Users saveOrUpdate(Users users);
+    ServiceResult<Users> saveOrUpdate(SignUpRepquest signUpRepquest);
     boolean isUser(String username);
 
 }
