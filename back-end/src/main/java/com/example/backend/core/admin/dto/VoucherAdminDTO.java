@@ -23,7 +23,7 @@ public class VoucherAdminDTO {
     private Date startDate;
     private Date endDate;
     private String description;
-    private BigDecimal conditions;
+    private BigDecimal conditionApply;
     private int status;
     private int idel;
     private String createName;

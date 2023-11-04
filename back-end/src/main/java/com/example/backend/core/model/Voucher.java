@@ -1,47 +1,68 @@
 package com.example.backend.core.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Objects;
 
-@Entity
-@Table(name = "`voucher`")
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
-@ToString
-public class Voucher implements Serializable {
+@Setter
+@Entity
+@Table(name = "voucher")
+public class Voucher {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Basic
     @Column(name = "code")
     private String code;
-    @Column(name = "condition_apply")
-    private BigDecimal conditionApply;
+    @Basic
+    @Column(name = "name")
+    private String name;
+    @Basic
     @Column(name = "create_date")
     private Date createDate;
+    @Basic
     @Column(name = "start_date")
     private Date startDate;
+    @Basic
     @Column(name = "end_date")
     private Date endDate;
-    @Column(name = "createName")
-    private String createName;
-    @Column(name = "voucher_type")
-    private Integer voucherType;
-    @Column(name = "reduced_value")
-    private BigDecimal reducedValue;
-    @Column(name = "quantity")
-    private Integer quantity;
+    @Basic
     @Column(name = "description")
     private String description;
+    @Basic
+    @Column(name = "conditions")
+    private BigDecimal conditionApply;
+    @Basic
     @Column(name = "status")
-    private Integer status;
+    private int status;
+    @Basic
     @Column(name = "idel")
-    private Integer isdel;
-
+    private int idel;
+    @Basic
+    @Column(name = "create_name")
+    private String createName;
+    @Basic
+    @Column(name = "update_name")
+    private String updateName;
+    @Basic
+    @Column(name = "voucher_type")
+    private int voucherType;
+    @Basic
+    @Column(name = "reduced_value")
+    private BigDecimal reducedValue;
+    @Basic
+    @Column(name = "quantity")
+    private int quantity;
 }

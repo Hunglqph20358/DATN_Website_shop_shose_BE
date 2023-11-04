@@ -49,10 +49,9 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     EntityManager entityManager;
 
     @Override
-    public Page<DiscountDetailAdminDTO> getAllDiscount(Integer i) {
-        Pageable pageable = PageRequest.of(i, AppConstant.PAGE_SIZE);
-        Page<DiscountDetail> page = discountDetailRepository.findAll(pageable);
-        return page.map(discountDetailAdminMapper::toDto);
+    public List<DiscountAdminDTO> getAllDiscount() {
+        List<DiscountAdminDTO> list = discountAdminMapper.toDto(discountAdminRepository.getAll());
+        return list ;
     }
 
 
@@ -197,11 +196,11 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     }
 
     @Override
-    public ServiceResult<DiscountDetailAdminDTO> updateDiscount(Long discountDetailId, DiscountDetailAdminDTO updatedDiscountDetailAdminDTO) {
+    public ServiceResult<DiscountDetailAdminDTO> updateDiscount(Long idDiscount, DiscountDetailAdminDTO updatedDiscountDetailAdminDTO) {
         ServiceResult<DiscountDetailAdminDTO> serviceResult = new ServiceResult<>();
 
         // Kiểm tra xem discountDetailId có tồn tại trong cơ sở dữ liệu không
-        Optional<DiscountDetail> existingDiscount = discountDetailRepository.findById(discountDetailId);
+        Optional<DiscountDetail> existingDiscount = discountDetailRepository.findById(updatedDiscountDetailAdminDTO.getId());
 
         if (existingDiscount.isPresent()) {
             // Cập nhật thông tin của bản ghi đã tồn tại dựa trên updatedDiscountDetailAdminDTO
@@ -213,7 +212,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                existingEntity.setIdProduct(updatedDiscountDetailAdminDTO.getProductDTOList().get(i).getId());
             }
 
-            Optional<Discount> discountAdmin= discountAdminRepository.findById(updatedDiscountDetailAdminDTO.getDiscountAdminDTO().getId());
+            Optional<Discount> discountAdmin= discountAdminRepository.findById(idDiscount);
             if(discountAdmin.isPresent()){
                 Discount discount=discountAdmin.get();
 //
@@ -272,7 +271,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                     "    d.description,\n" +
                     "    d.idel,\n" +
                     "    p.name AS product_name,\n" +
-                    "    p.create_date AS product_create_date,\n" +
                     "    p.code AS product_code,\n" +
                     "    p.id AS product_id,\n" +
                     "    p.id_brand,\n" +
@@ -285,66 +283,73 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                     "    b.name AS brand_name, -- Tên thương hiệu\n" +
                     "    c.name AS category_name -- Tên danh mục\n" +
                     "FROM\n" +
-                    "    discount_detail dd\n" +
-                    "INNER JOIN\n" +
-                    "    discount d ON dd.id_discount = d.id\n" +
-                    "Inner JOIN\n" +
+                    "    discount d\n" +
+                    "LEFT JOIN\n" +
+                    "   discount_detail dd \n" +
+                    "            ON dd.id_discount = d.id \n" +
+                    "LEFT JOIN\n" +
                     "    product p ON dd.id_product = p.id\n" +
                     "LEFT JOIN\n" +
                     "    brand b ON p.id_brand = b.id -- Liên kết với bảng brand\n" +
                     "LEFT JOIN\n" +
                     "    category c ON p.id_category = c.id -- Liên kết với bảng category\n" +
-                    "WHERE dd.id = :id"); // Thêm điều kiện WHERE để lọc theo id
+                    "WHERE d.id = :id"); // Thêm điều kiện WHERE để lọc theo id
 
             String sqlStr = sql.toString();
             Query query = entityManager.createNativeQuery(sqlStr);
             query.setParameter("id", id); // Đặt giá trị tham số id
             List<Object[]> resultList = query.getResultList();
             List<DiscountDetailAdminDTO> discountDetails = new ArrayList<>();
-                for (Object[] row : resultList) {
-                    DiscountDetailAdminDTO discountDetail = new DiscountDetailAdminDTO();
-                    discountDetail.setId(Long.valueOf(row[0].toString()));
-                    discountDetail.setIdProduct(( row[1].toString()));
-                    discountDetail.setIdDiscount(( row[2].toString()));
-                    discountDetail.setReducedValue( row[3].toString());
-                    discountDetail.setDiscountType( row[4].toString());
-                    discountDetail.setStatus((Integer) row[5]);
+            for (Object[] row : resultList) {
+                DiscountDetailAdminDTO discountDetail = new DiscountDetailAdminDTO();
 
-                    DiscountAdminDTO discount = new DiscountAdminDTO();
-                    discount.setCode( row[6].toString());
-                    discount.setId(Long.valueOf(row[7].toString()));
-                    discount.setName( row[8].toString());
-                    discount.setStartDate((Date) row[9]);
-                    discount.setEndDate((Date) row[10]);
-                    discount.setDescription( row[11].toString());
-                    discount.setIdel( row[12].toString());
+                discountDetail.setId(row[0] != null ? Long.valueOf(row[0].toString()) : null);
+                discountDetail.setIdProduct(row[1] != null ? row[1].toString() : null);
+                discountDetail.setIdDiscount(row[2] != null ? row[2].toString() : null);
+                discountDetail.setReducedValue(row[3] != null ? row[3].toString() : null);
+                discountDetail.setDiscountType(row[4] != null ? row[4].toString() : null);
+                discountDetail.setStatus(row[5] != null ? Integer.parseInt(row[5].toString()) : 0);
 
-                    ProductDTO product = new ProductDTO();
-                    product.setName((String) row[13]);
-                    product.setCreateDate(((Timestamp) row[14]).toInstant());
-                    product.setCode((String) row[15]);
-                    product.setId(Long.valueOf(row[16].toString()) );
-                    product.setIdBrand(((Number) row[17]).longValue());
-                    product.setIdCategory(((Number) row[18]).longValue());
-                    product.setIdMaterial(((Number) row[19]).longValue());
-                    product.setIdSole(((Number) row[20]).longValue());
-                    product.setDescription((String) row[21]);
-                    product.setStatus((Integer) row[22]);
-                    product.setIdel((Integer) row[23]);
+                DiscountAdminDTO discount = new DiscountAdminDTO();
+                discount.setCode(row[6] != null ? row[6].toString() : null);
+                discount.setId(row[7] != null ? Long.valueOf(row[7].toString()) : null);
+                discount.setName(row[8] != null ? row[8].toString() : null);
+                discount.setStartDate(row[9] != null ? (Date) row[9] : null);
+                discount.setEndDate(row[10] != null ? (Date) row[10] : null);
+                discount.setDescription(row[11] != null ? row[11].toString() : null);
+                discount.setIdel(row[12] != null ? row[12].toString() : null);
 
-                    BrandDTO brand = new BrandDTO();
-                    brand.setName((String) row[24]);
-                    product.setBrandDTO(brand);
+                ProductDTO product = new ProductDTO();
+                product.setName(row[13] != null ? (String) row[13] : null);
+                product.setCode(row[14] != null ? (String) row[14] : null);
+                product.setId(row[15] != null ? Long.valueOf(row[15].toString()) : null);
+                product.setIdBrand(row[16] != null ? ((Number) row[16]).longValue() : null);
+                product.setIdCategory(row[17] != null ? ((Number) row[17]).longValue() : null);
+                product.setIdMaterial(row[18] != null ? ((Number) row[18]).longValue() : null);
+                product.setIdSole(row[19] != null ? ((Number) row[19]).longValue() : null);
+                product.setDescription(row[20] != null ? (String) row[20] : null);
+                product.setStatus(row[21] != null ? (Integer) row[21] : null);
+                product.setIdel(row[22] != null ? (Integer) row[22] : null);
 
-                    CategoryDTO category = new CategoryDTO();
-                    category.setName((String) row[25]);
-                    product.setCategoryDTO(category);
+                BrandDTO brand = new BrandDTO();
+                brand.setName(row[23] != null ? (String) row[23] : null);
+                product.setBrandDTO(brand);
 
-                    discountDetail.setDiscountAdminDTO(discount);
-                    discountDetail.setProductDTO(product);
+                CategoryDTO category = new CategoryDTO();
+                category.setName(row[24] != null ? (String) row[24] : null);
+                product.setCategoryDTO(category);
 
-                    discountDetails.add(discountDetail);
+                discountDetail.setDiscountAdminDTO(discount);
+                discountDetails.add(discountDetail);
+                List<ProductDTO> productList = new ArrayList<>();
+                for (int i = 0; i < discountDetails.size(); i++) {
+                    productList.add(product);
+                    discountDetails.get(i).setProductDTOList(productList);
                 }
+                System.out.println(productList.size());
+
+            }
+
             return discountDetails;
         } catch (Exception e) {
             e.printStackTrace();

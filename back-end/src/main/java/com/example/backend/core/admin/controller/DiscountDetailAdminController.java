@@ -17,7 +17,7 @@ public class DiscountDetailAdminController {
     private DiscountDetailAdminService discountService;
     @GetMapping("/discount")
     public ResponseEntity<?> getAllDiscount(){
-        return ResponseEntity.ok(discountService.getAll());
+        return ResponseEntity.ok(discountService.getAllDiscount());
     }
     @GetMapping("/product")
     public ResponseEntity<?> getAllProduct(){
@@ -27,17 +27,17 @@ public class DiscountDetailAdminController {
     public ResponseEntity<?> createDiscount( @RequestBody DiscountDetailAdminDTO khuyenMaiDTO){
         return ResponseEntity.ok(discountService.createDiscount(khuyenMaiDTO));
     }
-    @PutMapping("/discount/{id}")
-    public ResponseEntity<?> updateDiscount(@PathVariable Long id,@Valid @RequestBody DiscountDetailAdminDTO khuyenMaiDTO){
-        return ResponseEntity.ok(discountService.updateDiscount(id,khuyenMaiDTO));
+    @PutMapping("/discount/{idDiscount}")
+    public ResponseEntity<?> updateDiscount(@PathVariable Long idDiscount,@Valid @RequestBody DiscountDetailAdminDTO khuyenMaiDTO){
+        return ResponseEntity.ok(discountService.updateDiscount(idDiscount,khuyenMaiDTO));
     }
     @DeleteMapping("/discount/{idDiscount}")
     public ResponseEntity<ServiceResult<Void>> deleteDiscount(@PathVariable Long idDiscount) {
         ServiceResult<Void> result = discountService.deleteDiscount(idDiscount);
         return ResponseEntity.ok(result);
     }
-    @GetMapping("/discount/{id}")
-    public ResponseEntity<?> getDetailDiscount(@PathVariable Long id) {
-        return ResponseEntity.ok(discountService.getDetailDiscount(id));
+    @GetMapping("/discount/{idDiscount}")
+    public ResponseEntity<?> getDetailDiscount(@PathVariable Long idDiscount) {
+        return ResponseEntity.ok(discountService.getDetailDiscount(idDiscount));
     }
 }

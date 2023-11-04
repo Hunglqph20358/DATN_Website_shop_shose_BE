@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface DiscountDetailAdminService {
-    Page<DiscountDetailAdminDTO> getAllDiscount(Integer page);
+    List<DiscountAdminDTO> getAllDiscount();
     List<DiscountDetailAdminDTO> getAll();
     ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO khuyenMaiDTO);
     ServiceResult<DiscountDetailAdminDTO> updateDiscount (Long discountDetailId, DiscountDetailAdminDTO updatedDiscountDetailAdminDTO);
