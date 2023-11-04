@@ -27,12 +27,12 @@ public class CustomUserDetails implements UserDetails {
     @JsonIgnore
     private String password;
     private String role;
-
+    public Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role.isEmpty()){
-            return Collections.emptyList();
+        if (role == null){
+            return authorities;
         }
         return Collections.singleton(new SimpleGrantedAuthority(role));
     }

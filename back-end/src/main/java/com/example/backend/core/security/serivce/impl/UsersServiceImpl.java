@@ -9,6 +9,7 @@ import com.example.backend.core.security.serivce.UserService;
 import com.example.backend.core.view.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,6 +22,9 @@ public class UsersServiceImpl implements UserService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Users findByUsername(String userName) {
@@ -56,7 +60,7 @@ public class UsersServiceImpl implements UserService {
         if(null != customer){
             Users users = new Users();
             users.setUsername(signUpRepquest.getUsername());
-            users.setPassword(signUpRepquest.getPassword());
+            users.setPassword(passwordEncoder.encode(signUpRepquest.getPassword()));
             users.setEmail(signUpRepquest.getEmail());
             users.setCreateDate(Instant.now());
             users.setId_customer(customer.getId().intValue());
