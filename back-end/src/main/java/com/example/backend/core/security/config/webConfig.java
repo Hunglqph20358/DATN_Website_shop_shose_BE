@@ -56,8 +56,10 @@ public class webConfig{
         http.cors(c -> c.disable()).csrf(cf -> cf.disable());
         http.authorizeHttpRequests(author -> {
             try {
-                author.requestMatchers("/api/sign-in").permitAll()
-                        .requestMatchers("api/sign-up").permitAll()
+                author.requestMatchers("view/api/sign-in").permitAll()
+                        .requestMatchers("view/api/sign-up").permitAll()
+                        .requestMatchers("admin/api/sign-in").permitAll()
+                        .requestMatchers("admin/api/sign-up").permitAll()
                         .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
                         .requestMatchers(AppConstant.API_ADMIN).permitAll()
                         .requestMatchers(AppConstant.API_STAFF).permitAll()

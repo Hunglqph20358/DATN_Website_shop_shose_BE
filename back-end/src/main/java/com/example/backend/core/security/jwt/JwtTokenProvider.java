@@ -1,6 +1,7 @@
 package com.example.backend.core.security.jwt;
 
 import com.example.backend.core.security.config.custom.CustomUserDetails;
+import com.example.backend.core.security.config.custom.CustomerUserDetails;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,17 @@ public class JwtTokenProvider {
         Date dateExpieed = new Date(now.getTime()+jWT_EXPIRATION);
         // tao chuoi token
         return Jwts.builder().setSubject(tokenUser)
+                .setIssuedAt(now)
+                .setExpiration(dateExpieed)
+                .signWith(SignatureAlgorithm.HS512,jWT_SECRET)
+                .compact();
+    }
+    public String generateTokenCustomer(CustomerUserDetails customerUserDetails){
+        Date now = new Date();
+        Date dateExpieed = new Date(now.getTime()+jWT_EXPIRATION);
+        String tokenCustomer = customerUserDetails.toString();
+        // tao chuoi token
+        return Jwts.builder().setSubject(tokenCustomer)
                 .setIssuedAt(now)
                 .setExpiration(dateExpieed)
                 .signWith(SignatureAlgorithm.HS512,jWT_SECRET)

@@ -16,10 +16,18 @@ import java.util.Collection;
 public class JwtResponse {
     private String token;
     private String type = "Bearer";
-    private UsersDTO usersDTO;
+    private String userName;
+    private String role;
+    private String code;
+    private String phone;
+    private String email;
 
-    public JwtResponse(String token, UsersDTO toUserDTO) {
+    public JwtResponse(String token, String username, String role, String code, String phone,String email) {
         this.token = token;
-        this.usersDTO = toUserDTO;
+        this.userName = username;
+        this.role = role;
+        this.code = code;
+        this.phone = phone;
+        this.email = email;
     }
 }
