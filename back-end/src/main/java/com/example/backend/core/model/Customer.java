@@ -25,6 +25,8 @@ public class Customer implements Serializable {
     private String code;
     @Column(name = "fullname")
     private String fullname;
+    @Column(name = "email")
+    private String email;
     @Column(name = "birthday")
     private Date birthday;
     @Column(name = "phone")
@@ -35,6 +37,10 @@ public class Customer implements Serializable {
     private Instant createDate;
     @Column(name = "update_date")
     private Instant updateDate;
+    @Column(name = "username")
+    private String username;
+    @Column(name = "password")
+    private String password;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")

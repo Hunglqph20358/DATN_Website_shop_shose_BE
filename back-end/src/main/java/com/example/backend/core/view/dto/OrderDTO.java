@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,10 +17,12 @@ public class OrderDTO {
     private String code;
     private Long idCustomer;
     private Long idStaff;
+    private String codeVoucher;
     private Instant createDate;
     private Instant paymentDate;
-    private Instant deliveryDate;
-    private Instant receivedDate;
+    private Date deliveryDate;
+    private Date receivedDate;
+    private String addressReceived;
     private String shipperPhone;
     private String receiverPhone;
     private String receiver;
@@ -32,4 +35,5 @@ public class OrderDTO {
 
     private CustomerDTO customerDTO;
 
+    private Integer page;
 }

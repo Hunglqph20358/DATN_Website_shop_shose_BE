@@ -24,17 +24,24 @@ public class AddressServiceImpl  implements AddressService {
     private AddressMapper addressMapper;
 
     @Override
-    public List<AddressDTO> getAllAddress(UsersDTO usersDTO) {
+    public List<AddressDTO> getAllAddress(AddressDTO addressDTO) {
         List<AddressDTO> lst = new ArrayList<>();
-        if(usersDTO.getId_customer() != null && usersDTO.getId_staff() == null){
-            List<Address> lstAddress = addressRepository.findByIdCustomer(usersDTO.getId_customer().longValue());
-            lst = addressMapper.toDto(lstAddress);
-        }
-        if(usersDTO.getId_customer() == null && usersDTO.getId_staff() != null){
-            List<Address> lstAddress = addressRepository.findByIdStaff(usersDTO.getId_staff().longValue());
-            lst = addressMapper.toDto(lstAddress);
-        }
+       if(addressDTO.getIdCustomer() != null){
+           lst = addressMapper.toDto(addressRepository.findByIdCustomerOrderByCreateDateDesc(addressDTO.getIdCustomer()));
+       }
         return lst;
+    }
+
+    @Override
+    public ServiceResult<AddressDTO> getAddress(AddressDTO addressDTO) {
+        ServiceResult<AddressDTO> result = new ServiceResult<>();
+        Address address = addressRepository.getAddressByCustomer(addressDTO.getIdCustomer());
+        if(null != address){
+            result.setMessage("Success");
+            result.setData(addressMapper.toDto(address));
+            result.setStatus(HttpStatus.OK);
+        }
+        return result;
     }
 
     @Override
