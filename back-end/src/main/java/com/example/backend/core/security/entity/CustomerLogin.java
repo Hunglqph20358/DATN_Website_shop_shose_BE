@@ -1,21 +1,16 @@
-package com.example.backend.core.model;
-
+package com.example.backend.core.security.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
-
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder @ToString
 @Entity
 @Table(name = "customer")
-@Builder
-public class Customer implements Serializable {
+public class CustomerLogin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -37,12 +32,11 @@ public class Customer implements Serializable {
     @Column(name = "password")
     private String password;
     @Column(name = "create_date")
-    private Instant createDate;
+    private Date createDate;
     @Column(name = "update_date")
-    private Instant updateDate;
+    private Date updateDate;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
-
 }
