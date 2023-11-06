@@ -12,7 +12,7 @@ public interface UserService {
     boolean existsByUsername(String userName);
     boolean existsByEmail(String email);
     String findByRole(String role);
-    ServiceResult<Users> saveOrUpdate(SignUpRepquest signUpRepquest);
+    Users saveOrUpdate(Users users);
     boolean isUser(String username);
 
 }

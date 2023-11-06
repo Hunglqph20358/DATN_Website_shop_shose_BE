@@ -19,4 +19,5 @@ public class SignUpRepquest {
     private String phone;
     private Date birthday;
     private String gender;
+    private String role;
 }
