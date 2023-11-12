@@ -18,4 +18,8 @@ public class OrderDetailController {
     public ResponseEntity<?> createOrderDetail(@RequestBody OrderDetailDTO orderDetailDTO){
         return ResponseEntity.ok(orderDetailService.createOrderDetail(orderDetailDTO));
     }
+    @GetMapping("/get-order-detail/by-order/{idOrder}")
+    public ResponseEntity<?> getAllOrderDetailByOrder(@PathVariable(name = "idOrder")Long idOrder){
+        return ResponseEntity.ok(orderDetailService.getAllByOrder(idOrder));
+    }
 }

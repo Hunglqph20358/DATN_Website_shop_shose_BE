@@ -1,6 +1,6 @@
-package com.example.backend.core.view.dto;
+package com.example.backend.core.admin.dto;
 
-import jakarta.persistence.Column;
+import com.example.backend.core.view.dto.CustomerDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class OrderDTO {
+public class OrderAdminDTO {
     private Long id;
     private String code;
     private Long idCustomer;
@@ -32,7 +32,4 @@ public class OrderDTO {
     private Integer paymentType;
     private String description;
     private Integer status;
-    private CustomerDTO customerDTO;
-
-    private String email;
 }

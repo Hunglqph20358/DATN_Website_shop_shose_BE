@@ -3,6 +3,7 @@ package com.example.backend.core.view.service.impl;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Address;
+import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.Voucher;
 import com.example.backend.core.security.dto.UsersDTO;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -43,6 +45,12 @@ public class OrderServiceImpl implements OrderService {
     private CustomerMapper customerMapper;
     @Autowired
     private VoucherRepository voucherRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
         ServiceResult<OrderDTO> result = new ServiceResult<>();
@@ -84,8 +92,60 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderDTO> getAll(OrderDTO orderDTO) {
-        Pageable pageable = PageRequest.of(orderDTO.getPage(), AppConstant.PAGE_SIZE);
-        return orderRepository.findByIdCustomerOrderByCreateDate(orderDTO.getIdCustomer(), pageable).map(orderMapper::toDto);
+    public List<OrderDTO> getAll(OrderDTO orderDTO) {
+        if(orderDTO.getIdCustomer() == null){
+            return null;
+        }
+        if(null != orderDTO.getStatus() && orderDTO.getStatus() != 6){
+            return orderMapper.toDto(orderRepository.findByIdCustomerAndStatusOrderByCreateDateDesc(orderDTO.getIdCustomer(), orderDTO.getStatus()));
+        }
+        return orderMapper.toDto(orderRepository.findByIdCustomerOrderByCreateDateDesc(orderDTO.getIdCustomer()));
+    }
+
+    @Override
+    public ServiceResult<OrderDTO> createOrderBuyNow(OrderDTO orderDTO) {
+        ServiceResult<OrderDTO> result = new ServiceResult<>();
+        OrderDTO dto = new OrderDTO();
+        Order order = new Order();
+        Customer customer = new Customer();
+        CustomerDTO customerDTO = customerMapper.toDto(customerRepository.findByCode(orderDTO.getCustomerDTO().getCode()));
+        if( customerRepository.findByEmail(orderDTO.getEmail()) == null){
+            customer.setFullname(orderDTO.getReceiver());
+            customer.setPhone(orderDTO.getReceiverPhone());
+            customer.setCreateDate(Instant.now());
+            customer.setEmail(orderDTO.getEmail());
+            customer.setCode("KH" + Instant.now().getEpochSecond());
+            customer.setUsername(orderDTO.getEmail().substring(0,orderDTO.getEmail().indexOf("@")));
+            customer.setPassword(passwordEncoder.encode("123456"));
+            customer = customerRepository.save(customer);
+            order.setIdCustomer(customer.getId());
+        }else {
+            order.setIdCustomer(customer.getId());
+        }
+//        if(customerDTO != null){
+            order.setCode("HD" + Instant.now().getEpochSecond());
+            order.setCreateDate(Instant.now());
+            order.setReceiver(orderDTO.getReceiver());
+            order.setPaymentType(orderDTO.getPaymentType());
+            order.setShipPrice(orderDTO.getShipPrice());
+            order.setTotalPrice(orderDTO.getTotalPrice());
+            order.setTotalPayment(orderDTO.getTotalPayment());
+            order.setReceiverPhone(orderDTO.getReceiverPhone());
+            order.setAddressReceived(order.getAddressReceived());
+            order.setStatus(0);
+            order = orderRepository.save(order);
+            if(StringUtils.isNotBlank(orderDTO.getCodeVoucher())){
+                Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
+                if(null != voucher){
+                    voucher.setQuantity(voucher.getQuantity() - 1);
+                    voucherRepository.save(voucher);
+                }
+            }
+            dto = orderMapper.toDto(order)  ;
+            result.setData(dto);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Success");
+//        }
+        return result;
     }
 }

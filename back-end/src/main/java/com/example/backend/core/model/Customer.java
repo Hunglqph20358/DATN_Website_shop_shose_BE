@@ -32,8 +32,6 @@ public class Customer implements Serializable {
     private String phone;
     @Column(name = "gender")
     private String gender;
-    @Column(name = "email")
-    private String email;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -42,10 +40,6 @@ public class Customer implements Serializable {
     private Instant createDate;
     @Column(name = "update_date")
     private Instant updateDate;
-    @Column(name = "username")
-    private String username;
-    @Column(name = "password")
-    private String password;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")

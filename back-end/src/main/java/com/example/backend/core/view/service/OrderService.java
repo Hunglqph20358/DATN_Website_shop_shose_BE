@@ -15,6 +15,8 @@ public interface OrderService {
 
     ServiceResult<OrderDTO> updateOrder(OrderDTO orderDTO);
 
-    Page<OrderDTO> getAll(OrderDTO orderDTO);
+    List<OrderDTO> getAll(OrderDTO orderDTO);
+
+    ServiceResult<OrderDTO> createOrderBuyNow(OrderDTO orderDTO);
 
 }

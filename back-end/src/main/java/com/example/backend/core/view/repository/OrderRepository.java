@@ -15,5 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByIdCustomer(Long idCustomer);
 
-    Page<Order> findByIdCustomerOrderByCreateDate(Long idCustomer, Pageable pageable);
+    List<Order> findByIdCustomerOrderByCreateDateDesc(Long idCustomer);
+
+    List<Order> findByIdCustomerAndStatusOrderByCreateDateDesc(Long idCustomer, Integer status);
 }
