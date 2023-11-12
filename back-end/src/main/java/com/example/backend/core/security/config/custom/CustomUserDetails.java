@@ -27,8 +27,11 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
+    private String isdn;
     private String role;
     public Collection<? extends GrantedAuthority> authorities;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -38,15 +41,16 @@ public class CustomUserDetails implements UserDetails {
         return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
-    public CustomUserDetails(Long id, String code, String fullname, Date birthday, String gender, String username, String password, String phone, String role) {
+    public CustomUserDetails(Long id, String code, String fullname, Date birthday, String gender, String phone, String username, String password, String isdn, String role) {
         this.id = id;
         this.code = code;
         this.fullname = fullname;
-        this.gender = gender;
         this.birthday = birthday;
+        this.gender = gender;
         this.phone = phone;
         this.username = username;
         this.password = password;
+        this.isdn = isdn;
         this.role = role;
     }
 
@@ -57,9 +61,10 @@ public class CustomUserDetails implements UserDetails {
                 users.getFullname(),
                 users.getBirthday(),
                 users.getGender(),
+                users.getPhone(),
                 users.getUsername(),
                 users.getPassword(),
-                users.getPhone(),
+                users.getIsdn(),
                 users.getRole()
         );
     }
