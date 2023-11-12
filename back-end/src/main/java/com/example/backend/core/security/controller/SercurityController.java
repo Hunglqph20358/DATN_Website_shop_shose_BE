@@ -93,14 +93,12 @@ public class SercurityController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(signInRequet.getUsername(),signInRequet.getPassword())
             );
+            UsersDTO usersDTO = new UsersDTO();
             SecurityContextHolder.getContext().setAuthentication(authentication);
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             String token = jwtTokenProvider.generateToken(customUserDetails);
-            String username = customUserDetails.getUsername();
-            String role = customUserDetails.getRole();
-            String code = customUserDetails.getCode();
-            String phone = customUserDetails.getPhone();
-            String email = customUserDetails.getEmail();
-            return ResponseEntity.ok(new JwtResponse(token,username,role,code,phone,email));
+            usersDTO = usersDTO.toStaffDTO(customUserDetails);
+            System.out.println(usersDTO);
+            return ResponseEntity.ok(new JwtResponse(token,usersDTO.toStaffDTO(customUserDetails)));
     }
 }
