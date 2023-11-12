@@ -2,6 +2,7 @@ package com.example.backend.core.security.controller;
 
 import com.example.backend.core.security.config.custom.CustomerUserDetails;
 import com.example.backend.core.security.config.custom.CustomerUserDetalsService;
+import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.security.dto.request.SignInRequet;
 import com.example.backend.core.security.dto.request.SignUpRepquest;
 import com.example.backend.core.security.dto.response.JwtResponse;
@@ -73,12 +74,8 @@ public class LoginCustomerController {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 CustomerUserDetails customerUserDetails = (CustomerUserDetails) authentication.getPrincipal();
                 String token = jwtTokenProvider.generateTokenCustomer(customerUserDetails);
-                String username = customerUserDetails.getUsername();
-                String role = null;
-                String code = customerUserDetails.getCode();
-                String phone = customerUserDetails.getPhone();
-                String email = customerUserDetails.getEmail();
-                return ResponseEntity.ok(new JwtResponse(token,username,role,code,phone,email));
+                UsersDTO usersDTO = new UsersDTO();
+                return ResponseEntity.ok(new JwtResponse(token, usersDTO.toCustomerDTO(customerUserDetails)));
             }
         }else{
             return ResponseEntity.ok(new MessageResponse("Bạn không có quyền truy cập"));

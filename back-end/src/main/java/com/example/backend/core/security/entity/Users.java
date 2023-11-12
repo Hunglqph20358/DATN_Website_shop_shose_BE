@@ -1,13 +1,11 @@
 package com.example.backend.core.security.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "staff")
@@ -42,12 +40,13 @@ public class Users {
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "role")
+    @Column(name = "roles")
     private String role;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
     @Column(name = "isdn")
+    @ColumnDefault("(UNIX_TIMESTAMP(NOW()))")
     private String isdn;
 }
