@@ -4,13 +4,20 @@ public class AppConstant {
         public static final Integer PAGE_SIZE = 10;
         public static final  String[] API_ADMIN = {
                 "/api/admin/home",
-                "/api/admin/discount",
-                "/api/admin/product",
-                "/api/admin/discount/*",
-                "/api/admin/voucher",
-                "/api/admin/voucher/*",
-                "/api/admin/home",
-                "admin/api/staff",
+                "/api/admin/brand/*/*",
+                "/api/admin/brand/*",
+                "/api/admin/product/*",
+                "/api/admin/product/*/*",
+                "/api/admin/material/*",
+                "/api/admin/material/*/*",
+                "/api/admin/color/*",
+                "/api/admin/color/*/*",
+                "/api/admin/size/*",
+                "/api/admin/size/*/*",
+                "/api/admin/category/*",
+                "/api/admin/category/*/*",
+                "/api/admin/sole/*",
+                "/api/admin/sole/*/*",
 
         };
         public static final String[] API_STAFF = {
@@ -29,6 +36,5 @@ public class AppConstant {
                 "/view/api/create-order",
                 "/view/api/get-all-address",
                 "/view/api/create-address"
-
         };
 }
