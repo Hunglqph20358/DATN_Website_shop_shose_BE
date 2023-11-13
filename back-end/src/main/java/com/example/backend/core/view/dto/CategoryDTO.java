@@ -1,9 +1,10 @@
 package com.example.backend.core.view.dto;
 
 import jakarta.persistence.Column;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-
+@NoArgsConstructor
 public class CategoryDTO {
     private Long id;
     private String name;

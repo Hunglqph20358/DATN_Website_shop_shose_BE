@@ -1,12 +1,11 @@
 package com.example.backend.core.security.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
 @Entity
 @Table(name = "staff")
@@ -15,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,20 +25,28 @@ public class Users {
     @Column(name = "fullname")
     private String fullname;
     @Column(name = "birthday")
-    private Instant birthday;
+    private Date birthday;
     @Column(name = "gender")
     private String gender;
-    @Column(name = "address")
-    private String address;
     @Column(name = "phone")
     private String phone;
     @Column(name = "create_date")
     private Instant createDate;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "email")
+    private String email;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "role")
+    @Column(name = "roles")
     private String role;
-
+    @Column(name = "status")
+    private Integer status;
+    @Column(name = "idel")
+    private Integer idel;
+    @Column(name = "isdn")
+    @ColumnDefault("(UNIX_TIMESTAMP(NOW()))")
+    private String isdn;
 }

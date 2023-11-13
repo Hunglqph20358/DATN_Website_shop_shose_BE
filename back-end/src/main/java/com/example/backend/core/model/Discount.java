@@ -15,18 +15,22 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "promotion")
+@Table(name = "discount")
 public class Discount {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "code")
+    private String code;
     @Column(name = "name")
     private String name;
+    @Column(name = "create_date")
+    private Date createDate;
     @Column(name = "start_date")
-    private Instant startDate;
+    private Date startDate;
     @Column(name = "end_date")
-    private Instant endDate;
+    private Date endDate;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

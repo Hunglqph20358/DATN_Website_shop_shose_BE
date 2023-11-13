@@ -22,9 +22,10 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class webConfig {
+public class webConfig{
+
     @Autowired
-    private CustomUserDetailService customUserDetailService;
+    public CustomUserDetailService customUserDetailService;
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
@@ -49,16 +50,19 @@ public class webConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(c -> c.disable()).csrf(cf -> cf.disable());
         http.authorizeHttpRequests(author -> {
             try {
-                author.requestMatchers("/sign-in").permitAll()
-                        .requestMatchers("/sign-up").permitAll()
+                author.requestMatchers("view/api/sign-in").permitAll()
+                        .requestMatchers("view/api/sign-up").permitAll()
+                        .requestMatchers("admin/api/sign-in").permitAll()
+                        .requestMatchers("admin/api/sign-up").permitAll()
+                        .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
                         .requestMatchers(AppConstant.API_ADMIN).permitAll()
-                        .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
-                        .requestMatchers(AppConstant.API_VIEW).hasAnyAuthority("STAFF","ADMIN","CUSTOMER")
+                        .requestMatchers(AppConstant.API_STAFF).permitAll()
                         .and().exceptionHandling()
                         .authenticationEntryPoint(jwtEntryPoint).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             } catch (Exception e) {

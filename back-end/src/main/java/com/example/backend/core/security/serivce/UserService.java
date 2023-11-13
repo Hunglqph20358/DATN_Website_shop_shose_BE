@@ -1,14 +1,18 @@
 package com.example.backend.core.security.serivce;
 
-import com.example.backend.core.security.entity.ERole;
+
+import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.security.dto.request.SignUpRepquest;
 import com.example.backend.core.security.entity.Users;
 
-import java.util.Optional;
+
 
 public interface UserService {
     public Users findByUsername(String userName);
     boolean existsByUsername(String userName);
-    boolean existsByPhone(String phone);
+    boolean existsByEmail(String email);
     String findByRole(String role);
     Users saveOrUpdate(Users users);
+    boolean isUser(String username);
+
 }

@@ -1,10 +1,7 @@
 package com.example.backend.core.security.dto.response;
 
+import com.example.backend.core.security.dto.UsersDTO;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,12 +9,10 @@ import java.util.Collection;
 public class JwtResponse {
     private String token;
     private String type = "Bearer";
-    private String userName;
-    private String role;
+    private UsersDTO usersDTO;
 
-    public JwtResponse(String token, String userName, String role) {
+    public JwtResponse(String token, UsersDTO usersDTO) {
         this.token = token;
-        this.userName = userName;
-        this.role = role;
+        this.usersDTO = usersDTO;
     }
 }

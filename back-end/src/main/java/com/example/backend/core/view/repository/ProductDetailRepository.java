@@ -12,4 +12,6 @@ import java.util.List;
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Long> {
 
     List<ProductDetail> findByIdProduct(Long idProduct);
+
+    ProductDetail findByIdSizeAndIdColor(Long idColor,Long idSize);
 }

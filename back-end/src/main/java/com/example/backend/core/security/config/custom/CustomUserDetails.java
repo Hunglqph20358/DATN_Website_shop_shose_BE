@@ -1,71 +1,73 @@
 package com.example.backend.core.security.config.custom;
 
+import com.example.backend.core.model.Customer;
 import com.example.backend.core.security.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString
 public class CustomUserDetails implements UserDetails {
     private Long id;
     private String code;
     private String fullname;
-    private Instant birthday;
+    private Date birthday;
     private String gender;
     private String address;
     private String phone;
+    private String email;
     private String username;
     @JsonIgnore
     private String password;
-
-//    private Collection<? extends GrantedAuthority> role;
+    private String isdn;
     private String role;
+    public Collection<? extends GrantedAuthority> authorities;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (role == null){
+            return authorities;
+        }
         return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
-    public CustomUserDetails(Long id, String code, String fullname, Instant birthday, String gender, String username, String password, String phone, String role) {
+    public CustomUserDetails(Long id, String code, String fullname, Date birthday, String gender, String phone, String username, String password, String isdn, String role) {
         this.id = id;
         this.code = code;
         this.fullname = fullname;
-        this.gender = gender;
         this.birthday = birthday;
+        this.gender = gender;
         this.phone = phone;
         this.username = username;
         this.password = password;
+        this.isdn = isdn;
         this.role = role;
     }
+
     public static CustomUserDetails mapUserToUserDetail(Users users){
-//        Set<SimpleGrantedAuthority> rolesaa  = ;
         return new CustomUserDetails(
                 users.getId(),
                 users.getCode(),
                 users.getFullname(),
                 users.getBirthday(),
                 users.getGender(),
+                users.getPhone(),
                 users.getUsername(),
                 users.getPassword(),
-                users.getPhone(),
+                users.getIsdn(),
                 users.getRole()
         );
     }
-
 
     @Override
     public String getPassword() {
