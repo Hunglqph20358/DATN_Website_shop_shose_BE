@@ -28,10 +28,10 @@ public class ProductAdminDTO {
     private Integer status;
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
-//    private Brand brandDTO;
-//    private CategoryDTO categoryDTO;
-//    private MaterialDTO materialDTO;
-//    private SoleDTO soleDTO;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
+    private BrandAdminDTO brandAdminDTO;
+    private CategoryAdminDTO categoryAdminDTO;
+    private MaterialAdminDTO materialAdminDTO;
+    private SoleAdminDTO soleAdminDTO;
 }

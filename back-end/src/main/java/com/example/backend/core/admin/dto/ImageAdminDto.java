@@ -6,14 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class SizeAdminDTO {
+public class ImageAdminDto {
     private Long id;
-    private String sizeNumber;
+    private Long idProduct;
+    private String imageName;
     private Instant createDate;
-    private Integer status;
 }

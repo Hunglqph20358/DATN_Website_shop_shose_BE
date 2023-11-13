@@ -11,9 +11,11 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SizeAdminDTO {
+public class BrandAdminDTO {
     private Long id;
-    private String sizeNumber;
+    private String name;
     private Instant createDate;
-    private Integer status;
+    private Instant updateDate;
+    private int status;
+    private int isDel;
 }

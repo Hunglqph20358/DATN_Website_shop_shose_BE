@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class SizeAdminDTO {
+public class CategoryAdminDTO {
     private Long id;
-    private String sizeNumber;
+    private String name;
     private Instant createDate;
+    private Instant updateDate;
     private Integer status;
+    private Integer isDel;
 }
