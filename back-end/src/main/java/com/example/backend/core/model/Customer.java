@@ -24,14 +24,14 @@ public class Customer implements Serializable {
     private String code;
     @Column(name = "fullname")
     private String fullname;
+    @Column(name = "email")
+    private String email;
     @Column(name = "birthday")
     private Date birthday;
     @Column(name = "phone")
     private String phone;
     @Column(name = "gender")
     private String gender;
-    @Column(name = "email")
-    private String email;
     @Column(name = "username")
     private String username;
     @Column(name = "password")

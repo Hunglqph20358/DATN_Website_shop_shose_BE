@@ -8,7 +8,9 @@ import com.example.backend.core.view.dto.AddressDTO;
 import java.util.List;
 
 public interface AddressService {
-    List<AddressDTO> getAllAddress(UsersDTO usersDTO);
+    List<AddressDTO> getAllAddress(AddressDTO addressDTO);
+
+    ServiceResult<AddressDTO> getAddress(AddressDTO addressDTO);
 
     ServiceResult<AddressDTO> save(AddressDTO addressDTO);
 }

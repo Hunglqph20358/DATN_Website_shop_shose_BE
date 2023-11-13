@@ -30,8 +30,8 @@ public class OrderDetail implements Serializable {
     private Integer quantity;
     @Column(name = "price")
     private BigDecimal price;
-    @Column(name = "code_promotion")
-    private String codePromotion;
+    @Column(name = "code_discount")
+    private String codeDiscount;
     @Column(name = "status")
     private Integer status;
 }

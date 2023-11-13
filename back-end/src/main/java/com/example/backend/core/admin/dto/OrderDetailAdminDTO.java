@@ -1,6 +1,6 @@
-package com.example.backend.core.view.dto;
+package com.example.backend.core.admin.dto;
 
-import jakarta.persistence.Column;
+import com.example.backend.core.view.dto.ProductDetailDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
-public class OrderDetailDTO {
+public class OrderDetailAdminDTO {
     private Long id;
     private Long idOrder;
     private Long idProductDetail;
@@ -18,5 +18,5 @@ public class OrderDetailDTO {
     private BigDecimal price;
     private String codeDiscount;
     private Integer status;
-    private ProductDetailDTO productDetailDTO;
+    private ProductDetailAdminDTO productDetailDTO;
 }

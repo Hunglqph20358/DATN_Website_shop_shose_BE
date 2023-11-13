@@ -13,7 +13,6 @@ import java.time.Instant;
 public class AddressDTO {
     private Long id;
     private Long idCustomer;
-    private Long idStaff;
     private Instant createDate;
     private String province;
     private String districtId;
@@ -21,4 +20,7 @@ public class AddressDTO {
     private String wardCode;
     private String wards;
     private String specificAddress;
+    private Integer config;
+
+    private CustomerDTO customerDTO;
 }

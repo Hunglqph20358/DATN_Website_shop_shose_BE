@@ -1,4 +1,4 @@
-package com.example.backend.core.view.repository;
+package com.example.backend.core.admin.repository;
 
 import com.example.backend.core.model.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
+public interface OrderDetailAdminRepository extends JpaRepository<OrderDetail, Long> {
 
     List<OrderDetail> findByIdOrder(Long idOrder);
 }
