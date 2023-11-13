@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ public class ColorAdminServiceIplm implements ColorAdminService {
     @Override
     public ServiceResult<ColorAdminDTO> addColor(ColorAdminDTO colorADDTO) {
         Color color = colorAdminMapper.toEntity(colorADDTO);
+        color.setCreateDate(Instant.now());
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
         result.setData(colorADDTO);
@@ -45,12 +47,13 @@ public class ColorAdminServiceIplm implements ColorAdminService {
     public ServiceResult<ColorAdminDTO> update(ColorAdminDTO colorAdminDTO, Long id) {
         Optional<Color> optional = this.clrp.findById(id);
         if (optional.isPresent()) {
-            Color color1 = colorAdminMapper.toEntity(colorAdminDTO);
-            color1.setId(id);
-            Color colorupdate = clrp.save(color1);
+            Color color = optional.get();
+            color.setId(id);
+            color.setName(colorAdminDTO.getName());
+            color  = clrp.save(color);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
-            result.setData(colorAdminMapper.toDto(colorupdate));
+            result.setData(colorAdminMapper.toDto(color));
         } else {
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Id khong ton tai");

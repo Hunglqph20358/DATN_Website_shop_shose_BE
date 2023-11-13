@@ -1,6 +1,7 @@
 package com.example.backend.core.admin.service.impl;
 
 import com.example.backend.core.admin.dto.BrandAdminDTO;
+import com.example.backend.core.admin.dto.SoleAdminDTO;
 import com.example.backend.core.admin.mapper.BrandAdminMapper;
 import com.example.backend.core.admin.repository.BrandAdminRepository;
 import com.example.backend.core.admin.service.BrandAdminService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,8 @@ public class BrandAdminServiceIplm implements BrandAdminService {
     @Override
     public ServiceResult<BrandAdminDTO> add(BrandAdminDTO brandAdminDTO) {
         Brand brand =  brandAdminMapper.toEntity(brandAdminDTO);
+        brand.setCreateDate(Instant.now());
+        brand.setUpdateDate(Instant.now());
         this.brrp.save(brand);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -43,8 +47,11 @@ public class BrandAdminServiceIplm implements BrandAdminService {
     public ServiceResult<BrandAdminDTO> update(BrandAdminDTO brandAdminDTO, Long id) {
         Optional<Brand> optional = this.brrp.findById(id);
         if (optional.isPresent()){
-            Brand brand = brandAdminMapper.toEntity(brandAdminDTO);
+            Brand brand = optional.get();
             brand.setId(id);
+            brand.setName(brandAdminDTO.getName());
+            brand.setStatus(brandAdminDTO.getStatus());
+            brand.setUpdateDate(Instant.now());
             Brand brandUpdate =  this.brrp.save(brand);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
@@ -69,4 +76,21 @@ public class BrandAdminServiceIplm implements BrandAdminService {
         }
         return result;
     }
+
+    @Override
+    public ServiceResult<BrandAdminDTO> findbyid(Long id) {
+        Optional<Brand> optional = this.brrp.findById(id);
+        if (optional.isPresent()) {
+            Brand brand = optional.get();
+            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brand);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Tìm thấy Brand thành công");
+            result.setData(brandAdminDTO);
+        } else {
+            result.setStatus(HttpStatus.NOT_FOUND);
+            result.setMessage("Không tìm thấy Brand với id " + id);
+        }
+        return result;
+    }
+
 }

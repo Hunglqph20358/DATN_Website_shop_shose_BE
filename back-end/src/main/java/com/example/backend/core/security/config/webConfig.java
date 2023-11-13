@@ -56,7 +56,7 @@ public class webConfig {
             try {
                 author.requestMatchers("/sign-in").permitAll()
                         .requestMatchers("/sign-up").permitAll()
-                        .requestMatchers(AppConstant.API_ADMIN).hasAnyAuthority("ADMIN")
+                        .requestMatchers(AppConstant.API_ADMIN).permitAll()
                         .requestMatchers(AppConstant.API_STAFF).hasAnyAuthority("STAFF","ADMIN")
                         .requestMatchers(AppConstant.API_VIEW).hasAnyAuthority("STAFF","ADMIN","CUSTOMER")
                         .and().exceptionHandling()

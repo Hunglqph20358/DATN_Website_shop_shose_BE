@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class SizeAdminServiceIplm implements SizeAdminService {
     @Override
     public ServiceResult<SizeAdminDTO> add(SizeAdminDTO sizeAdminDTO) {
         Size size =  sizeAdminMapper.toEntity(sizeAdminDTO);
+        size.setCreateDate(Instant.now());
         this.srp.save(size);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -41,12 +43,14 @@ public class SizeAdminServiceIplm implements SizeAdminService {
     public ServiceResult<SizeAdminDTO> update(SizeAdminDTO sizeAdminDTO, Long id) {
         Optional<Size> optional = this.srp.findById(id);
         if (optional.isPresent()){
-            Size size = sizeAdminMapper.toEntity(sizeAdminDTO);
+            Size size = optional.get();
             size.setId(id);
-            Size sizeUpdate =  this.srp.save(size);
+            size.setSizeNumber(sizeAdminDTO.getSizeNumber());
+            size.setStatus(sizeAdminDTO.getStatus());
+            size =  this.srp.save(size);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
-            result.setData(sizeAdminMapper.toDto(sizeUpdate));
+            result.setData(sizeAdminMapper.toDto(size));
 
         }else {
             result.setStatus(HttpStatus.BAD_REQUEST);

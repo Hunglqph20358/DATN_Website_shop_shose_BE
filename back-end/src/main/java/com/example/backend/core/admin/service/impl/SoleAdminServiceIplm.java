@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,8 @@ public class SoleAdminServiceIplm  implements SoleAdminService {
     @Override
     public ServiceResult<SoleAdminDTO> add(SoleAdminDTO soleAdminDTO) {
         Sole sole =  soleAdminMapper.toEntity(soleAdminDTO);
+        sole.setCreateDate(Instant.now());
+        sole.setUpdateDate(Instant.now());
         this.slrp.save(sole);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -42,8 +45,13 @@ public class SoleAdminServiceIplm  implements SoleAdminService {
     public ServiceResult<SoleAdminDTO> update(SoleAdminDTO soleAdminDTO, Long id) {
         Optional<Sole> optional = this.slrp.findById(id);
         if (optional.isPresent()){
-            Sole sole = soleAdminMapper.toEntity(soleAdminDTO);
+            Sole sole = optional.get();
             sole.setId(id);
+            sole.setStatus(soleAdminDTO.getStatus());
+            sole.setUpdateDate(Instant.now());
+            sole.setSoleHeight(soleAdminDTO.getSoleHeight());
+            sole.setSoleMaterial(soleAdminDTO.getSoleMaterial());
+            sole.setDescription(soleAdminDTO.getDescription());
             Sole soleUpdate =  this.slrp.save(sole);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
@@ -65,6 +73,22 @@ public class SoleAdminServiceIplm  implements SoleAdminService {
             result.setStatus(HttpStatus.OK);
             result.setMessage("Xoa thanh cong");
             result.setData(null);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult<SoleAdminDTO> findbyid(Long id) {
+        Optional<Sole> optional = this.slrp.findById(id);
+        if (optional.isPresent()) {
+            Sole sole = optional.get();
+            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(sole);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Tìm thấy Sole thành công");
+            result.setData(soleAdminDTO);
+        } else {
+            result.setStatus(HttpStatus.NOT_FOUND);
+            result.setMessage("Không tìm thấy Sole với id " + id);
         }
         return result;
     }

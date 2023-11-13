@@ -11,4 +11,5 @@ public interface CategoryAdminService {
     ServiceResult<CategoryAdminDTO> add(CategoryAdminDTO categoryAdminDTO);
     ServiceResult<CategoryAdminDTO> update(CategoryAdminDTO categoryAdminDTO,Long id);
     ServiceResult<CategoryAdminDTO> delete(Long id);
+    ServiceResult<CategoryAdminDTO> findbyid(Long id);
 }

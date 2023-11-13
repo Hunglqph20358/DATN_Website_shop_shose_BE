@@ -11,4 +11,5 @@ public interface SoleAdminService {
     ServiceResult<SoleAdminDTO> add(SoleAdminDTO soleAdminDTO);
     ServiceResult<SoleAdminDTO> update(SoleAdminDTO soleAdminDTO,Long id);
     ServiceResult<SoleAdminDTO> delete(Long id);
+    ServiceResult<SoleAdminDTO> findbyid(Long id);
 }

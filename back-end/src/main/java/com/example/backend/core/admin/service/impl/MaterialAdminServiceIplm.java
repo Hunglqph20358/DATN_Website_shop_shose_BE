@@ -1,6 +1,7 @@
 package com.example.backend.core.admin.service.impl;
 
 import com.example.backend.core.admin.dto.MaterialAdminDTO;
+import com.example.backend.core.admin.dto.SoleAdminDTO;
 import com.example.backend.core.admin.mapper.MaterialAdminMapper;
 import com.example.backend.core.admin.repository.MaterialAdminRepository;
 import com.example.backend.core.admin.service.MaterialAdminService;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,8 @@ public class MaterialAdminServiceIplm implements MaterialAdminService {
     @Override
     public ServiceResult<MaterialAdminDTO> add(MaterialAdminDTO materialAdminDTO) {
         Material material =  materialAdminMapper.toEntity(materialAdminDTO);
+        material.setCreateDate(Instant.now());
+        material.setUpdateDate(Instant.now());
         this.mtrp.save(material);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -43,12 +48,16 @@ public class MaterialAdminServiceIplm implements MaterialAdminService {
     public ServiceResult<MaterialAdminDTO> update(MaterialAdminDTO materialAdminDTO, Long id) {
         Optional<Material> optional = this.mtrp.findById(id);
         if (optional.isPresent()){
-            Material material = materialAdminMapper.toEntity(materialAdminDTO);
+            Material material = optional.get();
             material.setId(id);
-            Material mateUpdate =  this.mtrp.save(material);
+            material.setName(materialAdminDTO.getName());
+            material.setStatus(materialAdminDTO.getStatus());
+            material.setDescription(materialAdminDTO.getDescription());
+            material.setUpdateDate(Instant.now());
+            material =  this.mtrp.save(material);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
-            result.setData(materialAdminMapper.toDto(mateUpdate));
+            result.setData(materialAdminMapper.toDto(material));
 
         }else {
             result.setStatus(HttpStatus.BAD_REQUEST);
@@ -66,6 +75,22 @@ public class MaterialAdminServiceIplm implements MaterialAdminService {
             result.setStatus(HttpStatus.OK);
             result.setMessage("Xoa thanh cong");
             result.setData(null);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult<MaterialAdminDTO> findbyid(Long id) {
+        Optional<Material> optional = this.mtrp.findById(id);
+        if (optional.isPresent()) {
+            Material material = optional.get();
+            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(material);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Tìm thấy material thành công");
+            result.setData(materialAdminDTO);
+        } else {
+            result.setStatus(HttpStatus.NOT_FOUND);
+            result.setMessage("Không tìm thấy material với id " + id);
         }
         return result;
     }

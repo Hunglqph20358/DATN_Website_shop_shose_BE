@@ -9,23 +9,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/admin")
 public class ColorAdminController {
     @Autowired
     private ColorAdminService clsv;
-    @GetMapping("/color-admin/hien-thi")
+    @GetMapping("/color/hien-thi")
     public ResponseEntity<List<ColorAdminDTO>> index(){
         return ResponseEntity.ok(clsv.getAll());
     }
-    @DeleteMapping("/color-admin/delete/{id}")
+    @DeleteMapping("/color/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         return ResponseEntity.ok(clsv.delete(id));
     }
-    @PutMapping("/color-admin/update/{id}")
+    @PutMapping("/color/update/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id,@RequestBody ColorAdminDTO colorAdminDTO){
         return ResponseEntity.ok(clsv.update(colorAdminDTO,id));
     }
-    @PostMapping("/color-admin/add")
+    @PostMapping("/color/add")
     public ResponseEntity<?> add(@RequestBody ColorAdminDTO colorAdminDTO){
         return ResponseEntity.ok(clsv.addColor(colorAdminDTO));
     }
