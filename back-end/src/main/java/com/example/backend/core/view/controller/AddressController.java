@@ -16,8 +16,12 @@ public class AddressController {
     private AddressService addressService;
 
     @PostMapping("/get-all-address")
-    public ResponseEntity<?> getAllAddressByCustomer(@RequestBody UsersDTO usersDTO){
-        return ResponseEntity.ok(addressService.getAllAddress(usersDTO));
+    public ResponseEntity<?> getAllAddressByCustomer(@RequestBody AddressDTO addressDTO){
+        return ResponseEntity.ok(addressService.getAllAddress(addressDTO));
+    }
+    @PostMapping("/get-address")
+    public ResponseEntity<?> getAddressByCustomer(@RequestBody AddressDTO addressDTO){
+        return ResponseEntity.ok(addressService.getAddress(addressDTO));
     }
 
     @PostMapping("/create-address")

@@ -9,4 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Customer findByCode(String code);
+
+    Customer findByEmail(String email);
 }

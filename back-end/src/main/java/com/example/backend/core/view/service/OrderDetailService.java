@@ -10,4 +10,5 @@ public interface OrderDetailService {
 
     List<OrderDetailDTO> getAllByOrder(Long idOrder);
 
+    ServiceResult<OrderDetailDTO> createOrderDetail(OrderDetailDTO orderDetailDTO);
 }

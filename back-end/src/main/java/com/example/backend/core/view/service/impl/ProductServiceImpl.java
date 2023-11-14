@@ -93,6 +93,8 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setSoleDTO(soleDTO);
         productDTO.setCategoryDTO(categoryDTO);
         productDTO.setTotalQuantity(totalQuantity);
+        productDTO.setListedPrice(listProductDetail.get(0).getListedPrice());
+        productDTO.setPrice(listProductDetail.get(0).getPrice());
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
         result.setData(productDTO);
