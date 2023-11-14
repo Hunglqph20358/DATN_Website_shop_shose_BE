@@ -47,6 +47,5 @@ public class Users {
     @Column(name = "idel")
     private Integer idel;
     @Column(name = "isdn")
-    @ColumnDefault("(UNIX_TIMESTAMP(NOW()))")
     private String isdn;
 }
