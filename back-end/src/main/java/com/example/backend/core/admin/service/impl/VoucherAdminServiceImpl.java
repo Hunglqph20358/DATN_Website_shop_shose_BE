@@ -59,8 +59,6 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setStatus(0);
         voucher.setIdel(0);
         voucher.setCreateName("xuân");
-        voucher.setUpdateName("");
-
 //        String startDateStr = voucherAdminDTO.getStartDateStr();
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //        LocalDate localStartDate = LocalDate.parse(startDateStr, formatter);

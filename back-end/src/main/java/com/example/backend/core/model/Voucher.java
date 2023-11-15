@@ -23,46 +23,30 @@ public class Voucher {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Basic
     @Column(name = "code")
     private String code;
-    @Basic
     @Column(name = "name")
     private String name;
-    @Basic
     @Column(name = "create_date")
     private Date createDate;
-    @Basic
     @Column(name = "start_date")
     private Date startDate;
-    @Basic
     @Column(name = "end_date")
     private Date endDate;
-    @Basic
     @Column(name = "description")
     private String description;
-    @Basic
     @Column(name = "conditions")
     private BigDecimal conditionApply;
-    @Basic
     @Column(name = "status")
     private int status;
-    @Basic
     @Column(name = "idel")
     private int idel;
-    @Basic
     @Column(name = "create_name")
     private String createName;
-    @Basic
-    @Column(name = "update_name")
-    private String updateName;
-    @Basic
     @Column(name = "voucher_type")
     private int voucherType;
-    @Basic
     @Column(name = "reduced_value")
     private BigDecimal reducedValue;
-    @Basic
     @Column(name = "quantity")
     private int quantity;
 }

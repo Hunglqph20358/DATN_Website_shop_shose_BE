@@ -8,6 +8,15 @@ public class CartDTO {
     private String imageName;
     private ProductDetailDTO productDetailDTO;
     private Integer quantity;
+    private ProductDTO productDTO;
+
+    public ProductDTO getProductDTO() {
+        return productDTO;
+    }
+
+    public void setProductDTO(ProductDTO productDTO) {
+        this.productDTO = productDTO;
+    }
 
     public CartDTO() {
     }

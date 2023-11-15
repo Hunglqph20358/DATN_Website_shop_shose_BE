@@ -28,6 +28,8 @@ public class Order implements Serializable {
     private Long idCustomer;
     @Column(name = "id_staff")
     private Long idStaff;
+    @Column(name = "code_voucher")
+    private String codeVoucher;
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "payment_date")
@@ -36,6 +38,8 @@ public class Order implements Serializable {
     private Instant deliveryDate;
     @Column(name = "received_date")
     private Instant receivedDate;
+    @Column(name = "address_received")
+    private String addressReceived;
     @Column(name = "shipper_phone")
     private String shipperPhone;
     @Column(name = "receiver_phone")

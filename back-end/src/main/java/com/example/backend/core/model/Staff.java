@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,17 +26,17 @@ public class Staff implements Serializable {
     @Column(name = "fullname")
     private String fullname;
     @Column(name = "birthday")
-    private Instant birthday;
+    private Date birthday;
     @Column(name = "gender")
     private String gender;
-    @Column(name = "address")
-    private String address;
     @Column(name = "phone")
     private String phone;
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "description")
     private String description;
+    @Column(name = "email")
+    private String email;
     @Column(name = "username")
     private String username;
     @Column(name = "password")

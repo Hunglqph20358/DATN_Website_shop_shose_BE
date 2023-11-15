@@ -9,10 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -20,41 +17,56 @@ import java.util.Set;
 @ToString
 public class CustomUserDetails implements UserDetails {
     private Long id;
-    private Integer id_customer;
-    private Integer id_staff;
+    private String code;
+    private String fullname;
+    private Date birthday;
+    private String gender;
+    private String address;
+    private String phone;
     private String email;
     private String username;
     @JsonIgnore
     private String password;
+    private String isdn;
     private String role;
+    public Collection<? extends GrantedAuthority> authorities;
+
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role.isEmpty()){
-            return Collections.emptyList();
+        if (role == null){
+            return authorities;
         }
         return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
-    public CustomUserDetails(Long id, Integer id_customer, Integer id_staff, String email, String username, String password, String role) {
+    public CustomUserDetails(Long id, String code, String fullname, Date birthday, String gender, String phone,String email, String username, String password, String isdn, String role) {
         this.id = id;
-        this.id_customer = id_customer;
-        this.id_staff = id_staff;
+        this.code = code;
+        this.fullname = fullname;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.phone = phone;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.isdn = isdn;
         this.role = role;
     }
 
     public static CustomUserDetails mapUserToUserDetail(Users users){
         return new CustomUserDetails(
                 users.getId(),
-                users.getId_customer(),
-                users.getId_staff(),
+                users.getCode(),
+                users.getFullname(),
+                users.getBirthday(),
+                users.getGender(),
+                users.getPhone(),
                 users.getEmail(),
                 users.getUsername(),
                 users.getPassword(),
+                users.getIsdn(),
                 users.getRole()
         );
     }

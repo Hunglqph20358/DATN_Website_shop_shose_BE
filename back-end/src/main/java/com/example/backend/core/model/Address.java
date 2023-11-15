@@ -23,8 +23,6 @@ public class Address implements Serializable {
     private Long id;
     @Column(name ="id_customer")
     private Long idCustomer;
-    @Column(name ="id_staff")
-    private Long idStaff;
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "province")
@@ -39,5 +37,7 @@ public class Address implements Serializable {
     private String wards;
     @Column(name = "specific_address")
     private String specificAddress;
+    @Column(name = "config")
+    private Integer config;
 
 }

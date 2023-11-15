@@ -16,8 +16,7 @@ public class OrderDetailDTO {
     private Long idProductDetail;
     private Integer quantity;
     private BigDecimal price;
-    private String codePromotion;
+    private String codeDiscount;
     private Integer status;
-
     private ProductDetailDTO productDetailDTO;
 }
