@@ -41,13 +41,14 @@ public class CustomUserDetails implements UserDetails {
         return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
-    public CustomUserDetails(Long id, String code, String fullname, Date birthday, String gender, String phone, String username, String password, String isdn, String role) {
+    public CustomUserDetails(Long id, String code, String fullname, Date birthday, String gender, String phone,String email, String username, String password, String isdn, String role) {
         this.id = id;
         this.code = code;
         this.fullname = fullname;
         this.birthday = birthday;
         this.gender = gender;
         this.phone = phone;
+        this.email = email;
         this.username = username;
         this.password = password;
         this.isdn = isdn;
@@ -62,6 +63,7 @@ public class CustomUserDetails implements UserDetails {
                 users.getBirthday(),
                 users.getGender(),
                 users.getPhone(),
+                users.getEmail(),
                 users.getUsername(),
                 users.getPassword(),
                 users.getIsdn(),
