@@ -29,8 +29,9 @@ public class ProductDTO {
     private CategoryDTO categoryDTO;
     private MaterialDTO materialDTO;
     private SoleDTO soleDTO;
-    private BigDecimal listedPrice;
     private BigDecimal price;
+    private BigDecimal reducePrice;
+    private Integer percentageReduce;
     private Integer totalQuantity;
     private List<ProductDetailDTO> productDetailDTOList;
     private BigDecimal totalSold;
@@ -139,13 +140,6 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public BigDecimal getListedPrice() {
-        return listedPrice;
-    }
-
-    public void setListedPrice(BigDecimal listedPrice) {
-        this.listedPrice = listedPrice;
-    }
 
     public ProductDTO() {
     }

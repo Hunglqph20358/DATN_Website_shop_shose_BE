@@ -1,8 +1,12 @@
 package com.example.backend.core.view.repository.impl;
 
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.model.Discount;
+import com.example.backend.core.model.DiscountDetail;
 import com.example.backend.core.view.dto.ImagesDTO;
 import com.example.backend.core.view.dto.ProductDTO;
+import com.example.backend.core.view.repository.DiscountDetailRepository;
+import com.example.backend.core.view.repository.DiscountRepository;
 import com.example.backend.core.view.repository.ProductCustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -21,11 +25,16 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     @Autowired
     EntityManager entityManager;
 
+    @Autowired
+    private DiscountRepository discountRepository;
+
+    @Autowired
+    private DiscountDetailRepository discountDetailRepository;
 
     @Override
     public List<ProductDTO> getProductNoiBatByBrand(Long thuongHieu) {
         try {
-            StringBuilder sql = new StringBuilder("SELECT p.id, p.code, p.name, pd.listed_price, pd.price, images.image_names, IFNULL(SUM(od.quantity), 0) AS total_sold\n" +
+            StringBuilder sql = new StringBuilder("SELECT p.id, p.code, p.name, p.price, images.image_names, IFNULL(SUM(od.quantity), 0) AS total_sold\n" +
                     "FROM product p\n" +
                     "JOIN product_detail pd ON p.id = pd.id_product\n" +
                     "LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
@@ -36,7 +45,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                     ") images ON images.id_product = p.id ");
             sql.append("  left join brand b on b.id = p.id_brand ");
             sql.append(" {1} ");
-            sql.append("GROUP BY p.id, p.code, p.name,pd.listed_price , pd.price  " +
+            sql.append("GROUP BY p.id, p.code, p.name, p.price  " +
                     "  ORDER BY total_sold DESC limit 8");
             String sqlStr = sql.toString();
             if (null != thuongHieu && thuongHieu > 0) {
@@ -56,10 +65,9 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 productDTO.setId(((Number) obj[0]).longValue());
                 productDTO.setCode((String) obj[1]);
                 productDTO.setName((String) obj[2]);
-                productDTO.setListedPrice((BigDecimal) obj[3]);
-                productDTO.setPrice((BigDecimal) obj[4]);
+                productDTO.setPrice((BigDecimal) obj[3]);
 
-                String imagesString = (String) obj[5];
+                String imagesString = (String) obj[4];
                 if (imagesString != null && !imagesString.isEmpty()) {
                     for (String str : imagesString.split(",")) {
                         if (!str.trim().isEmpty()) { // Kiểm tra và bỏ qua chuỗi trống
@@ -69,8 +77,23 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                         }
                     }
                 }
-
                 productDTO.setImagesDTOList(imagesDTOLis);
+                List<Discount> discountList = discountRepository.getDiscountConApDung();
+                for (int i = 0; i < discountList.size(); i++) {
+                    List<DiscountDetail> discountDetailList = discountDetailRepository.findByIdDiscount(discountList.get(i).getId());
+                    for (int j = 0; j < discountDetailList.size(); j++) {
+                        if(productDTO.getId().equals(discountDetailList.get(i).getIdProduct()) ){
+                            if(discountDetailList.get(i).getDiscountType() == 0){
+                                productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
+                                productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                            }
+                            if(discountDetailList.get(i).getDiscountType() == 1){
+                                productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
+                                productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
+                            }
+                        }
+                    }
+                }
                 lstProduct.add(productDTO);
             }
             return lstProduct;

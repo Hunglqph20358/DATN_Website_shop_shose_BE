@@ -27,10 +27,7 @@ public class ProductDetail implements Serializable {
     private Long idSize;
     @Column(name = "quantity")
     private Integer quantity;
-    @Column(name = "listed_price")
-    private BigDecimal listedPrice;
-    @Column(name = "price")
-    private BigDecimal price;
+    
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "update_date")
