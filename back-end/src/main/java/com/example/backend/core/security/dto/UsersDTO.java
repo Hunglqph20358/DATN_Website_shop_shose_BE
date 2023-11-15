@@ -23,16 +23,24 @@ public class UsersDTO {
     private String isdn;
     private String role;
     public UsersDTO toStaffDTO(CustomUserDetails customUserDetails){
+        this.setId(customUserDetails.getId());
         this.setCode(customUserDetails.getCode());
         this.setFullname(customUserDetails.getFullname());
+        this.setBirthday(customUserDetails.getBirthday());
+        this.setGender(customUserDetails.getGender());
         this.setUsername(customUserDetails.getUsername());
         this.setEmail(customUserDetails.getEmail());
+        this.setPhone(customUserDetails.getPhone());
         this.setIsdn(customUserDetails.getIsdn());
         this.setRole(customUserDetails.getRole());
         return  UsersDTO.this;
     }
     public UsersDTO toCustomerDTO(CustomerUserDetails customerUserDetails){
+        this.setId(customerUserDetails.getId());
+        this.setCode(customerUserDetails.getCode());
         this.setFullname(customerUserDetails.getFullname());
+        this.setBirthday(customerUserDetails.getBirthday());
+        this.setGender(customerUserDetails.getGender());
         this.setUsername(customerUserDetails.getUsername());
         this.setEmail(customerUserDetails.getEmail());
         this.setPhone(customerUserDetails.getPhone());
