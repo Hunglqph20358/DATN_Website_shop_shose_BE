@@ -17,7 +17,7 @@ public class DiscountDetailAdminController {
     private DiscountDetailAdminService discountService;
     @GetMapping("/discount")
     public ResponseEntity<?> getAllDiscount(){
-        return ResponseEntity.ok(discountService.getAllDiscount());
+        return ResponseEntity.ok(discountService.getAll());
     }
     @GetMapping("/product")
     public ResponseEntity<?> getAllProduct(){

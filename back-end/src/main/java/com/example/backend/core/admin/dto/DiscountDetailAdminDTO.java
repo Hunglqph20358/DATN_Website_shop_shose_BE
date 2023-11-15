@@ -19,12 +19,12 @@ public class DiscountDetailAdminDTO {
     private Long id;
     private String idProduct;
     private String idDiscount;
-    private String reducedValue;
+    private BigDecimal reducedValue;
     private String discountType;
     private int status;
     private DiscountAdminDTO discountAdminDTO;
-    private ProductDTO productDTO;
-    private List<ProductDTO> productDTOList;
+    private ProductAdminDTO productDTO;
+    private List<ProductAdminDTO> productDTOList;
 
 
 }
