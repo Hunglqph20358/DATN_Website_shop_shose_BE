@@ -21,8 +21,6 @@ public class ProductDetailDTO {
     private Long idColor;
     private Long idSize;
     private Integer quantity;
-    private BigDecimal listedPrice;
-    private BigDecimal price;
     private Instant createDate;
     private Instant updateDate;
     private Integer shoeCollar;

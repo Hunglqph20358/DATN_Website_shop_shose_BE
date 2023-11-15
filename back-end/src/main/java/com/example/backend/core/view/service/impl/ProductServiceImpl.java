@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,10 +56,16 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private DiscountRepository discountRepository;
 
+    @Autowired
+    private DiscountDetailRepository discountDetailRepository;
     @Override
     public List<ProductDTO> getProductNoiBatByBrand(Long thuongHieu) {
-        return productCustomRepository.getProductNoiBatByBrand(thuongHieu);
+        List<ProductDTO> lst = productCustomRepository.getProductNoiBatByBrand(thuongHieu);
+
+        return lst;
     }
 
     @Override
@@ -93,8 +100,20 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setSoleDTO(soleDTO);
         productDTO.setCategoryDTO(categoryDTO);
         productDTO.setTotalQuantity(totalQuantity);
-        productDTO.setListedPrice(listProductDetail.get(0).getListedPrice());
-        productDTO.setPrice(listProductDetail.get(0).getPrice());
+        List<Discount> discountList = discountRepository.getDiscountConApDung();
+        for (int i = 0; i < discountList.size(); i++) {
+            List<DiscountDetail> discountDetailList = discountDetailRepository.findByIdDiscount(discountList.get(i).getId());
+            for (int j = 0; j < discountDetailList.size(); j++) {
+                if(discountDetailList.get(i).getDiscountType() == 0){
+                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
+                    productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                }
+                if(discountDetailList.get(i).getDiscountType() == 1){
+                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
+                    productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
+                }
+            }
+        }
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
         result.setData(productDTO);

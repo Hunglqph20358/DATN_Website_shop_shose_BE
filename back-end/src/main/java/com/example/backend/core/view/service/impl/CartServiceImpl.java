@@ -1,12 +1,15 @@
 package com.example.backend.core.view.service.impl;
 
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.model.Discount;
+import com.example.backend.core.model.DiscountDetail;
 import com.example.backend.core.model.Images;
 import com.example.backend.core.model.Product;
 import com.example.backend.core.model.ProductDetail;
 import com.example.backend.core.view.dto.*;
 import com.example.backend.core.view.mapper.ColorMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
+import com.example.backend.core.view.mapper.ProductMapper;
 import com.example.backend.core.view.mapper.SizeMapper;
 import com.example.backend.core.view.repository.*;
 import com.example.backend.core.view.service.CartService;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +45,14 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private ImagesRepository imagesRepository;
+    @Autowired
+    private DiscountRepository discountRepository;
 
+    @Autowired
+    private DiscountDetailRepository discountDetailRepository;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     @Override
     public ServiceResult<CartDTO> getCart(CartDTO cartDTO) {
@@ -54,7 +65,8 @@ public class CartServiceImpl implements CartService {
             result.setMessage("Không tìm thấy product!");
             return result;
         }
-        ProductDetail productDetail = productDetailRepository.findByIdSizeAndIdColor(cartDTO.getProductDetailDTO().getColorDTO().getId(),cartDTO.getProductDetailDTO().getSizeDTO().getId());
+        ProductDTO productDTO = productMapper.toDto(product.get());
+        ProductDetail productDetail = productDetailRepository.findByIdSizeAndIdColorAndIdProduct(cartDTO.getProductDetailDTO().getColorDTO().getId(),cartDTO.getProductDetailDTO().getSizeDTO().getId(), cartDTO.getProductId());
         if(null == productDetail){
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
@@ -72,6 +84,21 @@ public class CartServiceImpl implements CartService {
         dto.setProductId(product.get().getId());
         dto.setProductName(product.get().getName());
         dto.setQuantity(cartDTO.getQuantity());
+        List<Discount> discountList = discountRepository.getDiscountConApDung();
+        for (int i = 0; i < discountList.size(); i++) {
+            List<DiscountDetail> discountDetailList = discountDetailRepository.findByIdDiscount(discountList.get(i).getId());
+            for (int j = 0; j < discountDetailList.size(); j++) {
+                if(discountDetailList.get(i).getDiscountType() == 0){
+                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
+                    productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                }
+                if(discountDetailList.get(i).getDiscountType() == 1){
+                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
+                    productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
+                }
+            }
+        }
+        dto.setProductDTO(productDTO);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
         result.setData(dto);
