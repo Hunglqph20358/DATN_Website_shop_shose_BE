@@ -54,5 +54,6 @@ public class AppConstant {
                 "/view/api/create-order-detail",
                 "/view/api/get-order-detail/by-order/*",
                 "/view/api/create-order/buy-now",
+                "/view/api/completePurchase",
         };
 }
