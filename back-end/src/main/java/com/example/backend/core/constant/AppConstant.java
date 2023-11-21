@@ -53,7 +53,8 @@ public class AppConstant {
                 "/view/api/get-voucher",
                 "/view/api/create-order-detail",
                 "/view/api/get-order-detail/by-order/*",
-                "/view/api/create-order/buy-now",
-                "/view/api/completePurchase",
+                "/view/api/create-order/not-login",
+                "/view/api/send-email-completeOrder",
+                "/view/api/send-email-completeOrder/not-login",
         };
 }

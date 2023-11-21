@@ -1,16 +1,22 @@
 package com.example.backend.core.admin.service.impl;
 
+import com.example.backend.core.admin.dto.CustomerAdminDTO;
 import com.example.backend.core.admin.dto.OrderAdminDTO;
+import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.OrderAdminMapper;
+import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.OrderAdminRepository;
 import com.example.backend.core.admin.service.OrderAdminService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Order;
+import com.example.backend.core.view.dto.CustomerDTO;
+import com.example.backend.core.view.mapper.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderAdminServiceImpl implements OrderAdminService {
@@ -21,12 +27,34 @@ public class OrderAdminServiceImpl implements OrderAdminService {
     @Autowired
     private OrderAdminRepository orderAdminRepository;
 
+    @Autowired
+    private CustomerAdminRepository customerAdminRepository;
+    @Autowired
+    private CustomerAdminMapper customerAdminMapper;
+
     @Override
     public List<OrderAdminDTO> getAllOrderAdmin(Integer status) {
         if(status != null && status != 6){
-            return orderAdminMapper.toDto(orderAdminRepository.findByStatusOrderByCreateDateDesc(status));
+            return orderAdminMapper.toDto(
+                    orderAdminRepository.findByStatusOrderByCreateDateDesc(status)
+            ).stream().map(c -> {
+                CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
+                        customerAdminRepository.findById(c.getIdCustomer())
+                                .orElseThrow(null)
+                );
+                c.setCustomerAdminDTO(customerAdminDTO);
+                return c;
+            }).collect(Collectors.toList());
+
         }
-        return orderAdminMapper.toDto(orderAdminRepository.getAllByOrderByCreateDateDesc());
+        return orderAdminMapper.toDto(orderAdminRepository.getAllByOrderByCreateDateDesc()).stream().map(c -> {
+            CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
+                    customerAdminRepository.findById(c.getIdCustomer())
+                            .orElseThrow(null)
+            );
+            c.setCustomerAdminDTO(customerAdminDTO);
+            return c;
+        }).collect(Collectors.toList());
     }
 
     @Override

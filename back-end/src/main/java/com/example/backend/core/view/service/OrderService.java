@@ -17,6 +17,6 @@ public interface OrderService {
 
     List<OrderDTO> getAll(OrderDTO orderDTO);
 
-    ServiceResult<OrderDTO> createOrderBuyNow(OrderDTO orderDTO);
+    ServiceResult<OrderDTO> createOrderNotLogin(OrderDTO orderDTO);
 
 }
