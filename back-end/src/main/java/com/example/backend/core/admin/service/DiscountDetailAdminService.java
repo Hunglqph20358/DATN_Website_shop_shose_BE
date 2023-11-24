@@ -17,4 +17,5 @@ public interface DiscountDetailAdminService {
     ServiceResult<Void> deleteDiscount(Long idDisount);
     List<ProductAdminDTO> getAllProduct();
     List<DiscountDetailAdminDTO> getDetailDiscount(long id);
+    List<ProductAdminDTO> getProduct(String code, String name);
 }

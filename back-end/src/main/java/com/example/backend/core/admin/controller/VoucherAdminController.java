@@ -39,4 +39,8 @@ public class VoucherAdminController {
     public ResponseEntity<?> detailVoucher(@PathVariable Long id) {
         return ResponseEntity.ok( voucherAdminService.detailById(id));
     }
+    @GetMapping("/customer")
+    public ResponseEntity<?> getAllCustomer(){
+        return ResponseEntity.ok(voucherAdminService.getAllCustomer());
+    }
 }

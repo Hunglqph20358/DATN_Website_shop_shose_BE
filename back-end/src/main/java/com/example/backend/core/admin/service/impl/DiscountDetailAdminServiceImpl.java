@@ -16,6 +16,7 @@ import com.example.backend.core.view.dto.CategoryDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -60,9 +61,14 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                     "    d.start_date,\n" +
                     "    d.end_date,\n" +
                     "    d.description,\n" +
-                    "    d.idel \n" +
-                    "FROM \n" +
-                    "    discount d where d.idel=0 \n");
+                    "    d.idel, " +
+                    "COUNT(od.id) AS used_count\n" +
+                    "FROM discount d " +
+                    "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
+                    "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
+                    "GROUP BY d.id, d.code, d.name,d.start_date,d.end_date,d.description,d.idel;\n");
+
+
             String sqlStr = sql.toString();
             Query query = entityManager.createNativeQuery(sqlStr);
             List<Object[]> resultList = query.getResultList();
@@ -77,8 +83,9 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                 discount.setName(row[2].toString());
                 discount.setDescription(row[5].toString());
                 discount.setIdel(row[6].toString());
+                discount.setUsed_count(Integer.valueOf(row[7].toString()));
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
                     Date startDate = dateFormat.parse(row[3].toString());
@@ -116,7 +123,18 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     @Override
     public ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO discountDetailAdminDTO) {
         ServiceResult<DiscountDetailAdminDTO> serviceResult = new ServiceResult<>();
+        for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
+            ProductAdminDTO productDTO1 = discountDetailAdminDTO.getProductDTOList().get(i);
+            BigDecimal reducedValue1 = discountDetailAdminDTO.getReducedValue();
 
+            if (reducedValue1 == null && reducedValue1.doubleValue() > productDTO1.getPrice().doubleValue()) {
+                serviceResult.setData(null);
+                serviceResult.setMessage("ERROR");
+                serviceResult.setStatus(HttpStatus.BAD_REQUEST);
+                return serviceResult;
+
+            }
+        }
         // Chuyển DTO sang Entity cho DiscountAdmin
         Discount discountAdminEntity = discountAdminMapper.toEntity(discountDetailAdminDTO.getDiscountAdminDTO());
         discountAdminEntity.setCode("GG" + Instant.now().getEpochSecond());
@@ -124,25 +142,24 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         discountAdminEntity.setCreateDate(nowDate);
         discountAdminEntity.setStatus(0);
         discountAdminEntity.setIdel(0);
-
+        discountAdminEntity.setQuantity(discountDetailAdminDTO.getDiscountAdminDTO().getQuantity());
         discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
         discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
 
         discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
         for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
             ProductAdminDTO productDTO = discountDetailAdminDTO.getProductDTOList().get(i);
-
             BigDecimal reducedValue = discountDetailAdminDTO.getReducedValue();
 
-            if (reducedValue != null && reducedValue.compareTo(productDTO.getPrice()) <= 0) {
+            if (reducedValue != null && reducedValue.doubleValue() <= productDTO.getPrice().doubleValue()) {
                 // Nếu giảm giá không lớn hơn hoặc bằng giá sản phẩm, thì thực hiện lưu thông tin giảm giá
                 DiscountDetail discountDetailEntity = discountDetailAdminMapper.toEntity(discountDetailAdminDTO);
                 discountDetailEntity.setIdDiscount(discountAdminEntity.getId());
                 discountDetailEntity.setIdProduct(productDTO.getId());
+                if(discountDetailEntity.getDiscountType()==0){
+                    discountDetailEntity.setMaxReduced(discountDetailAdminDTO.getReducedValue());
+                }
                 discountDetailRepository.save(discountDetailEntity);
-            } else {
-                // Nếu giảm giá lớn hơn giá sản phẩm hoặc reducedValue là null, có thể xử lý thông báo hoặc thực hiện hành động khác tùy thuộc vào yêu cầu của bạn
-                System.out.println("Giảm giá không hợp lệ hoặc lớn hơn giá sản phẩm cho sản phẩm có ID = " + productDTO.getId());
             }
         }
 
@@ -315,7 +332,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
     public List<ProductAdminDTO> getAllProduct() {
         try {
-            String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold\n" +
+            String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold , p.price   \n" +
                     "FROM product p\n" +
                     "JOIN product_detail pd ON p.id = pd.id_product\n" +
                     "LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
@@ -333,6 +350,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                 product.setId(((Number) row[0]).longValue());
                 product.setCode((String) row[1]);
                 product.setName((String) row[2]);
+                product.setPrice(new BigDecimal(row[6].toString()));
                 BrandDTO brand = new BrandDTO();
                 brand.setName((String) row[3]);
                 product.setBrandDTO(brand);
@@ -351,6 +369,22 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
             return null;
         }
     }
+public List<ProductAdminDTO> getProduct(String code, String name) {
+    try {
+        String jpql = "SELECT NEW com.example.backend.core.admin.dto.ProductAdminDTO(p.id, p.code, p.name,p.price,pd.quantity) " +
+                "FROM Product p, ProductDetail pd " +  // Sử dụng CROSS JOIN
+                "WHERE p.name LIKE :productName AND p.code LIKE :productCode";
 
+
+        TypedQuery<ProductAdminDTO> query = entityManager.createQuery(jpql, ProductAdminDTO.class);
+        query.setParameter("productName", "%" + name + "%");
+        query.setParameter("productCode", "%" + code + "%");
+
+        return query.getResultList();
+    } catch (PersistenceException e) {
+        e.printStackTrace();
+        return null;
+    }
+}
 
 }

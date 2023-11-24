@@ -19,6 +19,7 @@ public class DiscountAdminDTO {
     private String description;
     private String status;
     private String idel;
-    private String startDateStr;
-    private String endDateStr;
+    private int  quantity;
+    private int  used_count;
+
 }

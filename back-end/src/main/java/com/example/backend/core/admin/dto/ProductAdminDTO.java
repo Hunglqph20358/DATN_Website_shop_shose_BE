@@ -30,17 +30,28 @@ public class ProductAdminDTO {
     private Long idSole;
     private String description;
     private Integer status;
-    private List<ImagesDTO> imagesDTOList;
+    private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
     private BrandDTO brandDTO;
     private CategoryDTO categoryDTO;
     private MaterialDTO materialDTO;
     private SoleDTO soleDTO;
-    private BigDecimal listedPrice;
     private BigDecimal price;
     private Integer totalQuantity;
     private List<ProductDetailDTO> productDetailDTOList;
     private BigDecimal totalSold;
+    private BrandAdminDTO brandAdminDTO;
+    private CategoryAdminDTO categoryAdminDTO;
+    private MaterialAdminDTO materialAdminDTO;
+    private SoleAdminDTO soleAdminDTO;
+
+    public ProductAdminDTO(Long id, String code, String name,BigDecimal price,Integer totalQuantity) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.price = price;
+        this.totalQuantity= totalQuantity;
+    }
 
     public List<ProductDetailDTO> getProductDetailDTOList() {
         return productDetailDTOList;

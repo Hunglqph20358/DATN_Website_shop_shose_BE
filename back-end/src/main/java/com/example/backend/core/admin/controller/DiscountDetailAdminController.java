@@ -40,4 +40,9 @@ public class DiscountDetailAdminController {
     public ResponseEntity<?> getDetailDiscount(@PathVariable Long idDiscount) {
         return ResponseEntity.ok(discountService.getDetailDiscount(idDiscount));
     }
+    @GetMapping("/products")
+    public ResponseEntity<?> getProducts(@RequestParam(required = false) String code,
+                                             @RequestParam(required = false) String name) {
+        return ResponseEntity.ok(discountService.getProduct(code,name));
+    }
 }

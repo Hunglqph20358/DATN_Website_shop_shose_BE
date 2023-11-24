@@ -21,10 +21,12 @@ public class DiscountDetailAdminDTO {
     private String idDiscount;
     private BigDecimal reducedValue;
     private String discountType;
+    private BigDecimal maxReduced;
     private int status;
     private DiscountAdminDTO discountAdminDTO;
     private ProductAdminDTO productDTO;
     private List<ProductAdminDTO> productDTOList;
+
 
 
 }
