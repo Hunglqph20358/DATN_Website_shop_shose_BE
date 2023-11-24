@@ -10,7 +10,10 @@ public interface OrderAdminService {
 
     List<OrderAdminDTO> getAllOrderAdmin(Integer status);
 
-    ServiceResult<OrderAdminDTO> updateStatusChoXuLy(Long idOrder);
+    ServiceResult<OrderAdminDTO> updateStatusChoXuLy(OrderAdminDTO orderAdminDTO);
 
-    ServiceResult<OrderAdminDTO> huyDonHang(Long idOrder);
+    ServiceResult<OrderAdminDTO> huyDonHang(OrderAdminDTO orderAdminDTO);
+    ServiceResult<OrderAdminDTO> giaoHangDonHang(OrderAdminDTO orderAdminDTO);
+    ServiceResult<OrderAdminDTO> hoanThanhDonHang(OrderAdminDTO orderAdminDTO);
+    ServiceResult<OrderAdminDTO> boLoDonHang(OrderAdminDTO orderAdminDTO);
 }
