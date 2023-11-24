@@ -1,5 +1,9 @@
 package com.example.backend.core.admin.dto;
 
+<<<<<<< HEAD
+=======
+import jakarta.persistence.Column;
+>>>>>>> main
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
