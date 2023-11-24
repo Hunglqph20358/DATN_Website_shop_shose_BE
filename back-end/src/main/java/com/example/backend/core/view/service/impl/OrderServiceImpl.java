@@ -75,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
                 order.setTotalPayment(null);
                 order.setStatusPayment(1);
             }
-            order.setStatus(0);
+            order.setStatus(AppConstant.CHO_XAC_NHAN);
             if (StringUtils.isNotBlank(orderDTO.getCodeVoucher())) {
                 Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
                 if (null != voucher) {

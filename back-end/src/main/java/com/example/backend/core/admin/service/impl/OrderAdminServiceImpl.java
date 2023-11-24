@@ -8,6 +8,7 @@ import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.OrderAdminRepository;
 import com.example.backend.core.admin.service.OrderAdminService;
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.view.dto.CustomerDTO;
 import com.example.backend.core.view.mapper.CustomerMapper;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,38 +60,110 @@ public class OrderAdminServiceImpl implements OrderAdminService {
     }
 
     @Override
-    public ServiceResult<OrderAdminDTO> updateStatusChoXuLy(Long idOrder) {
+    public ServiceResult<OrderAdminDTO> updateStatusChoXuLy(OrderAdminDTO orderAdminDTO) {
         ServiceResult<OrderAdminDTO> result = new ServiceResult<>();
-        if(idOrder == null) {
+        if(orderAdminDTO.getId() == null) {
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Error");
             return result;
         }
-        Order order = orderAdminRepository.findById(idOrder).get();
-        order.setStatus(1);
-        order = orderAdminRepository.save(order);
-        result.setData(orderAdminMapper.toDto(order));
-        result.setStatus(HttpStatus.BAD_REQUEST);
-        result.setMessage("Success");
-        return result;
-    }
-
-    @Override
-    public ServiceResult<OrderAdminDTO> huyDonHang(Long idOrder) {
-        ServiceResult<OrderAdminDTO> result = new ServiceResult<>();
-        if(idOrder == null) {
+        if(orderAdminDTO.getIdStaff() == null){
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Error");
             return result;
         }
-        Order order = orderAdminRepository.findById(idOrder).get();
-        order.setStatus(4);
+        Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        order.setStatus(AppConstant.CHO_XU_LY);
+        order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
         result.setData(orderAdminMapper.toDto(order));
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
         return result;
+    }
+
+    @Override
+    public ServiceResult<OrderAdminDTO> huyDonHang(OrderAdminDTO orderAdminDTO) {
+        ServiceResult<OrderAdminDTO> result = new ServiceResult<>();
+        if(orderAdminDTO.getId() == null) {
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        if(orderAdminDTO.getIdStaff() == null){
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        order.setStatus(AppConstant.HOAN_HUY);
+        order.setIdStaff(orderAdminDTO.getIdStaff());
+        order = orderAdminRepository.save(order);
+        result.setData(orderAdminMapper.toDto(order));
+        result.setStatus(HttpStatus.OK);
+        result.setMessage("Success");
+        return result;
+    }
+
+    @Override
+    public ServiceResult<OrderAdminDTO> giaoHangDonHang(OrderAdminDTO orderAdminDTO) {
+        ServiceResult<OrderAdminDTO> result = new ServiceResult<>();
+        if(orderAdminDTO.getId() == null) {
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        if(orderAdminDTO.getIdStaff() == null){
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        order.setShipperPhone("0985218603");
+        order.setDeliveryDate(Instant.now());
+        order.setStatus(AppConstant.DANG_GIAO_HANG);
+        order.setIdStaff(orderAdminDTO.getIdStaff());
+        order = orderAdminRepository.save(order);
+        result.setData(orderAdminMapper.toDto(order));
+        result.setStatus(HttpStatus.OK);
+        result.setMessage("Success");
+        return result;
+    }
+
+    @Override
+    public ServiceResult<OrderAdminDTO> hoanThanhDonHang(OrderAdminDTO orderAdminDTO) {
+        ServiceResult<OrderAdminDTO> result = new ServiceResult<>();
+        if(orderAdminDTO.getId() == null) {
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        if(orderAdminDTO.getIdStaff() == null){
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        order.setReceivedDate(Instant.now());
+        order.setStatus(AppConstant.HOAN_THANH);
+        order.setIdStaff(orderAdminDTO.getIdStaff());
+        order = orderAdminRepository.save(order);
+        result.setData(orderAdminMapper.toDto(order));
+        result.setStatus(HttpStatus.OK);
+        result.setMessage("Success");
+        return result;
+    }
+
+    @Override
+    public ServiceResult<OrderAdminDTO> boLoDonHang(OrderAdminDTO orderAdminDTO) {
+        return null;
     }
 }
