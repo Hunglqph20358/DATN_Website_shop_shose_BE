@@ -1,5 +1,6 @@
-package com.example.backend.core.view.dto;
+package com.example.backend.core.salesCounter.dto;
 
+import com.example.backend.core.view.dto.ProductDetailDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
-public class OrderDetailDTO {
+public class OrderSalesDetailDTO {
     private Long id;
     private Long idOrder;
     private Long idProductDetail;

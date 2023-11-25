@@ -28,6 +28,9 @@ public class AppConstant {
                 "/api/admin/get-all-order",
                 "/api/admin/get-order-detail/by-order/*",
                 "/api/admin/cancel-order",
+                "api/admin/product/search/*",
+                "/sales-counter/api/create-order",
+                "/sales-counter/api/create-order-detail"
 
         };
         public static final String[] API_STAFF = {

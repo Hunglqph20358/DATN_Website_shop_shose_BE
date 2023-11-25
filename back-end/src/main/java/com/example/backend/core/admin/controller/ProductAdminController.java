@@ -3,10 +3,7 @@ package com.example.backend.core.admin.controller;
 import com.example.backend.core.admin.dto.*;
 import com.example.backend.core.admin.mapper.ProductAdminMapper;
 import com.example.backend.core.admin.service.*;
-import com.example.backend.core.commons.ServiceResult;
-import com.example.backend.core.model.Sole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +42,11 @@ public class ProductAdminController {
     @DeleteMapping("product/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id")Long id){
         return ResponseEntity.ok(prdsv.delete(id));
+    }
+    @GetMapping("product/search/{param}")
+    public ResponseEntity<?> searchProduct(
+            @PathVariable("param") String param
+    ){
+        return ResponseEntity.ok(prdsv.findByNameLikeOrCodeLike(param));
     }
 }

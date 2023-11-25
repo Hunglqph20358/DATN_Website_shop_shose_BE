@@ -23,6 +23,7 @@ public class ProductAdminDTO {
     private Long idBrand;
     private Long idCategory;
     private Long idMaterial;
+    private BigDecimal price;
     private Long idSole;
     private String description;
     private Integer status;
@@ -34,4 +35,5 @@ public class ProductAdminDTO {
     private CategoryAdminDTO categoryAdminDTO;
     private MaterialAdminDTO materialAdminDTO;
     private SoleAdminDTO soleAdminDTO;
+    private ProductDetailAdminDTO productDetailAdminDTO;
 }
