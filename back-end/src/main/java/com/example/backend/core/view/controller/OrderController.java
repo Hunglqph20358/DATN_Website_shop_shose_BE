@@ -20,9 +20,9 @@ public class OrderController {
     public ResponseEntity<?> createOrder(@RequestBody OrderDTO orderDTO){
         return ResponseEntity.ok(orderService.createOrder(orderDTO));
     }
-    @PostMapping("/create-order/buy-now")
+    @PostMapping("/create-order/not-login")
     public ResponseEntity<?> createOrderBuyNow(@RequestBody OrderDTO orderDTO){
-        return ResponseEntity.ok(orderService.createOrderBuyNow(orderDTO));
+        return ResponseEntity.ok(orderService.createOrderNotLogin(orderDTO));
     }
 
     @PostMapping("/get-all-order")

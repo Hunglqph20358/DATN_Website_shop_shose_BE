@@ -33,6 +33,5 @@ public class OrderDTO {
     private String description;
     private Integer status;
     private CustomerDTO customerDTO;
-
     private String email;
 }

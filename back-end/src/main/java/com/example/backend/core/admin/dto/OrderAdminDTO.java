@@ -32,4 +32,6 @@ public class OrderAdminDTO {
     private Integer paymentType;
     private String description;
     private Integer status;
+    private Integer statusPayment;
+    private CustomerAdminDTO customerAdminDTO;
 }

@@ -22,6 +22,19 @@ public class OrderAdminController {
 
     @PostMapping("/cancel-order")
     public ResponseEntity<?> cancelOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
-        return ResponseEntity.ok(orderAdminService.huyDonHang(orderAdminDTO.getId()));
+        return ResponseEntity.ok(orderAdminService.huyDonHang(orderAdminDTO));
+    }
+
+    @PostMapping("/progressing-order")
+    public ResponseEntity<?> progressingOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(orderAdminService.updateStatusChoXuLy(orderAdminDTO));
+    }
+    @PostMapping("/complete-order")
+    public ResponseEntity<?> completeOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(orderAdminService.hoanThanhDonHang(orderAdminDTO));
+    }
+    @PostMapping("/ship-order")
+    public ResponseEntity<?> shipOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(orderAdminService.giaoHangDonHang(orderAdminDTO));
     }
 }
