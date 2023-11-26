@@ -5,10 +5,13 @@ import com.example.backend.core.admin.dto.ProductAdminDTO;
 import com.example.backend.core.commons.ServiceResult;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductAdminService {
     List<ProductAdminDTO> getAll();
     ServiceResult<ProductAdminDTO> add(ProductAdminDTO productAdminDTO);
     ServiceResult<ProductAdminDTO> update(ProductAdminDTO productAdminDTO,Long id);
     ServiceResult<ProductAdminDTO> delete(Long id);
+    List<ProductAdminDTO> getProduct(String code, String name);
+    List<ProductAdminDTO> findByNameLikeOrCodeLike(String param);
 }
