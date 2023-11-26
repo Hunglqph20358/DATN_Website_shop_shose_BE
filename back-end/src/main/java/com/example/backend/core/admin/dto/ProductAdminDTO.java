@@ -1,18 +1,19 @@
 package com.example.backend.core.admin.dto;
 
 import com.example.backend.core.view.dto.*;
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 public class ProductAdminDTO {
+
     private Long id;
     private String code;
     private String name;
@@ -29,6 +30,7 @@ public class ProductAdminDTO {
     private Integer status;
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
+    private StaffDTO staffDTO;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
     private BrandAdminDTO brandAdminDTO;
