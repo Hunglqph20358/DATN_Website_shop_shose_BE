@@ -46,4 +46,8 @@ public class ProductAdminController {
     public ResponseEntity<?> delete(@PathVariable("id")Long id){
         return ResponseEntity.ok(prdsv.delete(id));
     }
+    @GetMapping ("product/detail/{id}")
+    public ResponseEntity<?> detail(@PathVariable("id")Long id){
+        return ResponseEntity.ok(prdsv.getById(id));
+    }
 }

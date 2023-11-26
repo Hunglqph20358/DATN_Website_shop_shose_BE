@@ -43,6 +43,10 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
     private SoleAdminRepository slrp;
     @Autowired
     private SoleAdminMapper soleAdminMapper;
+    @Autowired
+    private StaffRepository strp;
+    @Autowired
+    private StaffMapper staffMapper;
 
     private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
     @Override
@@ -58,6 +62,8 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
           list.get(i).setBrandAdminDTO(brandAdminDTO);
           CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
           list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+//          StaffDTO staffDTO = staffMapper.toDto(strp.findById(list.get(i).getStaffDTO().getId()).get());
+//            list.get(i).setStaffDTO(staffDTO);
         }
         return list;
     }
@@ -73,6 +79,7 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
         SoleAdminDTO soleDTO = soleAdminMapper.toDto(sole.get());
         CategoryAdminDTO categoryDTO = categoryAdminMapper.toDto(category.get());
         BrandAdminDTO brandDTO = brandAdminMapper.toDto(brand.orElse(null));
+//        StaffDTO staffDTO = staffMapper.toDto(staff.get());
         product.setIdBrand(brandDTO.getId());
         product.setIdCategory(categoryDTO.getId());
         product.setIdMaterial(materialDTO.getId());
@@ -81,8 +88,11 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
         productAdminDTO.setBrandAdminDTO(brandDTO);
         productAdminDTO.setCategoryAdminDTO(categoryDTO);
         productAdminDTO.setMaterialAdminDTO(materialDTO);
+//        productAdminDTO.setStaffDTO(staffDTO);
         product.setCreateDate(Instant.now());
         product.setUpdateDate(Instant.now());
+        product.setPrice(productAdminDTO.getPrice());
+//        product.setCreateName(staffDTO.getFullname());
         this.prdrp.save(product);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -106,6 +116,7 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
             product.setIdCategory(productAdminDTO.getIdCategory());
             product.setDescription(productAdminDTO.getDescription());
             product.setStatus(productAdminDTO.getStatus());
+            product.setPrice(productAdminDTO.getPrice());
             product =  this.prdrp.save(product);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
@@ -128,6 +139,25 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
             result.setMessage("Xoa thanh cong");
             result.setData(null);
         }
+        return result;
+    }
+
+    @Override
+    public ServiceResult<ProductAdminDTO> getById(Long id) {
+        ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
+        Optional<Product> optional = this.prdrp.findById(id);
+
+        if (optional.isPresent()) {
+            Product product = optional.get();
+            ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Lấy thông tin thành công");
+            result.setData(productAdminDTO);
+        } else {
+            result.setStatus(HttpStatus.NOT_FOUND);
+            result.setMessage("Không tìm thấy sản phẩm");
+        }
+
         return result;
     }
 }

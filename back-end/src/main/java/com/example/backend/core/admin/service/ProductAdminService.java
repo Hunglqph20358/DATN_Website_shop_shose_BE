@@ -11,4 +11,5 @@ public interface ProductAdminService {
     ServiceResult<ProductAdminDTO> add(ProductAdminDTO productAdminDTO);
     ServiceResult<ProductAdminDTO> update(ProductAdminDTO productAdminDTO,Long id);
     ServiceResult<ProductAdminDTO> delete(Long id);
+    ServiceResult<ProductAdminDTO> getById(Long id);
 }
