@@ -59,8 +59,8 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     @Autowired
     private ProductDetailAdminRepository productDetailAdminRepository;
 
-    private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
 
+    private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
     @Override
     public List<ProductAdminDTO> getAll() {
 
