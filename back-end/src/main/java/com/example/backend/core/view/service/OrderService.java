@@ -13,7 +13,7 @@ public interface OrderService {
 
     ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO);
 
-    ServiceResult<OrderDTO> updateOrder(OrderDTO orderDTO);
+    ServiceResult<OrderDTO> cancelOrderView(OrderDTO orderDTO);
 
     List<OrderDTO> getAll(OrderDTO orderDTO);
 

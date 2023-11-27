@@ -40,24 +40,29 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             return orderAdminMapper.toDto(
                     orderAdminRepository.findByStatusOrderByCreateDateDesc(status)
             ).stream().map(c -> {
-                CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
-                        customerAdminRepository.findById(c.getIdCustomer())
-                                .orElseThrow(null)
-                );
-                c.setCustomerAdminDTO(customerAdminDTO);
+                if (c.getIdCustomer() != null) {
+                    CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
+                            customerAdminRepository.findById(c.getIdCustomer())
+                                    .orElse(null)
+                    );
+                    c.setCustomerAdminDTO(customerAdminDTO);
+                }
                 return c;
             }).collect(Collectors.toList());
 
         }
         return orderAdminMapper.toDto(orderAdminRepository.getAllByOrderByCreateDateDesc()).stream().map(c -> {
-            CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
-                    customerAdminRepository.findById(c.getIdCustomer())
-                            .orElseThrow(null)
-            );
-            c.setCustomerAdminDTO(customerAdminDTO);
+            if (c.getIdCustomer() != null) {
+                CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
+                        customerAdminRepository.findById(c.getIdCustomer())
+                                .orElse(null)
+                );
+                c.setCustomerAdminDTO(customerAdminDTO);
+            }
             return c;
         }).collect(Collectors.toList());
     }
+
 
     @Override
     public ServiceResult<OrderAdminDTO> updateStatusChoXuLy(OrderAdminDTO orderAdminDTO) {
@@ -127,6 +132,7 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
         order.setShipperPhone("0985218603");
         order.setDeliveryDate(Instant.now());
+        order.setMissedOrder(0);
         order.setStatus(AppConstant.DANG_GIAO_HANG);
         order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
@@ -164,6 +170,35 @@ public class OrderAdminServiceImpl implements OrderAdminService {
 
     @Override
     public ServiceResult<OrderAdminDTO> boLoDonHang(OrderAdminDTO orderAdminDTO) {
-        return null;
+        ServiceResult<OrderAdminDTO> result = new ServiceResult<>();
+        if(orderAdminDTO.getId() == null) {
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        if(orderAdminDTO.getIdStaff() == null){
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        if(order.getMissedOrder() == null || order.getMissedOrder() == 0){
+            order.setMissedOrder(AppConstant.BO_LO_LAN1);
+        }
+        if(order.getMissedOrder() == AppConstant.BO_LO_LAN1){
+            order.setMissedOrder(AppConstant.BO_LO_LAN2);
+        }
+        if(order.getMissedOrder() == AppConstant.BO_LO_LAN2){
+            order.setMissedOrder(AppConstant.BO_LO_LAN3);
+            order.setStatus(AppConstant.HOAN_HUY);
+        }
+        order.setIdStaff(orderAdminDTO.getIdStaff());
+        order = orderAdminRepository.save(order);
+        result.setData(orderAdminMapper.toDto(order));
+        result.setStatus(HttpStatus.OK);
+        result.setMessage("Success");
+        return result;
     }
 }

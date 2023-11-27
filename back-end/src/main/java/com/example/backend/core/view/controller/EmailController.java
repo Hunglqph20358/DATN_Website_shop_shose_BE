@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/view/api")
@@ -28,10 +31,9 @@ public class EmailController {
         }
     }
     @PostMapping("/send-email-completeOrder/not-login")
-    public ResponseEntity<String> sendMailOrderNotLogin(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> sendMailOrderNotLogin(@RequestBody OrderDTO orderDTO) {
         try {
-            emailService.sendMailOrderNotLogin(orderDTO);
-            return ResponseEntity.ok("Purchase completed successfully!");
+            return ResponseEntity.ok(emailService.sendMailOrderNotLogin(orderDTO));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error");

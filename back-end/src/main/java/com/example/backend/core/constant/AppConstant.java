@@ -8,6 +8,11 @@ public class AppConstant {
         public static final Integer DANG_GIAO_HANG = 2;
         public static final Integer HOAN_THANH = 3;
         public static final Integer HOAN_HUY = 4;
+        public static final Integer CHUA_THANH_TOAN = 1;
+        public static final Integer DA_THANH_TOAN = 0;
+        public static final Integer BO_LO_LAN1 = 1;
+        public static final Integer BO_LO_LAN2 = 2;
+        public static final Integer BO_LO_LAN3 = 3;
 
 
 
@@ -40,6 +45,7 @@ public class AppConstant {
                 "/api/admin/progressing-order",
                 "/api/admin/complete-order",
                 "/api/admin/ship-order",
+                "/api/admin/missed-order",
 
         };
         public static final String[] API_STAFF = {
@@ -60,6 +66,8 @@ public class AppConstant {
                 "/view/api/get-all-address",
                 "/view/api/create-address",
                 "/view/api/create-address",
+                "/view/api/update-address/config",
+                "/view/api/detail-address/*",
                 "/view/api/get-address",
                 "/view/api/get-all-voucher",
                 "/view/api/get-voucher",
@@ -68,5 +76,6 @@ public class AppConstant {
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
+                "/view/api/cancel-order-view",
         };
 }
