@@ -49,27 +49,33 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     @Autowired
     private SoleAdminMapper soleAdminMapper;
     @Autowired
+    private StaffRepository strp;
+    @Autowired
+    private StaffMapper staffMapper;
+    @Autowired
     private EntityManager entityManager;
     @Autowired
     private ProductDetailAdminMapper productDetailMapper;
     @Autowired
     private ProductDetailAdminRepository productDetailAdminRepository;
 
-    private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
 
+    private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
     @Override
     public List<ProductAdminDTO> getAll() {
 
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findAll());
         for (int i = 0; i < list.size(); i++) {
-            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
-            list.get(i).setSoleAdminDTO(soleAdminDTO);
-            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
-            list.get(i).setMaterialAdminDTO(materialAdminDTO);
-            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
-            list.get(i).setBrandAdminDTO(brandAdminDTO);
-            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
-            list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+          SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
+          list.get(i).setSoleAdminDTO(soleAdminDTO);
+          MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
+          list.get(i).setMaterialAdminDTO(materialAdminDTO);
+          BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
+          list.get(i).setBrandAdminDTO(brandAdminDTO);
+          CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
+          list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+//          StaffDTO staffDTO = staffMapper.toDto(strp.findById(list.get(i).getStaffDTO().getId()).get());
+//            list.get(i).setStaffDTO(staffDTO);
         }
         return list;
     }
@@ -95,6 +101,8 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         productAdminDTO.setMaterialAdminDTO(materialDTO);
         product.setCreateDate(Instant.now());
         product.setUpdateDate(Instant.now());
+        product.setPrice(productAdminDTO.getPrice());
+//        product.setCreateName(staffDTO.getFullname());
         this.prdrp.save(product);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -118,7 +126,8 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             product.setIdCategory(productAdminDTO.getIdCategory());
             product.setDescription(productAdminDTO.getDescription());
             product.setStatus(productAdminDTO.getStatus());
-            product = this.prdrp.save(product);
+            product.setPrice(productAdminDTO.getPrice());
+            product =  this.prdrp.save(product);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
             result.setData(productAdminMapper.toDto(product));
@@ -140,6 +149,25 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             result.setMessage("Xoa thanh cong");
             result.setData(null);
         }
+        return result;
+    }
+
+    @Override
+    public ServiceResult<ProductAdminDTO> getById(Long id) {
+        ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
+        Optional<Product> optional = this.prdrp.findById(id);
+
+        if (optional.isPresent()) {
+            Product product = optional.get();
+            ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Lấy thông tin thành công");
+            result.setData(productAdminDTO);
+        } else {
+            result.setStatus(HttpStatus.NOT_FOUND);
+            result.setMessage("Không tìm thấy sản phẩm");
+        }
+
         return result;
     }
 
