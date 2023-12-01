@@ -24,6 +24,10 @@ public class VoucherFreeShipController {
     public ResponseEntity<?> createVoucher( @RequestBody VoucherFreeShipDTO voucherAdminDTO){
         return ResponseEntity.ok(voucherAdminService.createVoucher(voucherAdminDTO));
     }
+    @PutMapping("/kichHoatFS/{id}")
+    public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
+        return ResponseEntity.ok(voucherAdminService.KichHoat(id));
+    }
 //    @PutMapping("/voucherFS/{id}")
 //    public ResponseEntity<?> updateVoucher(@PathVariable Long id,@Valid @RequestBody VoucherFreeShipDTO voucherAdminDTO){
 //        return ResponseEntity.ok(voucherAdminService.updateVoucher(id,voucherAdminDTO));

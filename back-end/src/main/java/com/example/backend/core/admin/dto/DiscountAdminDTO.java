@@ -3,7 +3,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,12 +17,17 @@ public class DiscountAdminDTO {
     private String code;
     private String name;
     private Date createDate;
-    private Date startDate;
-    private Date endDate;
+    private java.util.Date startDate;
+    private java.util.Date endDate;
     private String description;
-    private String status;
-    private String idel;
-    private int  quantity;
+    private String createName;
+    private Integer status;
+    private Integer idel;
+    private Integer quantity;
+    private Integer apply;
     private int  used_count;
 
+    private List<ProductAdminDTO> productDTOList;
+    private BigDecimal reducedValue;
+    private Integer discountType;
 }

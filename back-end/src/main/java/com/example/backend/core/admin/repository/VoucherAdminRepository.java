@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface VoucherAdminRepository extends JpaRepository<Voucher,Long> {
-    @Query(value = "select v from Voucher v where v.idel =0")
+    @Query(value = "select v from Voucher v ")
     List<Voucher> getAll();
 }

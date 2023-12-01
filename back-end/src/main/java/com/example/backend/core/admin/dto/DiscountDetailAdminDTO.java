@@ -14,13 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-
 public class DiscountDetailAdminDTO {
     private Long id;
     private String idProduct;
     private String idDiscount;
     private BigDecimal reducedValue;
-    private String discountType;
+    private Integer discountType;
     private BigDecimal maxReduced;
     private int status;
     private DiscountAdminDTO discountAdminDTO;

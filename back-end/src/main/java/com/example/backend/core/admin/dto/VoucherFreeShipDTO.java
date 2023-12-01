@@ -19,50 +19,24 @@ import java.util.List;
 @Setter
 public class VoucherFreeShipDTO {
     private Long id;
-
     private String code;
-
-
     private String name;
-
-
     private Long idCustomer;
-
-
     private Date createDate;
-
-
     private Date startDate;
-
-
     private Date endDate;
-
-
     private BigDecimal conditions;
-
-
     private String createName;
-
-
     private BigDecimal reducedValue;
-
-
     private String description;
-
-
-    private int status;
-
-
-    private int idel;
-
-
+    private Integer status;
+    private Integer idel;
     private Integer quantity;
-
-
     private Integer limitCustomer;
+    private Integer allow;
+    private Integer optionCustomer;
     private Integer useVoucher;
 
-    private int allow;
     private CustomerAdminDTO customerAdminDTO;
     private List<CustomerAdminDTO> customerAdminDTOList;
 

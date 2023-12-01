@@ -30,7 +30,7 @@ public class Voucher implements Serializable {
   private String name;
 
   @Column(name = "id_customer")
-  private String idCustomer;
+  private Long idCustomer;
 
   @Column(name = "create_date")
   private Date createDate;
@@ -48,7 +48,7 @@ public class Voucher implements Serializable {
   private String createName;
 
   @Column(name = "voucher_type")
-  private int voucherType;
+  private Integer voucherType;
 
   @Column(name = "reduced_value")
   private BigDecimal reducedValue;
@@ -57,23 +57,26 @@ public class Voucher implements Serializable {
   private String description;
 
   @Column(name = "status")
-  private int status;
+  private Integer status;
 
   @Column(name = "idel")
-  private int idel;
+  private Integer idel;
 
   @Column(name = "quantity")
-  private int quantity;
+  private Integer quantity;
 
   @Column(name = "max_reduced")
   private BigDecimal maxReduced;
 
   @Column(name = "limit_customer")
-  private int limitCustomer;
+  private Integer limitCustomer;
 
   @Column(name = "allow")
-  private int allow;
+  private Integer allow;
 
-  // Getters and setters (omitted for brevity)
+  @Column(name = "option_customer", columnDefinition = "int default 0")
+  private Integer optionCustomer;
+  @Column(name = "apply", columnDefinition = "int default 0")//1 là tại quầy 0 là web
+  private Integer apply;
 
 }

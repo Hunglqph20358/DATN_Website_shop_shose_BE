@@ -52,10 +52,10 @@ public class VoucherFreeShip {
     private String description;
 
     @Column(name = "status", columnDefinition = "int default 0")
-    private int status;
+    private Integer status;
 
     @Column(name = "idel", columnDefinition = "int default 0")
-    private int idel;
+    private Integer idel;
 
     @Column(name = "quantity")
     private Integer quantity;
@@ -64,6 +64,9 @@ public class VoucherFreeShip {
     private Integer limitCustomer;
 
     @Column(name = "allow", columnDefinition = "int default 0")
-    private int allow;
+    private Integer allow;
+
+    @Column(name = "option_customer", columnDefinition = "int default 0")
+    private Integer optionCustomer;
 
 }

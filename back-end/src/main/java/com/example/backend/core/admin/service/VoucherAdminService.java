@@ -6,6 +6,7 @@ import com.example.backend.core.admin.dto.VoucherAdminDTO;
 import com.example.backend.core.commons.ServiceResult;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 public interface VoucherAdminService {
@@ -17,4 +18,8 @@ public interface VoucherAdminService {
     List<VoucherAdminDTO> detailById(Long voucherId);
     List<VoucherAdminDTO> getAllVouchers();
     List<CustomerAdminDTO> getAllCustomer();
+    List<VoucherAdminDTO> getVouchersByTimeRange(Date fromDate, Date toDate);
+    List<VoucherAdminDTO> getVouchersByKeyword(String keyword);
+    ServiceResult<Void> KichHoat(Long idVoucher);
+    VoucherAdminDTO getDetailVoucher(Long id);
 }

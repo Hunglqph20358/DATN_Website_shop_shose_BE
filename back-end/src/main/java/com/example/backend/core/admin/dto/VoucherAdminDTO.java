@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoucherAdminDTO {
-    private long id;
+    private Long id;
     private String code;
     private String name;
     private String idCustomer;
@@ -26,16 +26,18 @@ public class VoucherAdminDTO {
     private Date endDate;
     private BigDecimal conditions;
     private String createName;
-    private int voucherType;
+    private Integer voucherType;
     private BigDecimal reducedValue;
     private String description;
-    private int status;
-    private String idel;
-    private int quantity;
-    private BigDecimal maxReduced;//gtri giảm tối đa
-    private int limitCustomer;//giới hạn số lần sd của mỗi kk
-    private int allow;//cho phép sd cùng km hay ko
-    private int useVoucher;
+    private Integer status;
+    private Integer idel;
+    private Integer quantity;
+    private BigDecimal maxReduced;
+    private Integer limitCustomer;
+    private Integer allow;
+    private Integer optionCustomer;
+    private Integer apply;
+    private Integer useVoucher;
     private CustomerAdminDTO customerAdminDTO;
     private List<CustomerAdminDTO> customerAdminDTOList;
 

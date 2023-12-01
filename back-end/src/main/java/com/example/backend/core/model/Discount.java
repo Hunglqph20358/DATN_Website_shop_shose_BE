@@ -31,10 +31,14 @@ public class Discount {
     private java.util.Date endDate;
     @Column(name = "description")
     private String description;
+    @Column(name = "create_name")
+    private String createName;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
     @Column(name = "quantity")
     private Integer quantity;
+    @Column(name = "apply", columnDefinition = "int default 0")//1 là tại quầy 0 là web
+    private Integer apply;
 }

@@ -37,7 +37,11 @@ public class VoucherAdminController {
     }
     @GetMapping("/voucher/{id}")
     public ResponseEntity<?> detailVoucher(@PathVariable Long id) {
-        return ResponseEntity.ok( voucherAdminService.detailById(id));
+        return ResponseEntity.ok( voucherAdminService.getDetailVoucher(id));
+    }
+    @PutMapping("/kichHoatV/{id}")
+    public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
+        return ResponseEntity.ok(voucherAdminService.KichHoat(id));
     }
     @GetMapping("/customer")
     public ResponseEntity<?> getAllCustomer(){

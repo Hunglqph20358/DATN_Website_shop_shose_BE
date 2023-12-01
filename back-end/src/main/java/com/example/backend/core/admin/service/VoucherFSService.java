@@ -16,4 +16,5 @@ public interface VoucherFSService {
     List<VoucherFreeShipDTO> detailById(Long voucherId);
     List<VoucherFreeShipDTO> getAllVouchers();
     List<CustomerAdminDTO> getAllCustomer();
+    ServiceResult<Void> KichHoat(Long idVoucher);
 }

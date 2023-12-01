@@ -6,6 +6,7 @@ import com.example.backend.core.admin.dto.VoucherFreeShipDTO;
 import com.example.backend.core.admin.repository.VoucherFreeShipRepository;
 import com.example.backend.core.admin.service.VoucherFSService;
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.view.mapper.VoucherFSMapper;
 import jakarta.persistence.EntityManager;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VoucherFSServiceImpl implements VoucherFSService {
@@ -96,6 +98,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
 
     @Override
     public List<VoucherFreeShipDTO> getAll() {
+
         return null;
     }
 
@@ -138,5 +141,26 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     public List<VoucherFreeShipDTO> detailById(Long voucherId) {
         return null;
     }
+    @Override
+    public ServiceResult<Void> KichHoat(Long idVoucher) {
+        ServiceResult<Void> serviceResult = new ServiceResult<>();
+        Optional<VoucherFreeShip> optionalVoucher = voucherFreeShipRepository.findById(idVoucher);
 
+        if (optionalVoucher.isPresent()) {
+            VoucherFreeShip voucher = optionalVoucher.get();
+
+            if (voucher.getIdel() ==1) {
+                voucher.setIdel(0);
+
+            } else {
+                voucher.setIdel(1);
+            }
+            voucherFreeShipRepository.save(voucher); // Lưu lại thay đổi vào cơ sở dữ liệu
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+        }
+
+        return serviceResult;
+    }
 }

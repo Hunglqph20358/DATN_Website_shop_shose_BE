@@ -1,18 +1,18 @@
 package com.example.backend.core.admin.service.impl;
 
-import com.example.backend.core.admin.dto.CustomerAdminDTO;
-import com.example.backend.core.admin.dto.DiscountDetailAdminDTO;
-import com.example.backend.core.admin.dto.ProductAdminDTO;
-import com.example.backend.core.admin.dto.VoucherAdminDTO;
+import com.example.backend.core.admin.dto.*;
+import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.DiscountAdminMapper;
 import com.example.backend.core.admin.mapper.DiscountDetailAdminMapper;
 import com.example.backend.core.admin.mapper.VoucherAdminMapper;
+import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.DiscountAdminRepository;
 import com.example.backend.core.admin.repository.DiscountDetailAdminRepository;
 import com.example.backend.core.admin.repository.VoucherAdminRepository;
 import com.example.backend.core.admin.service.VoucherAdminService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
+import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Discount;
 import com.example.backend.core.model.DiscountDetail;
 import com.example.backend.core.model.Voucher;
@@ -41,7 +41,11 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     @Autowired
     private VoucherAdminRepository voucherAdminRepository;
     @Autowired
+    private CustomerAdminRepository customerAdminRepository;
+    @Autowired
     private VoucherAdminMapper voucherAdminMapper;
+    @Autowired
+    private CustomerAdminMapper customerAdminMapper;
     @Autowired
     EntityManager entityManager;
 
@@ -85,7 +89,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(BigDecimal.valueOf(Long.parseLong(row[7].toString())));
                 voucher.setDescription(row[8].toString());
-                voucher.setIdel(row[9].toString());
+                voucher.setIdel(Integer.valueOf(row[9].toString()));
                 voucher.setMaxReduced(BigDecimal.valueOf(Long.parseLong(row[10].toString())));
                 voucher.setAllow(Integer.valueOf(row[11].toString()));
                 voucher.setUseVoucher(Integer.valueOf(row[12].toString()));
@@ -120,6 +124,154 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         }
     }
     @Override
+    public List<VoucherAdminDTO> getVouchersByTimeRange(Date fromDate, Date toDate) {
+        try {
+            String sql = "SELECT " +
+                    "  v.id, " +
+                    "  v.code, " +
+                    "  v.name, " +
+                    "  v.start_date, " +
+                    "  v.end_date, " +
+                    "  v.conditions, " +
+                    "  v.reduced_value, " +
+                    "  v.description, " +
+                    "  v.idel, " +
+                    "  v.quantity, " +
+                    "  v.max_reduced, " +
+                    "  v.allow, " +
+                    "  COUNT(o.id) AS use_voucher " +
+                    "FROM voucher v " +
+                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
+                    "WHERE v.start_date BETWEEN :fromDate AND :toDate " +
+                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("fromDate", fromDate);
+            query.setParameter("toDate", toDate);
+
+            List<Object[]> resultList = query.getResultList();
+
+            List<VoucherAdminDTO> vouchers = new ArrayList<>();
+            for (Object[] row : resultList) {
+                VoucherAdminDTO voucher = new VoucherAdminDTO();
+
+                voucher.setId(Long.parseLong(row[0].toString()));
+                voucher.setCode(row[1].toString());
+                voucher.setName(row[2].toString());
+                voucher.setConditions(BigDecimal.valueOf(Long.parseLong(row[5].toString())));
+                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
+                voucher.setReducedValue(BigDecimal.valueOf(Long.parseLong(row[7].toString())));
+                voucher.setDescription(row[8].toString());
+                voucher.setIdel(Integer.valueOf(row[9].toString()));
+                voucher.setMaxReduced(BigDecimal.valueOf(Long.parseLong(row[10].toString())));
+                voucher.setAllow(Integer.valueOf(row[11].toString()));
+                voucher.setUseVoucher(Integer.valueOf(row[12].toString()));
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+                try {
+                    java.util.Date startDate = dateFormat.parse(row[3].toString());
+                    java.util.Date endDate = dateFormat.parse(row[4].toString());
+
+                    voucher.setStartDate(startDate);
+                    voucher.setEndDate(endDate);
+
+                    if (new Date(System.currentTimeMillis()).after(endDate)) {
+                        voucher.setStatus(1);
+                    } else {
+                        voucher.setStatus(0);
+                    }
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
+                vouchers.add(voucher);
+            }
+            return vouchers;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    @Override
+    public List<VoucherAdminDTO> getVouchersByKeyword(String keyword) {
+        try {
+            String sql = "SELECT " +
+                    "  v.id, " +
+                    "  v.code, " +
+                    "  v.name, " +
+                    "  v.start_date, " +
+                    "  v.end_date, " +
+                    "  v.conditions, " +
+                    "  v.reduced_value, " +
+                    "  v.description, " +
+                    "  v.idel, " +
+                    "  v.quantity, " +
+                    "  v.max_reduced, " +
+                    "  v.allow, " +
+                    "  COUNT(o.id) AS use_voucher " +
+                    "FROM voucher v " +
+                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
+                    "WHERE v.name LIKE :keyword OR v.code LIKE :keyword " +
+                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("keyword", "%" + keyword + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
+
+            List<Object[]> resultList = query.getResultList();
+
+            List<VoucherAdminDTO> vouchers = new ArrayList<>();
+            for (Object[] row : resultList) {
+                VoucherAdminDTO voucher = new VoucherAdminDTO();
+
+                voucher.setId(Long.parseLong(row[0].toString()));
+                voucher.setCode(row[1].toString());
+                voucher.setName(row[2].toString());
+                voucher.setConditions(BigDecimal.valueOf(Long.parseLong(row[5].toString())));
+                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
+                voucher.setReducedValue(BigDecimal.valueOf(Long.parseLong(row[7].toString())));
+                voucher.setDescription(row[8].toString());
+                voucher.setIdel(Integer.valueOf(row[9].toString()));
+                voucher.setMaxReduced(BigDecimal.valueOf(Long.parseLong(row[10].toString())));
+                voucher.setAllow(Integer.valueOf(row[11].toString()));
+                voucher.setUseVoucher(Integer.valueOf(row[12].toString()));
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+                try {
+                    java.util.Date startDate = dateFormat.parse(row[3].toString());
+                    java.util.Date endDate = dateFormat.parse(row[4].toString());
+
+                    voucher.setStartDate(startDate);
+                    voucher.setEndDate(endDate);
+
+                    if (new Date(System.currentTimeMillis()).after(endDate)) {
+                        voucher.setStatus(1);
+                    } else {
+                        voucher.setStatus(0);
+                    }
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
+                vouchers.add(voucher);
+            }
+            return vouchers;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public ServiceResult<VoucherAdminDTO> createVoucher(VoucherAdminDTO voucherAdminDTO) {
         ServiceResult<VoucherAdminDTO> serviceResult = new ServiceResult<>();
         Voucher voucher = voucherAdminMapper.toEntity(voucherAdminDTO);
@@ -134,14 +286,18 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
        if(voucher.getVoucherType()==0){
            voucher.setMaxReduced(voucher.getReducedValue());
        }
+       if(voucher.getOptionCustomer()==0){
+           voucher.setIdCustomer(null);
+       }else {
+           StringBuilder customer = new StringBuilder();
+           for (int i = 0; i < voucherAdminDTO.getCustomerAdminDTOList().size(); i++) {
+               CustomerAdminDTO customerAdminDTO=voucherAdminDTO.getCustomerAdminDTOList().get(i);
+               customer.append(customerAdminDTO.getId());
+               customer.append(",");
+           }
+           voucher.setIdCustomer(Long.parseLong(String.valueOf(customer)));
+       }
         voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
-        StringBuilder customer = new StringBuilder();
-        for (int i = 0; i < voucherAdminDTO.getCustomerAdminDTOList().size(); i++) {
-            CustomerAdminDTO customerAdminDTO=voucherAdminDTO.getCustomerAdminDTOList().get(i);
-            customer.append(customerAdminDTO.getId());
-            customer.append(",");
-        }
-        voucher.setIdCustomer(customer.toString());
         voucherAdminRepository.save(voucher);
         serviceResult.setData(voucherAdminDTO);
         serviceResult.setMessage("Thêm thành công!");
@@ -256,6 +412,34 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
 
         return list;
     }
+    @Override
+    public VoucherAdminDTO getDetailVoucher(Long id) {
+        Optional<Voucher> optionalVoucher = voucherAdminRepository.findById(id);
+
+        Voucher voucher = optionalVoucher.orElse(null);
+
+        if (voucher == null) {
+            return null; // hoặc ném một exception để thông báo rằng không tìm thấy voucher với ID đã cho
+        }
+
+        VoucherAdminDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+
+        Optional<Customer> optionalCustomer = customerAdminRepository.findById(voucher.getIdCustomer());
+
+        Customer customer = optionalCustomer.orElse(null);
+
+        if (customer == null) {
+            return null; // hoặc ném một exception để thông báo rằng không tìm thấy khách hàng với ID của voucher
+        }
+
+        CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(customer);
+
+        voucherAdminDTO.setCustomerAdminDTO(customerAdminDTO);
+
+        return voucherAdminDTO;
+    }
+
+
 
     @Override
     public List<CustomerAdminDTO> getAllCustomer() {
@@ -313,5 +497,27 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             e.printStackTrace();
             return null;
         }
+    }
+    @Override
+    public ServiceResult<Void> KichHoat(Long idVoucher) {
+        ServiceResult<Void> serviceResult = new ServiceResult<>();
+        Optional<Voucher> optionalVoucher = voucherAdminRepository.findById(idVoucher);
+
+        if (optionalVoucher.isPresent()) {
+            Voucher voucher = optionalVoucher.get();
+
+            if (voucher.getIdel() ==1) {
+                voucher.setIdel(0);
+
+            } else {
+                voucher.setIdel(1);
+            }
+            voucherAdminRepository.save(voucher); // Lưu lại thay đổi vào cơ sở dữ liệu
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+        }
+
+        return serviceResult;
     }
 }
