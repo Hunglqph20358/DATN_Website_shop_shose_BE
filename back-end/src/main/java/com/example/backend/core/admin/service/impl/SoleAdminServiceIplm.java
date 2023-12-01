@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SoleAdminServiceIplm  implements SoleAdminService {
@@ -27,6 +28,11 @@ public class SoleAdminServiceIplm  implements SoleAdminService {
     public List<SoleAdminDTO> getAll() {
          List<SoleAdminDTO> lst = soleAdminMapper.toDto(slrp.findAll());
          return lst;
+    }
+
+    @Override
+    public List<String> getAllListExport() {
+        return slrp.findAll().stream().map(s -> s.getId() + "-" + s.getSoleHeight() +" cm").collect(Collectors.toList());
     }
 
     @Override

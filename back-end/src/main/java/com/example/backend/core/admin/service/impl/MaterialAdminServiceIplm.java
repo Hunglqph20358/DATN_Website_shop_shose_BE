@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MaterialAdminServiceIplm implements MaterialAdminService {
@@ -30,6 +31,11 @@ public class MaterialAdminServiceIplm implements MaterialAdminService {
     public List<MaterialAdminDTO> getAll() {
         List<MaterialAdminDTO> list =  materialAdminMapper.toDto(this.mtrp.findAll());
         return list;
+    }
+
+    @Override
+    public List<String> getAllListExport() {
+        return mtrp.findAll().stream().map(m -> m.getId() + "-" + m.getName()).collect(Collectors.toList());
     }
 
     @Override

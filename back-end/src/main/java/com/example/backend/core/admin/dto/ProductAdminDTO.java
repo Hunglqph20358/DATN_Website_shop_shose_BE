@@ -1,5 +1,6 @@
 package com.example.backend.core.admin.dto;
 
+import com.example.backend.core.commons.ExportDTO;
 import com.example.backend.core.view.dto.*;
 import jakarta.persistence.Column;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class ProductAdminDTO {
+public class ProductAdminDTO extends ExportDTO {
 
     private Long id;
     private String code;
@@ -38,4 +39,10 @@ public class ProductAdminDTO {
     private MaterialAdminDTO materialAdminDTO;
     private SoleAdminDTO soleAdminDTO;
     private ProductDetailAdminDTO productDetailAdminDTO;
+    private String brandName;
+    private String categoryName;
+    private String materialName;
+    private String soleHeight;
+
+    private String imageNameImport;
 }

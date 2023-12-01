@@ -13,8 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BrandAdminServiceIplm implements BrandAdminService {
@@ -29,6 +31,15 @@ public class BrandAdminServiceIplm implements BrandAdminService {
     public List<BrandAdminDTO> getAll() {
         List<BrandAdminDTO> list = brandAdminMapper.toDto(this.brrp.findAll());
         return list;
+    }
+
+    @Override
+    public List<String> getAllBrandExport() {
+        List<String> lstStr = brrp.findAll()
+                .stream()
+                .map(b -> b.getId() + "-" + b.getName())
+                .collect(Collectors.toList());
+        return lstStr;
     }
 
     @Override
