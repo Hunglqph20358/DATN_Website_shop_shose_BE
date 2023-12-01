@@ -14,8 +14,9 @@ public class AddressDTO {
     private Long id;
     private Long idCustomer;
     private Instant createDate;
+    private Integer provinceId;
     private String province;
-    private String districtId;
+    private Integer districtId;
     private String district;
     private String wardCode;
     private String wards;

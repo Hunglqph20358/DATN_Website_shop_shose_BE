@@ -81,7 +81,6 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Dòng này có thể được lặp lại cho từng sản phẩm trong đơn hàng -->
         <tr th:each="c,iterStat  : ${orderDetail}">
           <td th:text="${iterStat.index + 1}"></td>
           <td>
@@ -95,14 +94,13 @@
             <div style="height: 30px"><span style="font-weight: bold">Size: </span> [[${c.productDetailDTO.sizeDTO.sizeNumber}]]</div>
           </td>
           <td th:text="${c.quantity}"></td>
-          <td>[[${c.price, 0}]] đ</td>
-          <!-- Thêm cột mới cho tổng tiền -->
-          <td >1000000 đ</td>
+          <td>[[${#numbers.formatDecimal(c.price, 0, 'COMMA', 2, 'POINT')}]] đ</td>
+          <td >[[${#numbers.formatDecimal(c.price * c.quantity, 0, 'COMMA', 2, 'POINT')}]] đ</td>
         </tr>
         </tbody>
       </table>
 
-      <p>Tổng số tiền: [[${order.totalPrice}]] đ</p>
+      <p>Tổng số tiền: [[${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
       <p>Phương thức thanh toán: [Phương Thức Thanh Toán]</p>
       <!-- Thêm thông tin khác nếu cần -->
       <p>

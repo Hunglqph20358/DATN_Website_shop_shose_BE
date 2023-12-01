@@ -17,4 +17,6 @@ public interface ProductAdminRepository extends JpaRepository<Product,Long> {
 //    List<Product> getall();
 
     List<Product> findByNameLikeOrCodeLike(String param, String params);
+
+    Product findByCode(String code);
 }
