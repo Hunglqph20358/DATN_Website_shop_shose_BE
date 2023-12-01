@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface SoleAdminService {
     List<SoleAdminDTO> getAll();
+    List<String> getAllListExport();
     ServiceResult<SoleAdminDTO> add(SoleAdminDTO soleAdminDTO);
     ServiceResult<SoleAdminDTO> update(SoleAdminDTO soleAdminDTO,Long id);
     ServiceResult<SoleAdminDTO> delete(Long id);

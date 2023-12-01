@@ -8,6 +8,34 @@ public class AppConstant {
         public static final Integer DANG_GIAO_HANG = 2;
         public static final Integer HOAN_THANH = 3;
         public static final Integer HOAN_HUY = 4;
+        public static final Integer CHUA_THANH_TOAN = 1;
+        public static final Integer DA_THANH_TOAN = 0;
+        public static final Integer BO_LO_LAN1 = 1;
+        public static final Integer BO_LO_LAN2 = 2;
+        public static final Integer BO_LO_LAN3 = 3;
+        public static final String ALIGN_LEFT = "LEFT";
+        public static final String ALIGN_RIGHT = "RIGHT";
+        public static final String STRING = "STRING";
+        public static final String NUMBER = "NUMBER";
+        public static final String LIST = "LIST";
+        public static final String DOUBLE = "DOUBLE";
+        public static final String ERRORS = "ERRORS";
+        public static final String CENTER = "CENTER";
+        public static final String NO = "NO";
+        public static final String NEXT_LINE = "\n";
+        public static final String CHAR_STAR = "*";
+        public static final Long EXPORT_TEMPLATE = 0l;
+        public static final Long EXPORT_DATA = 1l;
+        public static final Long EXPORT_ERRORS = 2l;
+        public static final String DOT = ".";
+        public static final String YYYYMMDDHHSS = "yyyyMMddHHss";
+        public static final String EXTENSION_XLSX = "xlsx";
+        public static final String EXTENSION_XLS = "xls";
+        public static final String COMMA_DELIMITER = ",";
+        public static final String MIME_TYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8";
+        public static final String ENCODING_UTF8 = "UTF-8";
+        public static final Long IMPORT_INSERT = 0l;
+        public static final Long IMPORT_UPDATE = 1l;
 
 
 
@@ -40,6 +68,10 @@ public class AppConstant {
                 "/api/admin/progressing-order",
                 "/api/admin/complete-order",
                 "/api/admin/ship-order",
+                "/api/admin/missed-order",
+                "/api/admin/product/export-data",
+                "/api/admin/product/export-data-template",
+                "/api/admin/product/exportDataErrors",
 
         };
         public static final String[] API_STAFF = {
@@ -60,6 +92,8 @@ public class AppConstant {
                 "/view/api/get-all-address",
                 "/view/api/create-address",
                 "/view/api/create-address",
+                "/view/api/update-address/config",
+                "/view/api/detail-address/*",
                 "/view/api/get-address",
                 "/view/api/get-all-voucher",
                 "/view/api/get-voucher",
@@ -68,5 +102,6 @@ public class AppConstant {
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
+                "/view/api/cancel-order-view",
         };
 }

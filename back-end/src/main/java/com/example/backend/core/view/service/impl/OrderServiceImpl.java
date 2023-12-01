@@ -1,5 +1,6 @@
 package com.example.backend.core.view.service.impl;
 
+import com.example.backend.core.admin.dto.OrderAdminDTO;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Address;
@@ -95,8 +96,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ServiceResult<OrderDTO> updateOrder(OrderDTO orderDTO) {
-        return null;
+    public ServiceResult<OrderDTO> cancelOrderView(OrderDTO orderDTO) {
+        ServiceResult<OrderDTO> result = new ServiceResult<>();
+        if(orderDTO.getId() == null) {
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        if(orderDTO.getIdCustomer() == null){
+            result.setData(null);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Error");
+            return result;
+        }
+        Order order = orderRepository.findById(orderDTO.getId()).orElse(null);
+        if(order != null){
+            order.setStatus(AppConstant.HOAN_HUY);
+            order = orderRepository.save(order);
+            result.setData(orderMapper.toDto(order));
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Success");
+        }
+        return result;
     }
 
     @Override
@@ -115,40 +137,27 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<OrderDTO> result = new ServiceResult<>();
         OrderDTO dto = new OrderDTO();
         Order order = new Order();
-//        Customer customer = new Customer();
-//        CustomerDTO customerDTO = customerMapper.toDto(customerRepository.findByCode(orderDTO.getCustomerDTO().getCode()));
-//        if( customerRepository.findByEmail(orderDTO.getEmail()) == null){
-//            customer.setFullname(orderDTO.getReceiver());
-//            customer.setPhone(orderDTO.getReceiverPhone());
-//            customer.setCreateDate(Instant.now());
-//            customer.setEmail(orderDTO.getEmail());
-//            customer.setCode("KH" + Instant.now().getEpochSecond());
-//            customer.setUsername(orderDTO.getEmail().substring(0,orderDTO.getEmail().indexOf("@")));
-//            customer.setPassword(passwordEncoder.encode("123456"));
-//            customer = customerRepository.save(customer);
-//            order.setIdCustomer(customer.getId());
-//        }else {
-//            order.setIdCustomer(customer.getId());
-//        }
+
         order.setCode("HD" + Instant.now().getEpochSecond());
         order.setCreateDate(Instant.now());
         order.setReceiver(orderDTO.getReceiver());
         order.setPaymentType(orderDTO.getPaymentType());
         order.setShipPrice(orderDTO.getShipPrice());
         order.setTotalPrice(orderDTO.getTotalPrice());
-        order.setTotalPayment(orderDTO.getTotalPayment());
+//        order.setTotalPayment(orderDTO.getTotalPayment());
         order.setReceiverPhone(orderDTO.getReceiverPhone());
-        order.setAddressReceived(order.getAddressReceived());
+        order.setAddressReceived(orderDTO.getAddressReceived());
         if (orderDTO.getPaymentType() == 1) {
             order.setPaymentType(orderDTO.getPaymentType());
             order.setTotalPayment(orderDTO.getTotalPayment());
-            order.setStatusPayment(0);
+            order.setStatusPayment(AppConstant.DA_THANH_TOAN);
+            order.setPaymentDate(Instant.now());
         } else {
             order.setPaymentType(orderDTO.getPaymentType());
             order.setTotalPayment(null);
-            order.setStatusPayment(1);
+            order.setStatusPayment(AppConstant.CHUA_THANH_TOAN);
         }
-        order = orderRepository.save(order);
+        order.setStatus(AppConstant.CHO_XAC_NHAN);
         if (StringUtils.isNotBlank(orderDTO.getCodeVoucher())) {
             Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
             if (null != voucher) {
@@ -156,6 +165,7 @@ public class OrderServiceImpl implements OrderService {
                 voucherRepository.save(voucher);
             }
         }
+        order = orderRepository.save(order);
         dto = orderMapper.toDto(order);
         result.setData(dto);
         result.setStatus(HttpStatus.OK);

@@ -1,5 +1,6 @@
 package com.example.backend.core.model;
 
+import com.example.backend.core.admin.dto.ProductAdminDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,4 +50,18 @@ public class Product implements Serializable {
     private Integer idel;
     @Column(name = "id_sole")
     private Long idSole;
+
+    public Product(ProductAdminDTO dto) {
+        this.id = dto.getId();
+        this.code = dto.getCode();
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.createDate = dto.getCreateDate();
+        this.idBrand = dto.getIdBrand();
+        this.idCategory = dto.getIdCategory();
+        this.idMaterial = dto.getIdMaterial();
+        this.idSole = dto.getIdSole();
+        this.price = dto.getPrice();
+        this.status = 0;
+    }
 }

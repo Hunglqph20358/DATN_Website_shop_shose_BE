@@ -1,17 +1,37 @@
 package com.example.backend.core.view.service.impl;
 
+import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Customer;
+import com.example.backend.core.view.dto.ColorDTO;
+import com.example.backend.core.view.dto.ImagesDTO;
 import com.example.backend.core.view.dto.OrderDTO;
 import com.example.backend.core.view.dto.OrderDetailDTO;
+import com.example.backend.core.view.dto.ProductDTO;
+import com.example.backend.core.view.dto.ProductDetailDTO;
+import com.example.backend.core.view.dto.SizeDTO;
+import com.example.backend.core.view.mapper.ColorMapper;
+import com.example.backend.core.view.mapper.ImagesMapper;
+import com.example.backend.core.view.mapper.OrderDetailMapper;
+import com.example.backend.core.view.mapper.ProductDetailMapper;
+import com.example.backend.core.view.mapper.ProductMapper;
+import com.example.backend.core.view.mapper.SizeMapper;
+import com.example.backend.core.view.repository.ColorRepository;
 import com.example.backend.core.view.repository.CustomerRepository;
+import com.example.backend.core.view.repository.ImagesRepository;
+import com.example.backend.core.view.repository.OrderDetailRepository;
+import com.example.backend.core.view.repository.ProductDetailRepository;
+import com.example.backend.core.view.repository.ProductRepository;
+import com.example.backend.core.view.repository.SizeRepository;
 import com.example.backend.core.view.service.EmailService;
 import com.example.backend.core.view.service.OrderDetailService;
 import jakarta.mail.MessagingException;
 
 
 import jakarta.mail.internet.MimeMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -38,6 +58,38 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+
+    @Autowired
+    private ProductDetailMapper productDetailMapper;
+
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
+    private ImagesRepository imagesRepository;
+    @Autowired
+    private ImagesMapper imagesMapper;
+
+    @Autowired
+    private ColorRepository colorRepository;
+    @Autowired
+    private ColorMapper colorMapper;
+
+    @Autowired
+    private SizeRepository sizeRepository;
+    @Autowired
+    private SizeMapper sizeMapper;
+
     public EmailServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
@@ -56,7 +108,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
     public void sendMessageUsingThymeleafTemplate(OrderDTO orderDTO) throws MessagingException {
         Context thymeleafContext = new Context();
 
@@ -71,15 +122,46 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
-    public void sendMailOrderNotLogin(OrderDTO orderDTO) throws MessagingException {
+    public ServiceResult<String> sendMailOrderNotLogin(OrderDTO orderDTO) throws MessagingException {
         Context thymeleafContext = new Context();
+        ServiceResult<String> result = new ServiceResult<>();
+        if(orderDTO.getId() == null || StringUtils.isBlank(orderDTO.getEmail())){
+            result.setMessage("Error");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setData("Lỗi send Email");
+            return result;
+        }
         String emailTo = orderDTO.getEmail();
         String subject =  " Thông tin đơn hàng";
-        List<OrderDetailDTO> list = orderDetailService.getAllByOrder(orderDTO.getId());
+        List<OrderDetailDTO> list = getAllByOrder(orderDTO.getId());
         thymeleafContext.setVariable("order", orderDTO);
         thymeleafContext.setVariable("orderDetail", list);
         String htmlBody = templateEngine.process("sendMailOrderNotLogin", thymeleafContext);
         sendHtmlEmail(emailTo, subject, htmlBody);
+        result.setMessage("Success");
+        result.setStatus(HttpStatus.OK);
+        result.setData("Send Mail Thành công!");
+        return result;
+    }
+
+    private List<OrderDetailDTO> getAllByOrder(Long idOrder) {
+        if(idOrder == null){
+            return null;
+        }
+        List<OrderDetailDTO> lst = orderDetailMapper.toDto(orderDetailRepository.findByIdOrder(idOrder));
+        for (int i = 0; i < lst.size() ; i++) {
+            ProductDetailDTO productDetailDTO = productDetailMapper.toDto(productDetailRepository.findById(lst.get(i).getIdProductDetail()).get());
+            ProductDTO productDTO = productMapper.toDto(productRepository.findById(productDetailDTO.getIdProduct()).get());
+            List<ImagesDTO> imagesDTOList = imagesMapper.toDto(imagesRepository.findByIdProduct(productDTO.getId()));
+            ColorDTO colorDTO = colorMapper.toDto(colorRepository.findById(productDetailDTO.getIdColor()).get());
+            productDetailDTO.setColorDTO(colorDTO);
+            SizeDTO sizeDTO = sizeMapper.toDto(sizeRepository.findById(productDetailDTO.getIdSize()).get());
+            productDetailDTO.setSizeDTO(sizeDTO);
+            productDTO.setImagesDTOList(imagesDTOList);
+            productDetailDTO.setProductDTO(productDTO);
+            lst.get(i).setProductDetailDTO(productDetailDTO);
+            lst.set(i,lst.get(i));
+        }
+        return lst;
     }
 }

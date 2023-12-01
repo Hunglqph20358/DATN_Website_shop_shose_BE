@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BrandAdminService {
     List<BrandAdminDTO> getAll();
+    List<String> getAllBrandExport();
     ServiceResult<BrandAdminDTO> add(BrandAdminDTO brandAdminDTO);
     ServiceResult<BrandAdminDTO> update(BrandAdminDTO brandAdminDTO,Long id);
     ServiceResult<BrandAdminDTO> delete(Long id);
