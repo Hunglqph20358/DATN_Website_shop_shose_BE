@@ -10,6 +10,10 @@ import com.example.backend.core.view.dto.BrandDTO;
 import com.example.backend.core.view.dto.CategoryDTO;
 import com.example.backend.core.view.dto.MaterialDTO;
 import com.example.backend.core.view.dto.SoleDTO;
+import com.example.backend.core.view.mapper.ProductDetailMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +22,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductAdminServiceIplm  implements ProductAdminService {
+public class ProductAdminServiceIplm implements ProductAdminService {
     @Autowired
     private ProductAdminRepository prdrp;
     @Autowired
@@ -43,12 +48,23 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
     private SoleAdminRepository slrp;
     @Autowired
     private SoleAdminMapper soleAdminMapper;
+    @Autowired
+    private StaffRepository strp;
+    @Autowired
+    private StaffMapper staffMapper;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private ProductDetailAdminMapper productDetailMapper;
+    @Autowired
+    private ProductDetailAdminRepository productDetailAdminRepository;
+
 
     private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
     @Override
     public List<ProductAdminDTO> getAll() {
 
-        List<ProductAdminDTO>  list = productAdminMapper.toDto(prdrp.findAll());
+        List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findAll());
         for (int i = 0; i < list.size(); i++) {
           SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
           list.get(i).setSoleAdminDTO(soleAdminDTO);
@@ -58,6 +74,8 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
           list.get(i).setBrandAdminDTO(brandAdminDTO);
           CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
           list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+//          StaffDTO staffDTO = staffMapper.toDto(strp.findById(list.get(i).getStaffDTO().getId()).get());
+//            list.get(i).setStaffDTO(staffDTO);
         }
         return list;
     }
@@ -83,6 +101,8 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
         productAdminDTO.setMaterialAdminDTO(materialDTO);
         product.setCreateDate(Instant.now());
         product.setUpdateDate(Instant.now());
+        product.setPrice(productAdminDTO.getPrice());
+//        product.setCreateName(staffDTO.getFullname());
         this.prdrp.save(product);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
@@ -93,7 +113,7 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
     @Override
     public ServiceResult<ProductAdminDTO> update(ProductAdminDTO productAdminDTO, Long id) {
         Optional<Product> optional = this.prdrp.findById(id);
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             Product product = optional.get();
             product.setId(id);
             product.setCode(productAdminDTO.getCode());
@@ -106,12 +126,13 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
             product.setIdCategory(productAdminDTO.getIdCategory());
             product.setDescription(productAdminDTO.getDescription());
             product.setStatus(productAdminDTO.getStatus());
+            product.setPrice(productAdminDTO.getPrice());
             product =  this.prdrp.save(product);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
             result.setData(productAdminMapper.toDto(product));
 
-        }else {
+        } else {
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Id khong ton tai ");
             result.setData(null);
@@ -122,7 +143,7 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
     @Override
     public ServiceResult<ProductAdminDTO> delete(Long id) {
         Optional<Product> optional = this.prdrp.findById(id);
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             this.prdrp.deleteById(id);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Xoa thanh cong");
@@ -130,6 +151,65 @@ public class ProductAdminServiceIplm  implements ProductAdminService {
         }
         return result;
     }
+
+    @Override
+    public ServiceResult<ProductAdminDTO> getById(Long id) {
+        ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
+        Optional<Product> optional = this.prdrp.findById(id);
+
+        if (optional.isPresent()) {
+            Product product = optional.get();
+            ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Lấy thông tin thành công");
+            result.setData(productAdminDTO);
+        } else {
+            result.setStatus(HttpStatus.NOT_FOUND);
+            result.setMessage("Không tìm thấy sản phẩm");
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<ProductAdminDTO> getProduct(String code, String name) {
+        try {
+            String jpql = "SELECT NEW com.example.backend.core.admin.dto.ProductAdminDTO(p.id, p.code, p.name,p.price,pd.quantity) " +
+                    "FROM Product p, ProductDetail pd " +  // Sử dụng CROSS JOIN
+                    "WHERE p.name LIKE :productName AND p.code LIKE :productCode";
+
+
+            TypedQuery<ProductAdminDTO> query = entityManager.createQuery(jpql, ProductAdminDTO.class);
+            query.setParameter("productName", "%" + name + "%");
+            query.setParameter("productCode", "%" + code + "%");
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    @Override
+    public List<ProductAdminDTO> findByNameLikeOrCodeLike(String param) {
+        List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByNameLikeOrCodeLike("%" + param +"%", "%" + param +"%"));
+        for (int i = 0; i < list.size(); i++) {
+            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
+            list.get(i).setSoleAdminDTO(soleAdminDTO);
+            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
+            list.get(i).setMaterialAdminDTO(materialAdminDTO);
+            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
+            list.get(i).setBrandAdminDTO(brandAdminDTO);
+            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
+            list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+            ProductDetailAdminDTO productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findById(list.get(i).getId()).get());
+            list.get(i).setProductDetailAdminDTO(productDetailAdminDTO);
+        }
+
+        return list;
+    }
+
+
 }
 //        Instant instant = Instant.now();
 //        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh"); // Múi giờ Việt Nam

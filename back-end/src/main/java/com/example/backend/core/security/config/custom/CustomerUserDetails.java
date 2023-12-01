@@ -38,9 +38,10 @@ public class CustomerUserDetails implements UserDetails {
         this.gender = gender;
         this.birthday = birthday;
         this.phone = phone;
+        this.email = email;
         this.username = username;
         this.password = password;
-        this.email = email;
+        
     }
 
     @Override

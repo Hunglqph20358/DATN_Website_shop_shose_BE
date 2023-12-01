@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @AllArgsConstructor
@@ -38,6 +39,8 @@ public class Product implements Serializable {
     private Long idCategory;
     @Column(name = "id_material")
     private Long idMaterial;
+    @Column(name = "price")
+    private BigDecimal price;
     @Column(name = "description")
     private String description;
     @Column(name = "status")

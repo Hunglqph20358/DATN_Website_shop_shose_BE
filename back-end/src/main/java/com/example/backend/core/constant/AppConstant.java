@@ -1,7 +1,16 @@
 package com.example.backend.core.constant;
 
 public class AppConstant {
+
         public static final Integer PAGE_SIZE = 10;
+        public static final Integer CHO_XAC_NHAN = 0;
+        public static final Integer CHO_XU_LY = 1;
+        public static final Integer DANG_GIAO_HANG = 2;
+        public static final Integer HOAN_THANH = 3;
+        public static final Integer HOAN_HUY = 4;
+
+
+
         public static final  String[] API_ADMIN = {
                 "/api/admin/home",
                 "/api/admin/discount",
@@ -28,6 +37,9 @@ public class AppConstant {
                 "/api/admin/get-all-order",
                 "/api/admin/get-order-detail/by-order/*",
                 "/api/admin/cancel-order",
+                "/api/admin/progressing-order",
+                "/api/admin/complete-order",
+                "/api/admin/ship-order",
                 "/api/admin/upload"
 
         };
@@ -54,6 +66,8 @@ public class AppConstant {
                 "/view/api/get-voucher",
                 "/view/api/create-order-detail",
                 "/view/api/get-order-detail/by-order/*",
-                "/view/api/create-order/buy-now",
+                "/view/api/create-order/not-login",
+                "/view/api/send-email-completeOrder",
+                "/view/api/send-email-completeOrder/not-login",
         };
 }
