@@ -1,6 +1,7 @@
 package com.example.backend.core.salesCounter.service.impl;
 
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.Voucher;
 import com.example.backend.core.salesCounter.dto.CustomerSCDTO;
@@ -37,20 +38,33 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     @Override
     public ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO) {
         ServiceResult<OrderSalesDTO> result = new ServiceResult<>();
-        OrderSalesDTO salesDTO = new OrderSalesDTO();
         Order order = new Order();
-//        CustomerSCDTO customerSCDTO = customerSCMapper.toDto(customerSCRepository.findByPhone(salesDTO.getCustomerDTO().getPhone()));
-//        if(customerSCDTO != null){
+        if (orderSalesDTO.getIdCustomer() == null){
             order.setCode("HD" + Instant.now().getEpochSecond());
             order.setCreateDate(Instant.now());
-            order.setReceiver(salesDTO.getReceiver());
-//            order.setIdCustomer(customerSCDTO.getId());
-//            order.setIdStaff();
             order.setPaymentType(orderSalesDTO.getPaymentType());
             order.setTotalPrice(orderSalesDTO.getTotalPrice());
             order.setTotalPayment(orderSalesDTO.getTotalPayment());
-            order.setStatus(0);
+            order.setStatus(AppConstant.HOAN_THANH);
             order = orderSalesCountRepository.save(order);
+            orderSalesDTO = orderSalesCounterMapper.toDto(order);
+            result.setData(orderSalesDTO);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Success");
+        }
+        else {
+            CustomerSCDTO customerSCDTO = customerSCMapper.toDto(customerSCRepository.findByPhone(orderSalesDTO.getCustomerDTO().getPhone()));
+            if(customerSCDTO != null){
+                order.setCode("HD" + Instant.now().getEpochSecond());
+                order.setCreateDate(Instant.now());
+                order.setReceiver(orderSalesDTO.getReceiver());
+                order.setIdCustomer(orderSalesDTO.getIdCustomer());
+                order.setIdStaff(orderSalesDTO.getIdStaff());
+                order.setPaymentType(orderSalesDTO.getPaymentType());
+                order.setTotalPrice(orderSalesDTO.getTotalPrice());
+                order.setTotalPayment(orderSalesDTO.getTotalPayment());
+                order.setStatus(0);
+                order = orderSalesCountRepository.save(order);
 //            if(StringUtils.isNotBlank(salesDTO.getCodeVoucher())){
 //                Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
 //                if(null != voucher){
@@ -58,11 +72,12 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
 //                    voucherRepository.save(voucher);
 //                }
 //            }
-            salesDTO = orderSalesCounterMapper.toDto(order);
-            result.setData(salesDTO);
-            result.setStatus(HttpStatus.OK);
-            result.setMessage("Success");
-//        }
+                orderSalesDTO = orderSalesCounterMapper.toDto(order);
+                result.setData(orderSalesDTO);
+                result.setStatus(HttpStatus.OK);
+                result.setMessage("Success");
+            }
+        }
 
         return result;
     }

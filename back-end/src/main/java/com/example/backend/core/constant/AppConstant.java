@@ -37,10 +37,14 @@ public class AppConstant {
                 "/api/admin/get-all-order",
                 "/api/admin/get-order-detail/by-order/*",
                 "/api/admin/cancel-order",
+                "api/admin/product/search/*",
+                "/sales-counter/api/create-order",
+                "/sales-counter/api/create-order-detail",
                 "/api/admin/progressing-order",
                 "/api/admin/complete-order",
                 "/api/admin/ship-order",
-
+                "/sales-customer/findByPhone/*",
+                "/sales-customer/add-customer",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -68,5 +72,6 @@ public class AppConstant {
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
+                "/view/api/update-infor/*"
         };
 }
