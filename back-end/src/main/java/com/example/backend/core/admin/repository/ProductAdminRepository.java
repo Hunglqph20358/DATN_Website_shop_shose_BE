@@ -1,5 +1,6 @@
 package com.example.backend.core.admin.repository;
 
+import com.example.backend.core.admin.dto.ProductAdminDTO;
 import com.example.backend.core.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,8 @@ public interface ProductAdminRepository extends JpaRepository<Product,Long> {
 //    List<Product> getall();
 //@Query("SELECT prd.id,prd.code,prd.name,prd.createDate,prd.updateDate,prd.createName,prd.updateName,prd.idBrand,prd.idCategory,prd.idMaterial,prd.description,prd.status,prd.idel,prd.idSole FROM Product prd JOIN prd.idBrand br JOIN prd.idCategory ct JOIN prd.idMaterial mt JOIN prd.idSole sl")
 //    List<Product> getall();
+
+    List<Product> findByNameLikeOrCodeLike(String param, String params);
+
+    Product findByCode(String code);
 }

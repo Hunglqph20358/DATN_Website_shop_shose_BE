@@ -37,4 +37,8 @@ public class OrderAdminController {
     public ResponseEntity<?> shipOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
         return ResponseEntity.ok(orderAdminService.giaoHangDonHang(orderAdminDTO));
     }
+    @PostMapping("/missed-order")
+    public ResponseEntity<?> missedOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(orderAdminService.boLoDonHang(orderAdminDTO));
+    }
 }

@@ -25,10 +25,12 @@ public class Address implements Serializable {
     private Long idCustomer;
     @Column(name = "create_date")
     private Instant createDate;
+    @Column(name = "province_id")
+    private Integer provinceId;
     @Column(name = "province")
     private String province;
     @Column(name = "district_id")
-    private String districtId;
+    private Integer districtId;
     @Column(name = "district")
     private String district;
     @Column(name = "ward_code")

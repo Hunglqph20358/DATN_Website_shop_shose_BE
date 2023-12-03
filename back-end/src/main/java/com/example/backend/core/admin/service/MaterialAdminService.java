@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface MaterialAdminService {
     List<MaterialAdminDTO> getAll();
+    List<String> getAllListExport();
     ServiceResult<MaterialAdminDTO> add(MaterialAdminDTO materialAdminDTO);
     ServiceResult<MaterialAdminDTO> update(MaterialAdminDTO materialAdminDTO,Long id);
     ServiceResult<MaterialAdminDTO> delete(Long id);
