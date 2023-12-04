@@ -6,10 +6,12 @@ import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.OrderAdminMapper;
 import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.OrderAdminRepository;
+import com.example.backend.core.admin.repository.OrderHistoryAdminRepository;
 import com.example.backend.core.admin.service.OrderAdminService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderHistory;
 import com.example.backend.core.view.dto.CustomerDTO;
 import com.example.backend.core.view.mapper.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class OrderAdminServiceImpl implements OrderAdminService {
     private CustomerAdminRepository customerAdminRepository;
     @Autowired
     private CustomerAdminMapper customerAdminMapper;
+    @Autowired
+    private OrderHistoryAdminRepository orderHistoryAdminRepository;
+
 
     @Override
     public List<OrderAdminDTO> getAllOrderAdmin(Integer status) {
@@ -83,6 +88,14 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         order.setStatus(AppConstant.CHO_XU_LY);
         order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
+        if(order != null){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.CHO_XU_LY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
         result.setData(orderAdminMapper.toDto(order));
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
@@ -134,8 +147,16 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         order.setDeliveryDate(Instant.now());
         order.setMissedOrder(0);
         order.setStatus(AppConstant.DANG_GIAO_HANG);
-        order.setIdStaff(orderAdminDTO.getIdStaff());
+//        order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
+        if(order != null){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.DANG_GIAO_HANG);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
         result.setData(orderAdminMapper.toDto(order));
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
@@ -160,8 +181,16 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
         order.setReceivedDate(Instant.now());
         order.setStatus(AppConstant.HOAN_THANH);
-        order.setIdStaff(orderAdminDTO.getIdStaff());
+//        order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
+        if(order != null){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.HOAN_THANH);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
         result.setData(orderAdminMapper.toDto(order));
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
