@@ -36,7 +36,7 @@ public class VoucherFreeShipDTO {
     private Integer allow;
     private Integer optionCustomer;
     private Integer useVoucher;
-
+    private Integer  delete;
     private CustomerAdminDTO customerAdminDTO;
     private List<CustomerAdminDTO> customerAdminDTOList;
 

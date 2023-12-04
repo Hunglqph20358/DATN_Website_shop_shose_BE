@@ -1,8 +1,6 @@
 package com.example.backend.core.admin.service.impl;
 
-import com.example.backend.core.admin.dto.DiscountAdminDTO;
-import com.example.backend.core.admin.dto.DiscountDetailAdminDTO;
-import com.example.backend.core.admin.dto.ProductAdminDTO;
+import com.example.backend.core.admin.dto.*;
 import com.example.backend.core.admin.mapper.DiscountAdminMapper;
 import com.example.backend.core.admin.mapper.DiscountDetailAdminMapper;
 import com.example.backend.core.admin.mapper.ProductAdminMapper;
@@ -533,6 +531,7 @@ public List<DiscountAdminDTO> getAllByCodeOrName(String search) {
         return discountAdminDTO;
     }
 
+
     public List<ProductAdminDTO> getAllProduct() {
         try {
             String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold , p.price   \n" +
@@ -554,14 +553,14 @@ public List<DiscountAdminDTO> getAllByCodeOrName(String search) {
                 product.setCode((String) row[1]);
                 product.setName((String) row[2]);
                 product.setPrice(new BigDecimal(row[6].toString()));
-                BrandDTO brand = new BrandDTO();
+                BrandAdminDTO brand = new BrandAdminDTO();
                 brand.setName((String) row[3]);
-                product.setBrandDTO(brand);
+                product.setBrandAdminDTO(brand);
 
-                CategoryDTO category = new CategoryDTO();
+                CategoryAdminDTO category = new CategoryAdminDTO();
                 category.setName((String) row[4]);
-                product.setCategoryDTO(category);
-                product.setTotalSold(new BigDecimal(((Number) row[5]).doubleValue()));
+                product.setCategoryAdminDTO(category);
+                product.setTotalQuantity((((Number) row[5]).intValue()));
 
                 productDTOList.add(product);
             }

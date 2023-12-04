@@ -25,7 +25,8 @@ public class DiscountAdminDTO {
     private Integer idel;
     private Integer quantity;
     private Integer apply;
-    private int  used_count;
+    private Integer  used_count;
+    private Integer  delete;
 
     private List<ProductAdminDTO> productDTOList;
     private BigDecimal reducedValue;

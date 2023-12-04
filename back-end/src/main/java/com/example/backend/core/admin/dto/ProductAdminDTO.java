@@ -1,4 +1,6 @@
 package com.example.backend.core.admin.dto;
+import com.example.backend.core.commons.ExportDTO;
+import com.example.backend.core.view.dto.ProductDetailDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,11 +56,11 @@ public class ProductAdminDTO extends ExportDTO {
         this.totalQuantity= totalQuantity;
     }
 
-//    public List<ProductDetailDTO> getProductDetailDTOList() {
-//        return productDetailDTOList;
-//    }
-//
-//    public void setProductDetailDTOList(List<ProductDetailDTO> productDetailDTOList) {
-//        this.productDetailDTOList = productDetailDTOList;
-//    }
+    public List<ProductDetailAdminDTO> getProductDetailDTOList() {
+        return productDetailDTOList;
+    }
+
+    public void setProductDetailDTOList(List<ProductDetailAdminDTO> productDetailDTOList) {
+        this.productDetailDTOList = productDetailDTOList;
+    }
 }

@@ -38,6 +38,7 @@ public class VoucherAdminDTO {
     private Integer optionCustomer;
     private Integer apply;
     private Integer useVoucher;
+    private Integer  delete;
     private CustomerAdminDTO customerAdminDTO;
     private List<CustomerAdminDTO> customerAdminDTOList;
 

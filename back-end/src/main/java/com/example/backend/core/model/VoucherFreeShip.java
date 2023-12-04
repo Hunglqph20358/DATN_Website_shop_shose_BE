@@ -59,6 +59,8 @@ public class VoucherFreeShip {
 
     @Column(name = "quantity")
     private Integer quantity;
+    @Column(name = "delete")
+    private Integer delete;
 
     @Column(name = "limit_customer")
     private Integer limitCustomer;
