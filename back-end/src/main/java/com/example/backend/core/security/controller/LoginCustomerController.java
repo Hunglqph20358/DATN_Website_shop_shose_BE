@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,22 +65,25 @@ public class LoginCustomerController {
     @PostMapping("/sign-in")
     public ResponseEntity<?> loginCus(@Valid @RequestBody SignInRequet signInRequet, HttpServletRequest request){
         String uri = request.getRequestURI();
-        if(uri.contains("view")){
+        if (uri.contains("view")){
             UserDetails userDetails = customerUserDetalsService.loadUserByUsername(signInRequet.getUsername());
             if(userDetails != null){
-                // Neu nguoi dung hop le set thong tin cho security context
-                UsernamePasswordAuthenticationToken authentication
-                        = new UsernamePasswordAuthenticationToken(userDetails, signInRequet.getPassword(), userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                CustomerUserDetails customerUserDetails = (CustomerUserDetails) authentication.getPrincipal();
-                String token = jwtTokenProvider.generateTokenCustomer(customerUserDetails);
-                UsersDTO usersDTO = new UsersDTO();
-                return ResponseEntity.ok(new JwtResponse(token, usersDTO.toCustomerDTO(customerUserDetails)));
+                if (passwordEncoder.matches(signInRequet.getPassword(), userDetails.getPassword())) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    CustomerUserDetails customerUserDetails = (CustomerUserDetails) authentication.getPrincipal();
+                    String token = jwtTokenProvider.generateTokenCustomer(customerUserDetails);
+                    UsersDTO usersDTO = new UsersDTO();
+                    return ResponseEntity.ok(new JwtResponse(token, usersDTO.toCustomerDTO(customerUserDetails)));
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
             }
+            return ResponseEntity.ok(new MessageResponse("thành công"));
         }else{
             return ResponseEntity.ok(new MessageResponse("Bạn không có quyền truy cập"));
         }
-        return ResponseEntity.ok(HttpStatus.OK);
+
     }
 }

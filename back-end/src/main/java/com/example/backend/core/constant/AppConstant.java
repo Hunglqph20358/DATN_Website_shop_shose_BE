@@ -72,6 +72,7 @@ public class AppConstant {
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
-                "/view/api/update-infor/*"
+                "/view/api/update-infor/*",
+                "/view/api/changePass/*",
         };
 }

@@ -52,7 +52,7 @@ public class JwtAuthenticationFillter extends OncePerRequestFilter {
                 String userName = jwtTokenProvider.getUserNameFromJwt(jwt);
                 //lay thong tin nguoi dung tu userName
                 String uri = request.getRequestURI();
-                if (uri.contains("customer")){
+                if (uri.contains("view")){
                     UserDetails userDetails = customerUserDetailService.loadUserByUsername(userName);
                     if(userDetails != null){
                         // Neu nguoi dung hop le set thong tin cho security context
