@@ -14,7 +14,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     @Query(value = "SELECT v.*\n" +
             "FROM Voucher v\n" +
-            "WHERE v.end_date > NOW() AND v.quantity > 0\n" +
+            "WHERE v.start_date <= NOW() AND v.end_date >= NOW() AND v.quantity > 0 \n" +
             "ORDER BY v.end_date ASC" , nativeQuery = true)
     List<Voucher> getAllVoucher();
 

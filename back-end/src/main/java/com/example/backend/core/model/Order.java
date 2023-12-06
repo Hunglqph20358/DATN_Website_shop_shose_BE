@@ -58,6 +58,8 @@ public class Order implements Serializable {
     private String description;
     @Column(name = "status")
     private Integer status;
+    @Column(name = "missed_order")
+    private Integer missedOrder;
     @Column(name = "status_payment")
     private Integer statusPayment;
 }

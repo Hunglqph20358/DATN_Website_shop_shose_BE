@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryAdminServiceIplm implements CategoryAdminService {
@@ -31,6 +32,11 @@ public class CategoryAdminServiceIplm implements CategoryAdminService {
     public List<CategoryAdminDTO> getAll() {
         List<CategoryAdminDTO> list = categoryAdminMapper.toDto(this.ctrp.findAll());
         return list;
+    }
+
+    @Override
+    public List<String> getAllListExport() {
+        return ctrp.findAll().stream().map(c -> c.getId() + "-" + c.getName()).collect(Collectors.toList());
     }
 
     @Override

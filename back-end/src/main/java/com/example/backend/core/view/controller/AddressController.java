@@ -28,4 +28,13 @@ public class AddressController {
     public ResponseEntity<?> saveAddress(@RequestBody AddressDTO addressDTO){
         return ResponseEntity.ok(addressService.save(addressDTO));
     }
+
+    @PostMapping("/update-address/config")
+    public ResponseEntity<?> udpateAddressConfig(@RequestBody AddressDTO addressDTO){
+        return ResponseEntity.ok(addressService.updateConfig(addressDTO));
+    }
+    @GetMapping("/detail-address/{idAddress}")
+    public ResponseEntity<?> detailAddress(@PathVariable(name = "idAddress") Long idAddress){
+        return ResponseEntity.ok(addressService.detailAddressConfig(idAddress));
+    }
 }

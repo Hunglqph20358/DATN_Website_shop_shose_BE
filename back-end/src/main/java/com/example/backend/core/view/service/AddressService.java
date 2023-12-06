@@ -13,4 +13,8 @@ public interface AddressService {
     ServiceResult<AddressDTO> getAddress(AddressDTO addressDTO);
 
     ServiceResult<AddressDTO> save(AddressDTO addressDTO);
+
+    ServiceResult<AddressDTO> updateConfig(AddressDTO addressDTO);
+
+    ServiceResult<AddressDTO> detailAddressConfig(Long id);
 }

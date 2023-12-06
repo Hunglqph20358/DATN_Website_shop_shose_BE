@@ -1,7 +1,6 @@
 package com.example.backend.core.view.controller;
 
 
-import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.view.dto.OrderDTO;
 import com.example.backend.core.view.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,10 @@ public class OrderController {
     @PostMapping("/create-order/not-login")
     public ResponseEntity<?> createOrderBuyNow(@RequestBody OrderDTO orderDTO){
         return ResponseEntity.ok(orderService.createOrderNotLogin(orderDTO));
+    }
+    @PostMapping("/cancel-order-view")
+    public ResponseEntity<?> cancelOrderView(@RequestBody OrderDTO orderDTO){
+        return ResponseEntity.ok(orderService.cancelOrderView(orderDTO));
     }
 
     @PostMapping("/get-all-order")
