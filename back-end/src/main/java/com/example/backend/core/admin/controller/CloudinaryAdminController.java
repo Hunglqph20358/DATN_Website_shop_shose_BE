@@ -25,10 +25,10 @@ public class CloudinaryAdminController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @GetMapping("/list")
-    public ResponseEntity<List<Images>> List(){
-        return ResponseEntity.ok(imsv.list());
-    }
+//    @GetMapping("/list")
+//    public ResponseEntity<List<Images>> List(){
+//        return ResponseEntity.ok(imsv.list());
+//    }
 
     @PostMapping("/upload")
     @ResponseBody
