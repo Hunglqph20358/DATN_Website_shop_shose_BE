@@ -35,4 +35,7 @@ public class OrderDTO {
     private Integer missedOrder;
     private CustomerDTO customerDTO;
     private String email;
+    private Integer statusPayment;
+    private String dateFrom;
+    private String dateTo;
 }

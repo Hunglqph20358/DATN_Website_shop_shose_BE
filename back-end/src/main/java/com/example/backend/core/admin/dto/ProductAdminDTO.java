@@ -45,4 +45,5 @@ public class ProductAdminDTO extends ExportDTO {
     private String soleHeight;
 
     private String imageNameImport;
+    private Integer totalBestSeller;
 }
