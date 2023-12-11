@@ -15,9 +15,9 @@ public class OrderAdminController {
     @Autowired
     private OrderAdminService orderAdminService;
 
-    @GetMapping("/get-all-order")
-    public ResponseEntity<?> getAllOrderAdmin(@RequestParam(name = "status", required = false, defaultValue = "") Integer status){
-        return ResponseEntity.ok(orderAdminService.getAllOrderAdmin(status));
+    @PostMapping("/get-all-order")
+    public ResponseEntity<?> getAllOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(orderAdminService.getAllOrderAdmin(orderAdminDTO));
     }
 
     @PostMapping("/cancel-order")

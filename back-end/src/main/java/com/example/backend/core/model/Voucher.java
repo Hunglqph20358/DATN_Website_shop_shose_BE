@@ -49,4 +49,15 @@ public class Voucher {
     private BigDecimal reducedValue;
     @Column(name = "quantity")
     private int quantity;
+    @Column(name = "apply")
+    private Integer apply;
+    @Column(name = "option_customer")
+    private Integer optionCustomer;
+    @Column(name = "max_reduced")
+    private BigDecimal maxReduced;
+    @Column(name = "limit_customer")
+    private Integer limitCustomer;
+    @Column(name = "allow")
+    private Integer allow;
+
 }

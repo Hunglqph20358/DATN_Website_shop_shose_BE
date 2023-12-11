@@ -5,6 +5,7 @@ import com.example.backend.core.admin.dto.OrderAdminDTO;
 import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.OrderAdminMapper;
 import com.example.backend.core.admin.repository.CustomerAdminRepository;
+import com.example.backend.core.admin.repository.OrderAdminCustomerRepository;
 import com.example.backend.core.admin.repository.OrderAdminRepository;
 import com.example.backend.core.admin.repository.OrderHistoryAdminRepository;
 import com.example.backend.core.admin.service.OrderAdminService;
@@ -38,13 +39,13 @@ public class OrderAdminServiceImpl implements OrderAdminService {
     @Autowired
     private OrderHistoryAdminRepository orderHistoryAdminRepository;
 
+    @Autowired
+    private OrderAdminCustomerRepository orderAdminCustomerRepository;
 
     @Override
-    public List<OrderAdminDTO> getAllOrderAdmin(Integer status) {
-        if(status != null && status != 6){
-            return orderAdminMapper.toDto(
-                    orderAdminRepository.findByStatusOrderByCreateDateDesc(status)
-            ).stream().map(c -> {
+    public List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO) {
+        List<OrderAdminDTO> lst = orderAdminCustomerRepository.getAllOrderAdmin(orderAdminDTO);
+            return lst.stream().map(c -> {
                 if (c.getIdCustomer() != null) {
                     CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
                             customerAdminRepository.findById(c.getIdCustomer())
@@ -54,18 +55,6 @@ public class OrderAdminServiceImpl implements OrderAdminService {
                 }
                 return c;
             }).collect(Collectors.toList());
-
-        }
-        return orderAdminMapper.toDto(orderAdminRepository.getAllByOrderByCreateDateDesc()).stream().map(c -> {
-            if (c.getIdCustomer() != null) {
-                CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(
-                        customerAdminRepository.findById(c.getIdCustomer())
-                                .orElse(null)
-                );
-                c.setCustomerAdminDTO(customerAdminDTO);
-            }
-            return c;
-        }).collect(Collectors.toList());
     }
 
 

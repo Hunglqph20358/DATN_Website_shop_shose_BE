@@ -16,6 +16,7 @@ import com.example.backend.core.view.mapper.CustomerMapper;
 import com.example.backend.core.view.mapper.OrderMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
 import com.example.backend.core.view.repository.CustomerRepository;
+import com.example.backend.core.view.repository.OrderCustomRepository;
 import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
 import com.example.backend.core.view.repository.VoucherRepository;
@@ -50,6 +51,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private OrderCustomRepository orderCustomRepository;
 
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -126,10 +129,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderDTO.getIdCustomer() == null) {
             return null;
         }
-        if (null != orderDTO.getStatus() && orderDTO.getStatus() != 6) {
-            return orderMapper.toDto(orderRepository.findByIdCustomerAndStatusOrderByCreateDateDesc(orderDTO.getIdCustomer(), orderDTO.getStatus()));
-        }
-        return orderMapper.toDto(orderRepository.findByIdCustomerOrderByCreateDateDesc(orderDTO.getIdCustomer()));
+        return orderCustomRepository.getAllOrderByCustomerSearch(orderDTO);
     }
 
     @Override

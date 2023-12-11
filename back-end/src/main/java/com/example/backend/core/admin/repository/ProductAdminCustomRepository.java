@@ -8,4 +8,6 @@ import java.util.List;
 public interface ProductAdminCustomRepository {
 
     List<ProductAdminDTO> getAllProductExport();
+
+    List<ProductAdminDTO> topProductBestSeller();
 }

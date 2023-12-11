@@ -35,4 +35,6 @@ public class OrderAdminDTO {
     private Integer missedOrder;
     private Integer statusPayment;
     private CustomerAdminDTO customerAdminDTO;
+    private String dateFrom;
+    private String dateTo;
 }
