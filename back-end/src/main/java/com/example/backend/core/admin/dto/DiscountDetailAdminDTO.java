@@ -16,8 +16,8 @@ import java.util.List;
 @Setter
 public class DiscountDetailAdminDTO {
     private Long id;
-    private String idProduct;
-    private String idDiscount;
+    private Long idProduct;
+    private Long idDiscount;
     private BigDecimal reducedValue;
     private Integer discountType;
     private BigDecimal maxReduced;

@@ -24,7 +24,6 @@ public class DiscountAdminDTO {
     private Integer status;
     private Integer idel;
     private Integer quantity;
-    private Integer apply;
     private Integer  used_count;
     private Integer  delete;
 

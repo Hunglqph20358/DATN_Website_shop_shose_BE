@@ -14,8 +14,7 @@ public interface DiscountDetailAdminService {
     List<DiscountAdminDTO> getAllDiscount();
     List<DiscountAdminDTO> getAll();
     ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO khuyenMaiDTO);
-    ServiceResult<DiscountDetailAdminDTO> updateDiscount (Long discountDetailId, DiscountDetailAdminDTO updatedDiscountDetailAdminDTO);
-    ServiceResult<Void> KichHoat(Long idDiscount);
+    ServiceResult<DiscountDetailAdminDTO> updateDiscount( DiscountDetailAdminDTO discountDetailAdminDTO);    ServiceResult<Void> KichHoat(Long idDiscount);
     List<ProductAdminDTO> getAllProduct();
     DiscountAdminDTO getDetailDiscount(Long id);
     List<ProductAdminDTO> getProduct(String code, String name);
@@ -23,4 +22,8 @@ public interface DiscountDetailAdminService {
      List<DiscountAdminDTO> getAllKhongKichHoat();
     List<DiscountAdminDTO> getAllByDateRange(Date fromDate, Date toDate);
     List<DiscountAdminDTO> getAllByCodeOrName(String search);
+    List<DiscountAdminDTO> getAllByCategory(String category);
+    List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);
+    List<DiscountAdminDTO> getAllByBrand(String brand);
+    ServiceResult<Void> deleteDiscount(Long discountId);
 }

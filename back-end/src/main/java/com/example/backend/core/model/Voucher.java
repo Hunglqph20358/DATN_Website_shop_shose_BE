@@ -62,7 +62,7 @@ public class Voucher implements Serializable {
   @Column(name = "idel")
   private Integer idel;
 
-  @Column(name = "delete")
+  @Column(name = "dele")
   private Integer delete;
 
   @Column(name = "quantity")

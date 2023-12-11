@@ -20,7 +20,7 @@ public class VoucherAdminDTO {
     private Long id;
     private String code;
     private String name;
-    private String idCustomer;
+    private Long idCustomer;
     private Date createDate;
     private Date startDate;
     private Date endDate;
