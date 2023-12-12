@@ -24,7 +24,7 @@ public class VoucherAdminController {
     private VoucherAdminService voucherAdminService;
     @GetMapping()
     public ResponseEntity<?> getAllVoucher(){
-        return ResponseEntity.ok(voucherAdminService.getAll());
+        return ResponseEntity.ok(voucherAdminService.getAllVouchers());
     }
     @PostMapping()
     public ResponseEntity<?> createVoucher( @RequestBody VoucherAdminDTO voucherAdminDTO){
@@ -41,7 +41,7 @@ public class VoucherAdminController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> detailVoucher(@PathVariable Long id) {
-        return ResponseEntity.ok( voucherAdminService.detailById(id));
+        return ResponseEntity.ok( voucherAdminService.getDetailVoucher(id));
     }
     @PutMapping("/kichHoat/{id}")
     public ResponseEntity<?> kichHoat(@PathVariable Long id) throws MessagingException {

@@ -52,6 +52,7 @@ public class AppConstant {
                 "/api/admin/discount/kichHoat/*",
                 "/api/admin/discount/KH",
                 "/api/admin/discount/KKH",
+                "/api/admin/discount/discount/export-data",
 
                 "/api/admin/voucher",
                 "/api/admin/voucher/*",

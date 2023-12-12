@@ -7,17 +7,16 @@ import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.view.dto.ProductDTO;
 import org.springframework.data.domain.Page;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 public interface DiscountDetailAdminService {
-    List<DiscountAdminDTO> getAllDiscount();
     List<DiscountAdminDTO> getAll();
     ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO khuyenMaiDTO);
     ServiceResult<DiscountDetailAdminDTO> updateDiscount( DiscountDetailAdminDTO discountDetailAdminDTO);    ServiceResult<Void> KichHoat(Long idDiscount);
     List<ProductAdminDTO> getAllProduct();
     DiscountAdminDTO getDetailDiscount(Long id);
-    List<ProductAdminDTO> getProduct(String code, String name);
      List<DiscountAdminDTO> getAllKichHoat();
      List<DiscountAdminDTO> getAllKhongKichHoat();
     List<DiscountAdminDTO> getAllByDateRange(Date fromDate, Date toDate);
@@ -26,4 +25,7 @@ public interface DiscountDetailAdminService {
     List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);
     List<DiscountAdminDTO> getAllByBrand(String brand);
     ServiceResult<Void> deleteDiscount(Long discountId);
+    byte[] exportExcelProductErrors(List<DiscountAdminDTO> listDataErrors)  throws IOException;
+    byte[] exportExcelDiscount() throws IOException;
+
 }

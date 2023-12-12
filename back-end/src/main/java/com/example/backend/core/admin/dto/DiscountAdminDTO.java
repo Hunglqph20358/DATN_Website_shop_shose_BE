@@ -1,4 +1,5 @@
 package com.example.backend.core.admin.dto;
+import com.example.backend.core.commons.ExportDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DiscountAdminDTO {
+public class DiscountAdminDTO extends ExportDTO {
     private Long id;
     private String code;
     private String name;

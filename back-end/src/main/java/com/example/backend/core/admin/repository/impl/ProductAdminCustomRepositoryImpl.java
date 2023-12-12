@@ -5,22 +5,12 @@ import com.example.backend.core.admin.repository.ProductAdminCustomRepository;
 import com.mysql.cj.util.SaslPrep;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.hibernate.Session;
-import org.hibernate.metamodel.model.domain.BasicDomainType;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.descriptor.java.BigDecimalJavaType;
-import org.hibernate.type.descriptor.java.InstantJavaType;
-import org.hibernate.type.descriptor.java.IntegerJavaType;
-import org.hibernate.type.descriptor.java.StringJavaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -4,6 +4,7 @@ import com.example.backend.core.admin.dto.*;
 import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.VoucherAdminMapper;
 import com.example.backend.core.admin.repository.CustomerAdminRepository;
+import com.example.backend.core.admin.repository.VoucherAdminCustomRepository;
 import com.example.backend.core.admin.repository.VoucherAdminRepository;
 import com.example.backend.core.admin.service.VoucherAdminService;
 import com.example.backend.core.commons.ServiceResult;
@@ -50,14 +51,14 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     private VoucherAdminMapper voucherAdminMapper;
     @Autowired
     private CustomerAdminMapper customerAdminMapper;
-    @Autowired
-    private EntityManager entityManager;
 
     @Autowired
     private OrderDetailService orderDetailService;
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private VoucherAdminCustomRepository voucherAdminCustomRepository;
 
     public VoucherAdminServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
@@ -89,462 +90,39 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     }
 
     @Override
-    public List<VoucherAdminDTO> getAll() {
-        return voucherAdminMapper.toDto(voucherAdminRepository.getAll());
-    }
-
-    @Override
     public List<VoucherAdminDTO> getAllVouchers() {
-        try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
-            Query query = entityManager.createNativeQuery(sql);
-            List<Object[]> resultList = query.getResultList();
-
-            List<VoucherAdminDTO> vouchers = new ArrayList<>();
-            for (Object[] row : resultList) {
-                VoucherAdminDTO voucher = new VoucherAdminDTO();
-
-                voucher.setId(Long.parseLong(row[0].toString()));
-                voucher.setCode(row[1].toString());
-                voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setDescription(row[8].toString());
-                voucher.setIdel(Integer.valueOf(row[9].toString()));
-                voucher.setQuantity(Integer.valueOf(row[10].toString()));
-                voucher.setMaxReduced(new BigDecimal(row[11].toString()));
-                voucher.setAllow(Integer.parseInt(row[12].toString()));
-                voucher.setUseVoucher(Integer.parseInt(row[13].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
-
-                    voucher.setStartDate(startDate);
-                    voucher.setEndDate(endDate);
-
-                    if (new Date(System.currentTimeMillis()).after(endDate)) {
-                        voucher.setStatus(1);
-                    } else {
-                        voucher.setStatus(0);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                vouchers.add(voucher);
-            }
-            return vouchers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<VoucherAdminDTO> list= voucherAdminCustomRepository.getAllVouchers();
+        return list;
     }
 
     @Override
     public List<VoucherAdminDTO> getAllKichHoat() {
-        try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
-                    "where v.idel = 1 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
-            Query query = entityManager.createNativeQuery(sql);
-            List<Object[]> resultList = query.getResultList();
-
-            List<VoucherAdminDTO> vouchers = new ArrayList<>();
-            for (Object[] row : resultList) {
-                VoucherAdminDTO voucher = new VoucherAdminDTO();
-
-                voucher.setId(Long.parseLong(row[0].toString()));
-                voucher.setCode(row[1].toString());
-                voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setDescription(row[8].toString());
-                voucher.setIdel(Integer.valueOf(row[9].toString()));
-                voucher.setQuantity(Integer.valueOf(row[10].toString()));
-                voucher.setMaxReduced(new BigDecimal(row[11].toString()));
-                voucher.setAllow(Integer.parseInt(row[12].toString()));
-                voucher.setUseVoucher(Integer.parseInt(row[13].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
-
-                    voucher.setStartDate(startDate);
-                    voucher.setEndDate(endDate);
-
-                    if (new Date(System.currentTimeMillis()).after(endDate)) {
-                        voucher.setStatus(1);
-                    } else {
-                        voucher.setStatus(0);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                vouchers.add(voucher);
-            }
-            return vouchers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<VoucherAdminDTO> list= voucherAdminCustomRepository.getAllKichHoat();
+        return list;
     }
 
     @Override
     public List<VoucherAdminDTO> getAllKhongKH() {
-        try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
-                    "where idel=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
-            Query query = entityManager.createNativeQuery(sql);
-            List<Object[]> resultList = query.getResultList();
-
-            List<VoucherAdminDTO> vouchers = new ArrayList<>();
-            for (Object[] row : resultList) {
-                VoucherAdminDTO voucher = new VoucherAdminDTO();
-
-                voucher.setId(Long.parseLong(row[0].toString()));
-                voucher.setCode(row[1].toString());
-                voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setDescription(row[8].toString());
-                voucher.setIdel(Integer.valueOf(row[9].toString()));
-                voucher.setQuantity(Integer.valueOf(row[10].toString()));
-                voucher.setMaxReduced(new BigDecimal(row[11].toString()));
-                voucher.setAllow(Integer.parseInt(row[12].toString()));
-                voucher.setUseVoucher(Integer.parseInt(row[13].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
-
-                    voucher.setStartDate(startDate);
-                    voucher.setEndDate(endDate);
-
-                    if (new Date(System.currentTimeMillis()).after(endDate)) {
-                        voucher.setStatus(1);
-                    } else {
-                        voucher.setStatus(0);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                vouchers.add(voucher);
-            }
-            return vouchers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<VoucherAdminDTO> list= voucherAdminCustomRepository.getAllKhongKH();
+        return list;
     }
 
     @Override
     public List<VoucherAdminDTO> getVouchersByTimeRange(Date fromDate, Date toDate) {
-        try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
-                    "WHERE v.start_date BETWEEN :fromDate AND :toDate " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
-            Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("fromDate", fromDate);
-            query.setParameter("toDate", toDate);
-
-            List<Object[]> resultList = query.getResultList();
-
-            List<VoucherAdminDTO> vouchers = new ArrayList<>();
-            for (Object[] row : resultList) {
-                VoucherAdminDTO voucher = new VoucherAdminDTO();
-
-                voucher.setId(Long.parseLong(row[0].toString()));
-                voucher.setCode(row[1].toString());
-                voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setDescription(row[8].toString());
-                voucher.setIdel(Integer.valueOf(row[9].toString()));
-                voucher.setQuantity(Integer.valueOf(row[10].toString()));
-                voucher.setMaxReduced(new BigDecimal(row[11].toString()));
-                voucher.setAllow(Integer.parseInt(row[12].toString()));
-                voucher.setUseVoucher(Integer.parseInt(row[13].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
-
-                    voucher.setStartDate(startDate);
-                    voucher.setEndDate(endDate);
-
-                    if (new Date(System.currentTimeMillis()).after(endDate)) {
-                        voucher.setStatus(1);
-                    } else {
-                        voucher.setStatus(0);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                vouchers.add(voucher);
-            }
-            return vouchers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<VoucherAdminDTO> list= voucherAdminCustomRepository.getVouchersByTimeRange(fromDate,toDate);
+        return list;
     }
 
     @Override
     public List<VoucherAdminDTO> getVouchersByKeyword(String keyword) {
-        try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
-                    "WHERE v.name LIKE :keyword OR v.code LIKE :keyword " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
-            Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("keyword", "%" + keyword + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
-
-            List<Object[]> resultList = query.getResultList();
-
-            List<VoucherAdminDTO> vouchers = new ArrayList<>();
-            for (Object[] row : resultList) {
-                VoucherAdminDTO voucher = new VoucherAdminDTO();
-
-                voucher.setId(Long.parseLong(row[0].toString()));
-                voucher.setCode(row[1].toString());
-                voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setDescription(row[8].toString());
-                voucher.setIdel(Integer.valueOf(row[9].toString()));
-                voucher.setQuantity(Integer.valueOf(row[10].toString()));
-                voucher.setMaxReduced(new BigDecimal(row[11].toString()));
-                voucher.setAllow(Integer.parseInt(row[12].toString()));
-                voucher.setUseVoucher(Integer.parseInt(row[13].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
-
-                    voucher.setStartDate(startDate);
-                    voucher.setEndDate(endDate);
-
-                    if (new Date(System.currentTimeMillis()).after(endDate)) {
-                        voucher.setStatus(1);
-                    } else {
-                        voucher.setStatus(0);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                vouchers.add(voucher);
-            }
-            return vouchers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<VoucherAdminDTO> list= voucherAdminCustomRepository.getVouchersByKeyword(keyword);
+        return list;
     }
 
     @Override
     public List<VoucherAdminDTO> getVouchersByCustomer(String searchTerm) {
-        try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN order_detail o ON o.code_discount = v.code " +
-                    "LEFT JOIN customer c ON v.id_customer = c.id " +
-                    "WHERE LOWER(c.code) LIKE LOWER(:searchTerm) " +
-                    "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
-                    "   OR c.phone LIKE  :searchTerm " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
-
-            Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("searchTerm", "%" + searchTerm + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
-
-            List<Object[]> resultList = query.getResultList();
-
-            List<VoucherAdminDTO> vouchers = new ArrayList<>();
-            for (Object[] row : resultList) {
-                VoucherAdminDTO voucher = new VoucherAdminDTO();
-
-                voucher.setId(Long.parseLong(row[0].toString()));
-                voucher.setCode(row[1].toString());
-                voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setDescription(row[8].toString());
-                voucher.setIdel(Integer.valueOf(row[9].toString()));
-                voucher.setQuantity(Integer.valueOf(row[10].toString()));
-                voucher.setMaxReduced(new BigDecimal(row[11].toString()));
-                voucher.setAllow(Integer.parseInt(row[12].toString()));
-                voucher.setUseVoucher(Integer.parseInt(row[13].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
-
-                    voucher.setStartDate(startDate);
-                    voucher.setEndDate(endDate);
-
-                    if (new Date(System.currentTimeMillis()).after(endDate)) {
-                        voucher.setStatus(1);
-                    } else {
-                        voucher.setStatus(0);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                vouchers.add(voucher);
-            }
-            return vouchers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<VoucherAdminDTO> list= voucherAdminCustomRepository.getVouchersByCustomer(searchTerm);
+        return list;
     }
 
     @Override
@@ -689,60 +267,60 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         return serviceResult;
     }
 
-    @Override
-    public List<VoucherAdminDTO> detailById(Long voucherId) {
-        List<VoucherAdminDTO> list = new ArrayList<>();
-
-        // Thực hiện câu truy vấn JOIN để lấy thông tin từ cả bảng voucher và customer
-        String query = "SELECT "
-                + "c.code as customer_code, c.fullname as customer_fullname, "
-                + " v.code as voucher_code, v.name as voucher_name, v.start_date as voucher_start_date, v.end_date as voucher_end_date, "
-                + "v.conditions as voucher_conditions, v.create_name as voucher_create_name, v.voucher_type as voucher_type, "
-                + "v.reduced_value as voucher_reduced_value, v.description as voucher_description, v.status as voucher_status, "
-                + "v.quantity as voucher_quantity, v.max_reduced as voucher_max_reduced, v.limit_customer as voucher_limit_customer, v.allow as voucher_allow ,v.apply "
-                + " FROM\n" +
-                "       voucher v \n" +
-                "    LEFT JOIN\n" +
-                "        customer c ON c.id = v.id_customer "
-                + "WHERE v.id = :voucherId";
-
-        Query nativeQuery = entityManager.createNativeQuery(query);
-        nativeQuery.setParameter("voucherId", voucherId);
-
-        List<Object[]> result = nativeQuery.getResultList();
-        // Chuyển kết quả từ nativeQuery sang DTO
-        for (Object[] row : result) {
-            VoucherAdminDTO voucherAdminDTO = new VoucherAdminDTO();
-            CustomerAdminDTO customerAdminDTO = new CustomerAdminDTO();
-            customerAdminDTO.setCode((String) row[0]);
-            customerAdminDTO.setFullname((String) row[1]);
-
-
-            voucherAdminDTO.setCode((String) row[2]);
-            voucherAdminDTO.setName((String) row[3]);
-            voucherAdminDTO.setStartDate((Date) row[4]);
-            voucherAdminDTO.setEndDate((Date) row[5]);
-            voucherAdminDTO.setConditions((BigDecimal) row[6]);
-            voucherAdminDTO.setCreateName((String) row[7]);
-            voucherAdminDTO.setVoucherType((Integer) row[8]);
-            voucherAdminDTO.setReducedValue((BigDecimal) row[9]);
-            voucherAdminDTO.setDescription((String) row[10]);
-            voucherAdminDTO.setStatus((Integer) row[11]);
-            voucherAdminDTO.setQuantity((Integer) row[12]);
-            voucherAdminDTO.setMaxReduced((BigDecimal) row[13]);
-            voucherAdminDTO.setLimitCustomer((Integer) row[14]);
-            voucherAdminDTO.setAllow((Integer) row[15]);
-            voucherAdminDTO.setApply((Integer) row[16]);
-            list.add(voucherAdminDTO);
-            List<CustomerAdminDTO> customerAdminDTOList = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                customerAdminDTOList.add(customerAdminDTO);
-                list.get(i).setCustomerAdminDTOList(customerAdminDTOList);
-            }
-        }
-
-        return list;
-    }
+//    @Override
+//    public List<VoucherAdminDTO> detailById(Long voucherId) {
+//        List<VoucherAdminDTO> list = new ArrayList<>();
+//
+//        // Thực hiện câu truy vấn JOIN để lấy thông tin từ cả bảng voucher và customer
+//        String query = "SELECT "
+//                + "c.code as customer_code, c.fullname as customer_fullname, "
+//                + " v.code as voucher_code, v.name as voucher_name, v.start_date as voucher_start_date, v.end_date as voucher_end_date, "
+//                + "v.conditions as voucher_conditions, v.create_name as voucher_create_name, v.voucher_type as voucher_type, "
+//                + "v.reduced_value as voucher_reduced_value, v.description as voucher_description, v.status as voucher_status, "
+//                + "v.quantity as voucher_quantity, v.max_reduced as voucher_max_reduced, v.limit_customer as voucher_limit_customer, v.allow as voucher_allow ,v.apply "
+//                + " FROM\n" +
+//                "       voucher v \n" +
+//                "    LEFT JOIN\n" +
+//                "        customer c ON c.id = v.id_customer "
+//                + "WHERE v.id = :voucherId";
+//
+//        Query nativeQuery = entityManager.createNativeQuery(query);
+//        nativeQuery.setParameter("voucherId", voucherId);
+//
+//        List<Object[]> result = nativeQuery.getResultList();
+//        // Chuyển kết quả từ nativeQuery sang DTO
+//        for (Object[] row : result) {
+//            VoucherAdminDTO voucherAdminDTO = new VoucherAdminDTO();
+//            CustomerAdminDTO customerAdminDTO = new CustomerAdminDTO();
+//            customerAdminDTO.setCode((String) row[0]);
+//            customerAdminDTO.setFullname((String) row[1]);
+//
+//
+//            voucherAdminDTO.setCode((String) row[2]);
+//            voucherAdminDTO.setName((String) row[3]);
+//            voucherAdminDTO.setStartDate((Date) row[4]);
+//            voucherAdminDTO.setEndDate((Date) row[5]);
+//            voucherAdminDTO.setConditions((BigDecimal) row[6]);
+//            voucherAdminDTO.setCreateName((String) row[7]);
+//            voucherAdminDTO.setVoucherType((Integer) row[8]);
+//            voucherAdminDTO.setReducedValue((BigDecimal) row[9]);
+//            voucherAdminDTO.setDescription((String) row[10]);
+//            voucherAdminDTO.setStatus((Integer) row[11]);
+//            voucherAdminDTO.setQuantity((Integer) row[12]);
+//            voucherAdminDTO.setMaxReduced((BigDecimal) row[13]);
+//            voucherAdminDTO.setLimitCustomer((Integer) row[14]);
+//            voucherAdminDTO.setAllow((Integer) row[15]);
+//            voucherAdminDTO.setApply((Integer) row[16]);
+//            list.add(voucherAdminDTO);
+//            List<CustomerAdminDTO> customerAdminDTOList = new ArrayList<>();
+//            for (int i = 0; i < list.size(); i++) {
+//                customerAdminDTOList.add(customerAdminDTO);
+//                list.get(i).setCustomerAdminDTOList(customerAdminDTOList);
+//            }
+//        }
+//
+//        return list;
+//    }
 
     @Override
     public VoucherAdminDTO getDetailVoucher(Long id) {
@@ -774,60 +352,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
 
     @Override
     public List<CustomerAdminDTO> getAllCustomer() {
-        try {
-            String sql = "SELECT " +
-                    "  c.id, " +
-                    "  c.code, " +
-                    "  c.fullname, " +
-                    "  c.birthday, " +
-                    "  c.phone, " +
-                    "  c.email, " +
-                    "  c.gender, " +
-                    "  c.status, " +
-                    "  c.idel, " +
-                    "  COUNT(o.id) AS order_count " +
-                    "FROM customer c " +
-                    "LEFT JOIN `order` o ON c.id = o.id_customer " +
-                    "GROUP BY c.id, c.code, c.fullname, c.birthday, c.phone, c.email, c.gender, c.status, c.idel";
-
-            Query query = entityManager.createNativeQuery(sql);
-            List<Object[]> resultList = query.getResultList();
-
-            List<CustomerAdminDTO> customers = new ArrayList<>();
-
-            for (Object[] row : resultList) {
-                CustomerAdminDTO customer = new CustomerAdminDTO();
-
-                customer.setId(Long.parseLong(row[0].toString()));
-                customer.setCode(row[1].toString());
-                customer.setFullname(row[2].toString());
-                customer.setPhone(row[4].toString());
-                customer.setEmail(row[5].toString());
-                customer.setGender(row[6].toString());
-                customer.setStatus(Integer.valueOf(row[7].toString()));
-                customer.setIdel(Integer.valueOf(row[8].toString()));
-                customer.setOrderCount(Integer.valueOf(row[9].toString()));
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-                try {
-                    java.util.Date birthday = dateFormat.parse(row[3].toString());
-
-                    customer.setBirthday(birthday);
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                customers.add(customer);
-            }
-            return customers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        List<CustomerAdminDTO> list= voucherAdminCustomRepository.getAllCustomer();
+        return list;
     }
 
     @Override
