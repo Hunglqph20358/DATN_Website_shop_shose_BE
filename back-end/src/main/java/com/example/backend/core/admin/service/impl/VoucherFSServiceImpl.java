@@ -7,7 +7,6 @@ import com.example.backend.core.admin.repository.VoucherFreeShipRepository;
 import com.example.backend.core.admin.service.VoucherFSService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Customer;
-import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.view.mapper.VoucherFSMapper;
 import jakarta.persistence.EntityManager;
@@ -35,9 +34,8 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     private VoucherFSMapper voucherAdminMapper;
     @Autowired
     private CustomerAdminMapper customerAdminMapper;
-
     @Autowired
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public List<VoucherFreeShipDTO> getAll() {
@@ -62,7 +60,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     "FROM voucher_free_ship v " +
                     "LEFT JOIN order_detail o ON o.code_discount = v.code " +
                     "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    "v.reduced_value, v.description, v.status, v.idel, v.quantity";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -131,7 +129,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     "LEFT JOIN order_detail o ON o.code_discount = v.code " +
                     "where idel = 1 " +
                     "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    " v.reduced_value, v.description, v.status, v.idel, v.quantity";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -200,7 +198,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     "LEFT JOIN order_detail o ON o.code_discount = v.code" +
                     " where  idel =0 " +
                     "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    "v.reduced_value, v.description, v.status, v.idel, v.quantity";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -270,7 +268,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     "LEFT JOIN order_detail o ON o.code_discount = v.code " +
                     "WHERE v.start_date BETWEEN :fromDate AND :toDate " +
                     "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    " v.reduced_value, v.description, v.status, v.idel, v.quantity";
 
             Query query = entityManager.createNativeQuery(sql);
             query.setParameter("fromDate", fromDate);
@@ -342,7 +340,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     "LEFT JOIN order_detail o ON o.code_discount = v.code " +
                     "WHERE v.name LIKE :keyword OR v.code LIKE :keyword " +
                     "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    "v.reduced_value, v.description, v.status, v.idel, v.quantity";
 
             Query query = entityManager.createNativeQuery(sql);
             query.setParameter("keyword", "%" + keyword + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
@@ -416,7 +414,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
                     "   OR c.phone LIKE  :searchTerm " +
                     "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    " v.reduced_value, v.description, v.status, v.idel, v.quantity";
 
 
             Query query = entityManager.createNativeQuery(sql);
