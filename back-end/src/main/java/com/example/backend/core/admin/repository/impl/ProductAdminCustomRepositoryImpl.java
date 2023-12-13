@@ -1,7 +1,10 @@
 package com.example.backend.core.admin.repository.impl;
 
+import com.example.backend.core.admin.dto.ImagesAdminDTO;
 import com.example.backend.core.admin.dto.ProductAdminDTO;
 import com.example.backend.core.admin.repository.ProductAdminCustomRepository;
+import com.example.backend.core.view.dto.ImagesDTO;
+import com.example.backend.core.view.dto.ProductDTO;
 import com.mysql.cj.util.SaslPrep;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -59,6 +62,57 @@ public class ProductAdminCustomRepositoryImpl implements ProductAdminCustomRepos
                 lstProduct.add(productAdminDTO);
             }
         } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return lstProduct;
+    }
+
+    @Override
+    public List<ProductAdminDTO> topProductBestSeller() {
+        List<ProductAdminDTO> lstProduct = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT p.id, p.code, p.name, p.price, images.image_names, b.name, IFNULL(SUM(od.quantity), 0) AS total_sold\n" +
+                    "FROM product p\n" +
+                    "left JOIN product_detail pd ON p.id = pd.id_product\n" +
+                    "join brand b on b.id = p.id_brand\n" +
+                    "LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
+                    "LEFT JOIN (\n" +
+                    "    SELECT id_product, GROUP_CONCAT(image_name) AS image_names\n" +
+                    "    FROM images\n" +
+                    "    GROUP BY id_product\n" +
+                    ") images ON images.id_product = p.id\n" +
+                    "left join `order` o on o.id = od.id_order\n" +
+                    "where month(o.create_date) = month(now())\n" +
+                    "GROUP BY p.id, p.code, p.name, p.price, images.image_names, b.name\n" +
+                    "ORDER BY total_sold DESC\n" +
+                    "LIMIT 5;");
+            Query query  = entityManager.createNativeQuery(sql.toString());
+            List<Object[]> lst = query.getResultList();
+            for (Object[] obj: lst) {
+                ProductAdminDTO dto = new ProductAdminDTO();
+                List<ImagesAdminDTO> imagesAdminDTOLis = new ArrayList<>();
+                dto.setId(((Number) obj[0]).longValue());
+                dto.setCode((String) obj[1]);
+                dto.setName((String) obj[2]);
+                dto.setPrice((BigDecimal) obj[3]);
+                dto.setBrandName((String) obj[5]);
+                dto.setTotalBestSeller(((Number) obj[6]).intValue());
+                String imagesString = (String) obj[4];
+                if (imagesString != null && !imagesString.isEmpty()) {
+                    for (String str : imagesString.split(",")) {
+                        if (!str.trim().isEmpty()) { // Kiểm tra và bỏ qua chuỗi trống
+                            ImagesAdminDTO imagesAdminDTO = new ImagesAdminDTO();
+                            imagesAdminDTO.setImageName(str.trim());
+                            imagesAdminDTOLis.add(imagesAdminDTO);
+                        }
+                    }
+                }
+                dto.setImagesDTOList(imagesAdminDTOLis);
+                lstProduct.add(dto);
+            }
+        }catch (Exception e){
             e.printStackTrace();
             return null;
         }
