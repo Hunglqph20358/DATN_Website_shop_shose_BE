@@ -110,6 +110,9 @@ public class AppConstant {
                 "/view/api/cancel-order-view",
                 "/view/api/update-infor/*",
                 "/view/api/changePass/*",
-
+                "/view/api/send-mail-otp",
+                "/view/api/verify-otp",
+                "/view/api/reset-pass",
+                "/sales-counter/api/list-bill-all",
         };
 }

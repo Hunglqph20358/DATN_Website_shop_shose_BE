@@ -6,5 +6,5 @@ import com.example.backend.core.view.dto.CustomerDTO;
 
 public interface CustomerInforSerivce {
     ServiceResult<CustomerDTO> updatePassword(CustomerDTO customerDTO, Customer customer);
-    ServiceResult<CustomerDTO> resetPassword(CustomerDTO customerDTO, Customer customer);
+    ServiceResult<CustomerDTO> resetPassword(CustomerDTO customerDTO);
 }

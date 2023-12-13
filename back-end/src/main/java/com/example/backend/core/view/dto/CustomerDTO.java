@@ -28,4 +28,5 @@ public class CustomerDTO {
     private Integer status;
     private Integer idel;
     private String newPass;
+    private String otp;
 }

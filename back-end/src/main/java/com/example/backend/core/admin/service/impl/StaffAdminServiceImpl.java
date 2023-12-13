@@ -1,9 +1,9 @@
 package com.example.backend.core.admin.service.impl;
 
-import com.example.backend.core.admin.dto.StaffDTO;
+import com.example.backend.core.admin.dto.StaffAdminDTO;
 import com.example.backend.core.admin.mapper.StaffMapper;
-import com.example.backend.core.admin.repository.StaffRepository;
-import com.example.backend.core.admin.service.StaffService;
+import com.example.backend.core.admin.repository.StaffAdminRepository;
+import com.example.backend.core.admin.service.StaffAdminService;
 import com.example.backend.core.model.Staff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,15 +13,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StaffServiceImpl implements StaffService {
+public class StaffAdminServiceImpl implements StaffAdminService {
     @Autowired
-    private StaffRepository repository;
+    private StaffAdminRepository repository;
     @Autowired
     private StaffMapper staffMapper;
     @Override
-    public List<StaffDTO> getAllStaff() {
+    public List<StaffAdminDTO> getAllStaff() {
         List<Staff> listStaff = repository.findAll();
-        List<StaffDTO> listDto = new ArrayList<>();
+        List<StaffAdminDTO> listDto = new ArrayList<>();
          return listDto = staffMapper.toDto(listStaff);
     }
 

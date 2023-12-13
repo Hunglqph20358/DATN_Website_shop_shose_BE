@@ -43,7 +43,20 @@ public class CustomerInforServiceImpl implements CustomerInforSerivce {
     }
 
     @Override
-    public ServiceResult<CustomerDTO> resetPassword(CustomerDTO customerDTO, Customer customer) {
-        return null;
+    public ServiceResult<CustomerDTO> resetPassword(CustomerDTO customerDTO) {
+        Customer customer = repository.findByEmail(customerDTO.getEmail());
+        if (customer != null){
+            customer.setPassword(encoder.encode(customerDTO.getNewPass()));
+            customer.setUpdateDate(Instant.now());
+            this.repository.save(customer);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Sua thanh cong");
+            result.setData(customerMapper.toDto(customer));
+            return result;
+        }
+        result.setStatus(HttpStatus.BAD_REQUEST);
+        result.setMessage("Sua  khong thanh cong");
+        result.setData(null);
+        return result;
     }
 }

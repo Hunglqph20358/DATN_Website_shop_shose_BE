@@ -1,8 +1,6 @@
 package com.example.backend.core.admin.dto;
 
 import com.example.backend.core.commons.ExportDTO;
-import com.example.backend.core.view.dto.*;
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -31,7 +29,7 @@ public class ProductAdminDTO extends ExportDTO {
     private Integer status;
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
-    private StaffDTO staffDTO;
+    private StaffAdminDTO staffAdminDTO;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
     private BrandAdminDTO brandAdminDTO;

@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
@@ -34,6 +35,7 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     private CustomerSCMapper customerSCMapper;
     @Autowired
     private StaffSCMapper staffSCMapper;
+
 
     @Override
     public ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO) {
@@ -85,5 +87,10 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     @Override
     public ServiceResult<OrderSalesDTO> updateOrderSales(OrderSalesDTO orderSalesDTO) {
         return null;
+    }
+
+    @Override
+    public List<OrderSalesDTO> getAllOrder() {
+        return orderSalesCounterMapper.toDto(orderSalesCountRepository.findAll());
     }
 }

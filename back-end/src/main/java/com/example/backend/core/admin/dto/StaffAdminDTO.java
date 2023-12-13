@@ -11,7 +11,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StaffDTO {
+public class StaffAdminDTO {
     private Long id;
     private String code;
     private String fullname;
