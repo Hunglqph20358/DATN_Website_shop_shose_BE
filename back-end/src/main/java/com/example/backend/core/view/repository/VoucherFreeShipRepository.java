@@ -3,6 +3,7 @@ package com.example.backend.core.view.repository;
 
 import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +30,6 @@ public interface VoucherFreeShipRepository extends JpaRepository<VoucherFreeShip
             "ORDER BY v.end_date ASC" , nativeQuery = true)
     List<VoucherFreeShip> getAllVoucherShipByCustomer(@Param(value = "codeSearch") String codeSearch,
                                           @Param(value = "idCustomer") Long idCustomer);
+
+    VoucherFreeShip findByCode(String code);
 }

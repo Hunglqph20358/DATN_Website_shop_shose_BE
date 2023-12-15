@@ -27,7 +27,7 @@ public class OrderAdminCustomRepositoryImpl implements OrderAdminCustomerReposit
         List<OrderAdminDTO> lstOrderAdminDTOS = new ArrayList<>();
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("select * from `order` o where true ");
+            sql.append("select * from `order` o where true and type = 0");
             if (orderAdminDTO.getStatus() != 6 && orderAdminDTO.getStatus() != null) {
                 sql.append("  and o.status = :status  ");
             }

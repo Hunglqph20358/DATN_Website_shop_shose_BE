@@ -29,7 +29,7 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select * from `order` o  ");
-            sql.append("where o.id_customer = :idCustomer   ");
+            sql.append("where o.id_customer = :idCustomer and type = 0  ");
             if (orderDTO.getStatus() != 6 && orderDTO.getStatus() != null) {
                 sql.append("  and o.status = :status  ");
             }
@@ -65,24 +65,26 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
                 dto.setIdCustomer(obj[2] != null ? ((Number) obj[2]).longValue() : null);
                 dto.setIdStaff(obj[3] != null ? ((Number) obj[3]).longValue() : null);
                 dto.setCodeVoucher((String) obj[4]);
-                Timestamp createTimestamp = (Timestamp) obj[5];
+                dto.setCodeVoucherShip((String) obj[5]);
+                Timestamp createTimestamp = (Timestamp) obj[6];
                 dto.setCreateDate(createTimestamp != null ? createTimestamp.toInstant() : null);
-                Timestamp paymentTimestamp = (Timestamp) obj[6];
+                Timestamp paymentTimestamp = (Timestamp) obj[7];
                 dto.setPaymentDate(paymentTimestamp != null ? paymentTimestamp.toInstant() : null);
-                dto.setDeliveryDate((Date) obj[7]);
-                dto.setReceivedDate((Date) obj[8]);
-                dto.setAddressReceived((String) obj[9]);
-                dto.setShipperPhone((String) obj[10]);
-                dto.setReceiverPhone((String) obj[11]);
-                dto.setReceiver((String) obj[12]);
-                dto.setShipPrice((BigDecimal) obj[13]);
-                dto.setTotalPrice((BigDecimal) obj[14]);
-                dto.setTotalPayment((BigDecimal) obj[15]);
-                dto.setPaymentType((Integer) obj[16]);
-                dto.setDescription((String) obj[17]);
-                dto.setMissedOrder((Integer) obj[18]);
-                dto.setStatus((Integer) obj[19]);
-                dto.setStatusPayment((Integer) obj[20]);
+                dto.setDeliveryDate((Date) obj[8]);
+                dto.setReceivedDate((Date) obj[9]);
+                dto.setAddressReceived((String) obj[10]);
+                dto.setShipperPhone((String) obj[11]);
+                dto.setReceiverPhone((String) obj[12]);
+                dto.setReceiver((String) obj[13]);
+                dto.setShipPrice((BigDecimal) obj[14]);
+                dto.setTotalPrice((BigDecimal) obj[15]);
+                dto.setTotalPayment((BigDecimal) obj[16]);
+                dto.setType( obj[17] != null ? ((Number) obj[17]).intValue() : null);
+                dto.setPaymentType((Integer) obj[18]);
+                dto.setDescription((String) obj[19]);
+                dto.setMissedOrder((Integer) obj[20]);
+                dto.setStatus((Integer) obj[21]);
+                dto.setStatusPayment((Integer) obj[22]);
                 lstOrderDTOS.add(dto);
             }
         } catch (Exception e) {

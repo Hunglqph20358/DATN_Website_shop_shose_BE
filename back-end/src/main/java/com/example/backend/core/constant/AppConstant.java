@@ -117,5 +117,6 @@ public class AppConstant {
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
                 "view/api/get-all-voucher-ship",
+                "view/api/get-voucher-ship",
         };
 }

@@ -18,6 +18,7 @@ public class OrderDTO {
     private Long idCustomer;
     private Long idStaff;
     private String codeVoucher;
+    private String codeVoucherShip;
     private Instant createDate;
     private Instant paymentDate;
     private Date deliveryDate;
@@ -29,6 +30,7 @@ public class OrderDTO {
     private BigDecimal shipPrice;
     private BigDecimal totalPrice;
     private BigDecimal totalPayment;
+    private Integer type;
     private Integer paymentType;
     private String description;
     private Integer status;

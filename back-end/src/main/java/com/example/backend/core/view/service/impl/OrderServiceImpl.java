@@ -8,6 +8,7 @@ import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.OrderHistory;
 import com.example.backend.core.model.Voucher;
+import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.view.dto.AddressDTO;
 import com.example.backend.core.view.dto.CustomerDTO;
@@ -21,6 +22,7 @@ import com.example.backend.core.view.repository.OrderCustomRepository;
 import com.example.backend.core.view.repository.OrderHistoryRepository;
 import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
+import com.example.backend.core.view.repository.VoucherFreeShipRepository;
 import com.example.backend.core.view.repository.VoucherRepository;
 import com.example.backend.core.view.service.OrderService;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +53,9 @@ public class OrderServiceImpl implements OrderService {
     private VoucherRepository voucherRepository;
 
     @Autowired
+    private VoucherFreeShipRepository voucherFreeShipRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -74,6 +79,8 @@ public class OrderServiceImpl implements OrderService {
             order.setTotalPrice(orderDTO.getTotalPrice());
             order.setReceiverPhone(orderDTO.getReceiverPhone());
             order.setAddressReceived(orderDTO.getAddressReceived());
+            order.setDescription(orderDTO.getDescription());
+            order.setType(0);
             if (orderDTO.getPaymentType() == 1) {
                 order.setPaymentType(orderDTO.getPaymentType());
                 order.setTotalPayment(orderDTO.getTotalPayment());
@@ -93,13 +100,20 @@ public class OrderServiceImpl implements OrderService {
                     voucherRepository.save(voucher);
                 }
             }
+            if (StringUtils.isNotBlank(orderDTO.getCodeVoucherShip())) {
+                VoucherFreeShip voucherFreeShip = voucherFreeShipRepository.findByCode(orderDTO.getCodeVoucherShip());
+                if (null != voucherFreeShip) {
+                    voucherFreeShip.setQuantity(voucherFreeShip.getQuantity() - 1);
+                    order.setCodeVoucherShip(voucherFreeShip.getCode());
+                    voucherFreeShipRepository.save(voucherFreeShip);
+                }
+            }
             order = orderRepository.save(order);
             dto = orderMapper.toDto(order);
             result.setData(dto);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");
         }
-
         return result;
     }
 
