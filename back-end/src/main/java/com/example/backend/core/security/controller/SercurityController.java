@@ -58,7 +58,9 @@ public class SercurityController {
         if(usersService.existsByEmail(signUpFormRequest.getEmail())){
             return new ResponseEntity<>(new MessageResponse("The email is existed"), HttpStatus.OK);
         }
-
+        if(usersService.existsByPhone(signUpFormRequest.getPhone())){
+            return new ResponseEntity<>(new MessageResponse("The phone is existed"), HttpStatus.OK);
+        }
             Users users = Users.builder()
                     .code("NV" + Instant.now().getEpochSecond())
                     .fullname(signUpFormRequest.getFullname())
@@ -67,6 +69,8 @@ public class SercurityController {
                     .phone(signUpFormRequest.getPhone())
                     .email(signUpFormRequest.getEmail())
                     .createDate(Instant.now())
+                    .description(signUpFormRequest.getDescription())
+                    .idel(signUpFormRequest.getIdel())
                     .username(signUpFormRequest.getUsername())
                     .password(passwordEncoder.encode(signUpFormRequest.getPassword())).build();
             String strRoles = signUpFormRequest.getRole();

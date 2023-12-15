@@ -28,7 +28,7 @@ public class ProductAdminDTO extends ExportDTO {
     private Integer status;
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
-    private StaffDTO staffDTO;
+    private StaffAdminDTO staffAdminDTO;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
     private BrandAdminDTO brandAdminDTO;

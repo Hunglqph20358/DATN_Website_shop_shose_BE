@@ -11,6 +11,7 @@ public interface UserService {
     public Users findByUsername(String userName);
     boolean existsByUsername(String userName);
     boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
     String findByRole(String role);
     Users saveOrUpdate(Users users);
     boolean isUser(String username);
