@@ -77,7 +77,7 @@ public class ProductAdminController {
         try {
             byte[] fileData = prdsv.exportExcelProduct();
             SimpleDateFormat dateFormat = new SimpleDateFormat(AppConstant.YYYYMMDDHHSS);
-            String fileName = "DS_CBGV" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
+            String fileName = "DS_QLSP" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
             return fileExportUtil.responseFileExportWithUtf8FileName(fileData, fileName, AppConstant.MIME_TYPE_XLSX);
         }catch (Exception e){
             log.error(e.getMessage(), e);
@@ -89,7 +89,7 @@ public class ProductAdminController {
         try {
             byte[] fileData = prdsv.exportExcelTemplateProduct();
             SimpleDateFormat dateFormat = new SimpleDateFormat(AppConstant.YYYYMMDDHHSS);
-            String fileName = "DS_CBGV" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
+            String fileName = "DS_QLSP" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
             return fileExportUtil.responseFileExportWithUtf8FileName(fileData, fileName, AppConstant.MIME_TYPE_XLSX);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

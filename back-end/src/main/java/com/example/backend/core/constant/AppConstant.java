@@ -7,12 +7,23 @@ public class AppConstant {
         public static final Integer CHO_XU_LY = 1;
         public static final Integer DANG_GIAO_HANG = 2;
         public static final Integer HOAN_THANH = 3;
-        public static final Integer HOAN_HUY = 4;
+        public static final Integer HUY_DON_HANG = 4;
         public static final Integer CHUA_THANH_TOAN = 1;
         public static final Integer DA_THANH_TOAN = 0;
         public static final Integer BO_LO_LAN1 = 1;
         public static final Integer BO_LO_LAN2 = 2;
         public static final Integer BO_LO_LAN3 = 3;
+        public static final Integer XU_LY_HISTORY = 1;
+        public static final Integer GIAO_HANG_HISTORY = 2;
+        public static final Integer BO_LO_LAN1_HISTORY = 3;
+        public static final Integer BO_LO_LAN2_HISTORY = 4;
+        public static final Integer BO_LO_LAN3_HISTORY = 5;
+        public static final Integer HUY_HISTORY = 6;
+        public static final Integer HOAN_THANH_HISTORY = 7;
+
+
+
+
         public static final String ALIGN_LEFT = "LEFT";
         public static final String ALIGN_RIGHT = "RIGHT";
         public static final String STRING = "STRING";
@@ -67,6 +78,9 @@ public class AppConstant {
                 "/api/admin/get-all-order",
                 "/api/admin/get-order-detail/by-order/*",
                 "/api/admin/cancel-order",
+                "api/admin/product/search/*",
+                "/sales-counter/api/create-order",
+                "/sales-counter/api/create-order-detail",
                 "/api/admin/progressing-order",
                 "/api/admin/complete-order",
                 "/api/admin/ship-order",
@@ -74,8 +88,12 @@ public class AppConstant {
                 "/api/admin/product/export-data",
                 "/api/admin/product/export-data-template",
                 "/api/admin/product/exportDataErrors",
-                "/api/admin/upload"
-
+                "/api/admin/upload",
+                "/api/admin/get-statistical-by-year",
+                "/sales-customer/findByPhone/*",
+                "/sales-customer/add-customer",
+                "/api/admin/staff-getall",
+                "/api/admin/staff-update/*",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -106,5 +124,13 @@ public class AppConstant {
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
+                "view/api/get-all-voucher-ship",
+                "view/api/get-voucher-ship",
+                "/view/api/update-infor/*",
+                "/view/api/changePass/*",
+                "/view/api/send-mail-otp",
+                "/view/api/verify-otp",
+                "/view/api/reset-pass",
+                "/sales-counter/api/list-bill-all",
         };
 }

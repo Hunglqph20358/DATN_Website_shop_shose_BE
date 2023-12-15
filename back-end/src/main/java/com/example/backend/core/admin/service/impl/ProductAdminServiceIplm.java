@@ -16,11 +16,6 @@ import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.commons.SheetConfigDTO;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.*;
-import com.example.backend.core.view.dto.BrandDTO;
-import com.example.backend.core.view.dto.CategoryDTO;
-import com.example.backend.core.view.dto.MaterialDTO;
-import com.example.backend.core.view.dto.SoleDTO;
-import com.example.backend.core.view.mapper.ProductDetailMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
@@ -28,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,10 +31,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,9 +59,9 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     @Autowired
     private SoleAdminMapper soleAdminMapper;
     @Autowired
-    private StaffRepository strp;
+    private StaffAdminRepository strp;
     @Autowired
-    private StaffMapper staffMapper;
+    private StaffAdminMapper staffMapper;
     @Autowired
     private EntityManager entityManager;
     @Autowired
@@ -233,14 +224,14 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     public List<ProductAdminDTO> findByNameLikeOrCodeLike(String param) {
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByNameLikeOrCodeLike("%" + param + "%", "%" + param + "%"));
         for (int i = 0; i < list.size(); i++) {
-            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
-            list.get(i).setSoleAdminDTO(soleAdminDTO);
-            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
-            list.get(i).setMaterialAdminDTO(materialAdminDTO);
-            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
-            list.get(i).setBrandAdminDTO(brandAdminDTO);
-            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
-            list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+//            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
+//            list.get(i).setSoleAdminDTO(soleAdminDTO);
+//            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
+//            list.get(i).setMaterialAdminDTO(materialAdminDTO);
+//            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
+//            list.get(i).setBrandAdminDTO(brandAdminDTO);
+//            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
+//            list.get(i).setCategoryAdminDTO(categoryAdminDTO);
             ProductDetailAdminDTO productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findById(list.get(i).getId()).get());
             list.get(i).setProductDetailAdminDTO(productDetailAdminDTO);
         }

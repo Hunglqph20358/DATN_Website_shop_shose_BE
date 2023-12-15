@@ -91,10 +91,12 @@ public class CartServiceImpl implements CartService {
                 if(discountDetailList.get(i).getDiscountType() == 0){
                     productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
                     productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                    productDTO.setCodeDiscount(discountList.get(i).getCode());
                 }
                 if(discountDetailList.get(i).getDiscountType() == 1){
                     productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
                     productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
+                    productDTO.setCodeDiscount(discountList.get(i).getCode());
                 }
             }
         }
