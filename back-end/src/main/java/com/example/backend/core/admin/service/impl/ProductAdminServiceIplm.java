@@ -249,6 +249,11 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     }
 
     @Override
+    public List<ProductAdminDTO> findByName(String name) {
+        return null;
+    }
+
+    @Override
     public byte[] exportExcelProduct() throws IOException {
         List<SheetConfigDTO> sheetConfigList = new ArrayList<>();
         List<ProductAdminDTO> productAdminDTOS = productAdminCustomRepository.getAllProductExport();
