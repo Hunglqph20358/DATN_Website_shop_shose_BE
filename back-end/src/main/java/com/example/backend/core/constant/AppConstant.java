@@ -65,6 +65,9 @@ public class AppConstant {
                 "/api/admin/get-all-order",
                 "/api/admin/get-order-detail/by-order/*",
                 "/api/admin/cancel-order",
+                "api/admin/product/search/*",
+                "/sales-counter/api/create-order",
+                "/sales-counter/api/create-order-detail",
                 "/api/admin/progressing-order",
                 "/api/admin/complete-order",
                 "/api/admin/ship-order",
@@ -73,8 +76,11 @@ public class AppConstant {
                 "/api/admin/product/export-data-template",
                 "/api/admin/product/exportDataErrors",
                 "/api/admin/upload",
-                "/api/admin/get-statistical-by-year"
-
+                "/api/admin/get-statistical-by-year",
+                "/sales-customer/findByPhone/*",
+                "/sales-customer/add-customer",
+                "/api/admin/staff-getall",
+                "/api/admin/staff-update/*",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -105,5 +111,11 @@ public class AppConstant {
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
+                "/view/api/update-infor/*",
+                "/view/api/changePass/*",
+                "/view/api/send-mail-otp",
+                "/view/api/verify-otp",
+                "/view/api/reset-pass",
+                "/sales-counter/api/list-bill-all",
         };
 }

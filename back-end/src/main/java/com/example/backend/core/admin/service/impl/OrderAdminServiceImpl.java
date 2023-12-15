@@ -2,12 +2,11 @@ package com.example.backend.core.admin.service.impl;
 
 import com.example.backend.core.admin.dto.CustomerAdminDTO;
 import com.example.backend.core.admin.dto.OrderAdminDTO;
+import com.example.backend.core.admin.dto.StaffAdminDTO;
 import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.OrderAdminMapper;
-import com.example.backend.core.admin.repository.CustomerAdminRepository;
-import com.example.backend.core.admin.repository.OrderAdminCustomerRepository;
-import com.example.backend.core.admin.repository.OrderAdminRepository;
-import com.example.backend.core.admin.repository.OrderHistoryAdminRepository;
+import com.example.backend.core.admin.mapper.StaffMapper;
+import com.example.backend.core.admin.repository.*;
 import com.example.backend.core.admin.service.OrderAdminService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
@@ -42,6 +41,12 @@ public class OrderAdminServiceImpl implements OrderAdminService {
     @Autowired
     private OrderAdminCustomerRepository orderAdminCustomerRepository;
 
+    @Autowired
+    private StaffAdminRepository staffAdminRepository;
+
+    @Autowired
+    private StaffMapper staffMapper;
+
     @Override
     public List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO) {
         List<OrderAdminDTO> lst = orderAdminCustomerRepository.getAllOrderAdmin(orderAdminDTO);
@@ -52,6 +57,10 @@ public class OrderAdminServiceImpl implements OrderAdminService {
                                     .orElse(null)
                     );
                     c.setCustomerAdminDTO(customerAdminDTO);
+                }
+                if (c.getIdStaff() != null) {
+                    StaffAdminDTO staffAdminDTO = staffMapper.toDto(staffAdminRepository.findById(c.getIdStaff()).orElse(null));
+                    c.setStaffAdminDTO(staffAdminDTO);
                 }
                 return c;
             }).collect(Collectors.toList());

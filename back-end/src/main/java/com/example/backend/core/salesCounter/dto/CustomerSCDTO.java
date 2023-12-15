@@ -16,10 +16,5 @@ public class CustomerSCDTO {
     private String phone;
     private String email;
     private String gender;
-    private Instant createDate;
-    private Instant updateDate;
     private String username;
-    private String password;
-    private Integer status;
-    private Integer idel;
 }

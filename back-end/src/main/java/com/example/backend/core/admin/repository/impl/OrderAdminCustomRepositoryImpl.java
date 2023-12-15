@@ -80,6 +80,7 @@ public class OrderAdminCustomRepositoryImpl implements OrderAdminCustomerReposit
                 dto.setMissedOrder((Integer) obj[18]);
                 dto.setStatus((Integer) obj[19]);
                 dto.setStatusPayment((Integer) obj[20]);
+                dto.setType((Integer) obj[21]);
                 lstOrderAdminDTOS.add(dto);
             }
         } catch (Exception e) {
