@@ -54,9 +54,9 @@ public class OrderDetailAdminServiceImpl implements OrderDetailAdminService {
     private OrderHistoryAdminMapper orderHistoryAdminMapper;
 
     @Autowired
-    private StaffMapper staffMapper;
+    private StaffAdminMapper staffMapper;
     @Autowired
-    private StaffRepository staffRepository;
+    private StaffAdminRepository staffAdminRepository;
 
     public OrderDetailAdminServiceImpl(ProductAdminRepository productAdminRepository, ProductDetailAdminRepository productDetailAdminRepository) {
         this.productAdminRepository = productAdminRepository;
@@ -72,9 +72,9 @@ public class OrderDetailAdminServiceImpl implements OrderDetailAdminService {
         List<OrderHistoryAdminDTO> orderHistoryAdminDTOList = new ArrayList<>();
         List<OrderHistory> orderHistoryList = orderHistoryAdminRepository.getAllOrderHistoryByOrder(idOrder);
         for (int i = 0; i < orderHistoryList.size(); i++) {
-            StaffDTO staffDTO = staffMapper.toDto(staffRepository.findById(orderHistoryList.get(i).getIdStaff()).orElse(null));
+            StaffAdminDTO staffAdminDTO = staffMapper.toDto(staffAdminRepository.findById(orderHistoryList.get(i).getIdStaff()).orElse(null));
             OrderHistoryAdminDTO orderHistoryAdminDTO = orderHistoryAdminMapper.toDto(orderHistoryList.get(i));
-            orderHistoryAdminDTO.setStaffDTO(staffDTO);
+            orderHistoryAdminDTO.setStaffDTO(staffAdminDTO);
             orderHistoryAdminDTOList.add(orderHistoryAdminDTO);
         }
         List<OrderDetailAdminDTO> lst = orderDetailAdminMapper.toDto(orderDetailAdminRepository.findByIdOrder(idOrder));

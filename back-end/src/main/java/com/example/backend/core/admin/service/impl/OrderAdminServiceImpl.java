@@ -5,15 +5,13 @@ import com.example.backend.core.admin.dto.OrderAdminDTO;
 import com.example.backend.core.admin.dto.StaffAdminDTO;
 import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.mapper.OrderAdminMapper;
-import com.example.backend.core.admin.mapper.StaffMapper;
+import com.example.backend.core.admin.mapper.StaffAdminMapper;
 import com.example.backend.core.admin.repository.*;
 import com.example.backend.core.admin.service.OrderAdminService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.OrderHistory;
-import com.example.backend.core.view.dto.CustomerDTO;
-import com.example.backend.core.view.mapper.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,7 +43,7 @@ public class OrderAdminServiceImpl implements OrderAdminService {
     private StaffAdminRepository staffAdminRepository;
 
     @Autowired
-    private StaffMapper staffMapper;
+    private StaffAdminMapper staffMapper;
 
     @Override
     public List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO) {

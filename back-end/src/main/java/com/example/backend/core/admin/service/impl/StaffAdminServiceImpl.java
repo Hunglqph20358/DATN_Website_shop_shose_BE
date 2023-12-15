@@ -1,20 +1,16 @@
 package com.example.backend.core.admin.service.impl;
 
-import com.example.backend.core.admin.dto.SoleAdminDTO;
 import com.example.backend.core.admin.dto.StaffAdminDTO;
-import com.example.backend.core.admin.mapper.StaffMapper;
+import com.example.backend.core.admin.mapper.StaffAdminMapper;
 import com.example.backend.core.admin.repository.StaffAdminRepository;
 import com.example.backend.core.admin.service.StaffAdminService;
 import com.example.backend.core.commons.ServiceResult;
-import com.example.backend.core.model.Sole;
 import com.example.backend.core.model.Staff;
-import com.example.backend.core.view.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +23,7 @@ public class StaffAdminServiceImpl implements StaffAdminService {
     private ServiceResult<StaffAdminDTO> result = new ServiceResult<>();
 
     @Autowired
-    private StaffMapper staffMapper;
+    private StaffAdminMapper staffMapper;
     @Autowired
     PasswordEncoder encoder;
     @Override

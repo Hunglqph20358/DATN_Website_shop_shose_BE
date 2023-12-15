@@ -66,6 +66,4 @@ public class Order implements Serializable {
     private Integer missedOrder;
     @Column(name = "status_payment")
     private Integer statusPayment;
-    @Column(name = "type")
-    private Integer type;
 }

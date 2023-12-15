@@ -21,7 +21,7 @@ public class OrderHistoryAdminDTO {
     private Integer status;
     private Instant createDate;
     private String note;
-    private StaffDTO staffDTO;
+    private StaffAdminDTO staffDTO;
     private CustomerAdminDTO customerAdminDTO;
 
 
