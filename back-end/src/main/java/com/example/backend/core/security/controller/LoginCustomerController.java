@@ -48,6 +48,15 @@ public class LoginCustomerController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUpCustomer(@Valid @RequestBody SignUpRepquest signUpFormRequest){
+        if (customerSPService.existsByUsername(signUpFormRequest.getUsername())){
+            return new ResponseEntity<>(new MessageResponse("The Username is existed"), HttpStatus.OK);
+        }
+        if (customerSPService.existsByEmail(signUpFormRequest.getEmail())){
+            return new ResponseEntity<>(new MessageResponse("The Email is existed"), HttpStatus.OK);
+        }
+        if (customerSPService.existsByPhone(signUpFormRequest.getPhone())){
+            return new ResponseEntity<>(new MessageResponse("The Phone is existed"), HttpStatus.OK);
+        }
         CustomerLogin customer = CustomerLogin.builder()
                 .code("KH" + Instant.now().getEpochSecond())
                 .fullname(signUpFormRequest.getFullname())

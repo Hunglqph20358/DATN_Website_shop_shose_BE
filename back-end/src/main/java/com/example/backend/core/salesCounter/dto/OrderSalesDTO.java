@@ -31,6 +31,7 @@ public class OrderSalesDTO {
     private Integer paymentType;
     private String description;
     private Integer status;
+    private Integer statusPayment;
     private CustomerDTO customerDTO;
 
     private String email;

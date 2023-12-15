@@ -41,7 +41,7 @@ public class Staff implements Serializable {
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "role")
+    @Column(name = "roles")
     private String role;
     @Column(name = "status")
     private Integer status;

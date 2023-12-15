@@ -40,6 +40,11 @@ public class UsersServiceImpl implements UserService {
     }
 
     @Override
+    public boolean existsByPhone(String phone) {
+        return repository.existsByPhone(phone);
+    }
+
+    @Override
     public String findByRole(String role) {
         return repository.findByRole(role);
     }

@@ -36,7 +36,7 @@ public class CustomerInforServiceImpl implements CustomerInforSerivce {
             result.setData(customerMapper.toDto(customer));
         } else {
             result.setStatus(HttpStatus.BAD_REQUEST);
-            result.setMessage("Sua  khong thanh cong");
+            result.setMessage("mat khau cu khong chinh xac");
             result.setData(null);
         }
         return result;

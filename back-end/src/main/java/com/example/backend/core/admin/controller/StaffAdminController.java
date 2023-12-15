@@ -22,7 +22,7 @@ public class StaffAdminController {
     }
     @GetMapping("/staff/finbyId/{id}")
     public ResponseEntity<?> findByIdStaff(
-            @PathVariable("id") String id
+            @PathVariable("id") Long id
     ){
         return ResponseEntity.ok(service.findById(id));
     }

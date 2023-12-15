@@ -43,11 +43,14 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
         Order order = new Order();
         if (orderSalesDTO.getIdCustomer() == null){
             order.setCode("HD" + Instant.now().getEpochSecond());
+            order.setIdStaff(orderSalesDTO.getIdStaff());
             order.setCreateDate(Instant.now());
-            order.setPaymentType(orderSalesDTO.getPaymentType());
+            order.setPaymentType(AppConstant.DA_THANH_TOAN);
+            order.setStatusPayment(orderSalesDTO.getStatusPayment());
             order.setTotalPrice(orderSalesDTO.getTotalPrice());
             order.setTotalPayment(orderSalesDTO.getTotalPayment());
             order.setStatus(AppConstant.HOAN_THANH);
+            order.setType(1);
             order = orderSalesCountRepository.save(order);
             orderSalesDTO = orderSalesCounterMapper.toDto(order);
             result.setData(orderSalesDTO);
@@ -62,10 +65,12 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
                 order.setReceiver(orderSalesDTO.getReceiver());
                 order.setIdCustomer(orderSalesDTO.getIdCustomer());
                 order.setIdStaff(orderSalesDTO.getIdStaff());
-                order.setPaymentType(orderSalesDTO.getPaymentType());
+                order.setPaymentType(AppConstant.DA_THANH_TOAN);
+                order.setStatusPayment(orderSalesDTO.getStatusPayment());
                 order.setTotalPrice(orderSalesDTO.getTotalPrice());
                 order.setTotalPayment(orderSalesDTO.getTotalPayment());
-                order.setStatus(0);
+                order.setStatus(AppConstant.HOAN_THANH);
+                order.setType(1);
                 order = orderSalesCountRepository.save(order);
 //            if(StringUtils.isNotBlank(salesDTO.getCodeVoucher())){
 //                Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());

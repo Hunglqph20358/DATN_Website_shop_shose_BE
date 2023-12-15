@@ -23,6 +23,22 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerMapper customerMapper;
     @Override
     public ServiceResult<CustomerDTO> updateInforCustomer(CustomerDTO customerDTO, Customer customer) {
+        if (!customer.getPhone().equals(customerDTO.getPhone())){
+            if (repository.existsByPhone(customerDTO.getPhone())){
+                result.setStatus(HttpStatus.OK);
+                result.setMessage("Phone existed");
+                result.setData(customerMapper.toDto(customer));
+                return result;
+            }
+        }
+        if (!customer.getEmail().equals(customerDTO.getEmail())){
+            if (repository.existsByEmail(customerDTO.getEmail())){
+                result.setStatus(HttpStatus.OK);
+                result.setMessage("Email existed");
+                result.setData(customerMapper.toDto(customer));
+                return result;
+            }
+        }
         if (!customer.equals("")){
             customer.setFullname(customerDTO.getFullname());
             customer.setPhone(customerDTO.getPhone());

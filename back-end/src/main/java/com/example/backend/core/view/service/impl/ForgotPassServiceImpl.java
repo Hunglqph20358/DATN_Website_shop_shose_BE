@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -45,12 +46,12 @@ public class ForgotPassServiceImpl implements ForgotPassService {
         helper.setFrom("hunglqph20358@fpt.edu.vn");
         helper.setTo(to);
         helper.setSubject(subject);
-        helper.setText(htmlBody, true);
+        helper.setText(htmlBody, false);
         javaMailSender.send(message);
     }
     @Override
+    @Async
     public void sendMessageMailOTP(CustomerDTO customerDTO) throws MessagingException{
-
         Customer customer = customerInforRepository.findByEmail(customerDTO.getEmail());
         if (customer != null){
             String emailTo = customer.getEmail();

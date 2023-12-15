@@ -76,9 +76,11 @@ public class AppConstant {
                 "/api/admin/product/export-data-template",
                 "/api/admin/product/exportDataErrors",
                 "/api/admin/upload",
-                "/api/admin/get-statistical-by-year"
+                "/api/admin/get-statistical-by-year",
                 "/sales-customer/findByPhone/*",
                 "/sales-customer/add-customer",
+                "/api/admin/staff-getall",
+                "/api/admin/staff-update/*",
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
