@@ -1,6 +1,5 @@
 package com.example.backend.core.view.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-public class VoucherDTO {
+public class VoucherFreeShipDTO {
     private Long id;
     private String code;
     private BigDecimal conditionApply;
@@ -22,16 +21,12 @@ public class VoucherDTO {
     private Date startDate;
     private Date endDate;
     private String createName;
-    private Integer voucherType;
     private BigDecimal reducedValue;
     private Integer quantity;
     private String description;
     private Integer status;
     private Integer isdel;
-    private Integer apply;
     private Integer optionCustomer;
-    private BigDecimal maxReduced;
     private Integer limitCustomer;
-    private Integer allow;
     private Long idCustomerLogin;
 }

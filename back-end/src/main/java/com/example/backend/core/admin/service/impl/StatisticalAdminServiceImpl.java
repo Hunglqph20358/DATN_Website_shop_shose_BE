@@ -1,6 +1,5 @@
 package com.example.backend.core.admin.service.impl;
 
-import com.example.backend.core.admin.dto.ProductAdminDTO;
 import com.example.backend.core.admin.dto.StatisticalAdminDTO;
 import com.example.backend.core.admin.dto.TotalStatisticalAdminDTO;
 import com.example.backend.core.admin.repository.ProductAdminCustomRepository;
@@ -8,9 +7,7 @@ import com.example.backend.core.admin.repository.StatisticalAdminCustomRepositor
 import com.example.backend.core.admin.service.StatisticalAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Calendar;
+import com.example.backend.core.admin.dto.ProductAdminDTO;
 import java.util.List;
 
 @Service

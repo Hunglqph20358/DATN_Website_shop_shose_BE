@@ -32,6 +32,7 @@ public class ProductDTO {
     private BigDecimal price;
     private BigDecimal reducePrice;
     private Integer percentageReduce;
+    private String codeDiscount;
     private Integer totalQuantity;
     private List<ProductDetailDTO> productDetailDTOList;
     private BigDecimal totalSold;

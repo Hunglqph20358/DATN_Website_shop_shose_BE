@@ -10,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class ProductAdminDTO extends ExportDTO {
 
     private Long id;

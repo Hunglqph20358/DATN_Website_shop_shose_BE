@@ -30,6 +30,8 @@ public class Order implements Serializable {
     private Long idStaff;
     @Column(name = "code_voucher")
     private String codeVoucher;
+    @Column(name = "code_voucher_ship")
+    private String codeVoucherShip;
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "payment_date")
@@ -52,6 +54,8 @@ public class Order implements Serializable {
     private BigDecimal totalPrice;
     @Column(name = "total_payment")
     private BigDecimal totalPayment;
+    @Column(name = "type")
+    private Integer type;
     @Column(name = "payment_type")
     private Integer paymentType;
     @Column(name = "description")
@@ -62,6 +66,4 @@ public class Order implements Serializable {
     private Integer missedOrder;
     @Column(name = "status_payment")
     private Integer statusPayment;
-    @Column(name = "type")
-    private Integer type;
 }

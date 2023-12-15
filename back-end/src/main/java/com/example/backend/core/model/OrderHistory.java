@@ -32,10 +32,12 @@ public class OrderHistory implements Serializable {
     private Long idOrder;
     @Column(name = "id_staff")
     private Long idStaff;
+    @Column(name = "id_customer")
+    private Long idCustomer;
     @Column(name = "status")
     private Integer status;
     @Column(name = "create_date")
     private Instant createDate;
-    @Column(name = "description")
-    private String description;
+    @Column(name = "note")
+    private String note;
 }

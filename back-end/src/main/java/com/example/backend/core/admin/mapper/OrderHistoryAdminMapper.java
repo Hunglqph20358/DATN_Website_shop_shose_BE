@@ -6,5 +6,5 @@ import com.example.backend.core.model.OrderHistory;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {})
-public interface OrderHistoryMapper extends EntityMapper<OrderHistoryAdminDTO, OrderHistory> {
+public interface OrderHistoryAdminMapper extends EntityMapper<OrderHistoryAdminDTO, OrderHistory> {
 }

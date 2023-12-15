@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface VoucherService {
 
-    List<VoucherDTO> getAllVoucher();
+    List<VoucherDTO> getAllVoucher(VoucherDTO voucherDTO);
 
     ServiceResult<VoucherDTO> findByCode(String code);
 }

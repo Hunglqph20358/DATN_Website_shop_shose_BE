@@ -13,9 +13,11 @@ import java.util.List;
 @Transactional
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findByIdCustomer(Long idCustomer);
+    List<Order> findByIdCustomerAndCodeVoucher(Long idCustomer, String codeVoucher);
 
     List<Order> findByIdCustomerOrderByCreateDateDesc(Long idCustomer);
 
     List<Order> findByIdCustomerAndStatusOrderByCreateDateDesc(Long idCustomer, Integer status);
+
+
 }
