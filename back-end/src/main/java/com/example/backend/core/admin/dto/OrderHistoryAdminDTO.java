@@ -17,7 +17,10 @@ public class OrderHistoryAdminDTO {
     private Long id;
     private Long idOrder;
     private Long idStaff;
+    private Long idCustomer;
     private Integer status;
     private Instant createDate;
-    private String description;
+    private String note;
+    private StaffDTO staffDTO;
+    private CustomerAdminDTO customerAdminDTO;
 }

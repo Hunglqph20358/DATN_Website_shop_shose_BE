@@ -38,4 +38,5 @@ public class OrderDTO {
     private Integer statusPayment;
     private String dateFrom;
     private String dateTo;
+    private String note;
 }

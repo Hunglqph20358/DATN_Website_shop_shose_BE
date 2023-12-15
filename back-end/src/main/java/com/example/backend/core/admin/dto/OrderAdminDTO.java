@@ -37,4 +37,5 @@ public class OrderAdminDTO {
     private CustomerAdminDTO customerAdminDTO;
     private String dateFrom;
     private String dateTo;
+    private String note;
 }

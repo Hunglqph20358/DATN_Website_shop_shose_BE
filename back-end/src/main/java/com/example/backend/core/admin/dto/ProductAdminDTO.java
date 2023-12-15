@@ -1,8 +1,6 @@
 package com.example.backend.core.admin.dto;
 
 import com.example.backend.core.commons.ExportDTO;
-import com.example.backend.core.view.dto.*;
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class ProductAdminDTO extends ExportDTO {
 
     private Long id;

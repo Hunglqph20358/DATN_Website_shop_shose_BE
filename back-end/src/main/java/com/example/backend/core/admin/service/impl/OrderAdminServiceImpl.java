@@ -79,10 +79,11 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         order = orderAdminRepository.save(order);
         if(order != null){
             OrderHistory orderHistory = new OrderHistory();
-            orderHistory.setStatus(AppConstant.CHO_XU_LY);
+            orderHistory.setStatus(AppConstant.XU_LY_HISTORY);
             orderHistory.setCreateDate(Instant.now());
             orderHistory.setIdOrder(order.getId());
             orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
             orderHistoryAdminRepository.save(orderHistory);
         }
         result.setData(orderAdminMapper.toDto(order));
@@ -107,9 +108,18 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             return result;
         }
         Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
-        order.setStatus(AppConstant.HOAN_HUY);
+        order.setStatus(AppConstant.HUY_DON_HANG);
         order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
+        if(order != null){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.HUY_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
         result.setData(orderAdminMapper.toDto(order));
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
@@ -140,10 +150,11 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         order = orderAdminRepository.save(order);
         if(order != null){
             OrderHistory orderHistory = new OrderHistory();
-            orderHistory.setStatus(AppConstant.DANG_GIAO_HANG);
+            orderHistory.setStatus(AppConstant.GIAO_HANG_HISTORY);
             orderHistory.setCreateDate(Instant.now());
             orderHistory.setIdOrder(order.getId());
             orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
             orderHistoryAdminRepository.save(orderHistory);
         }
         result.setData(orderAdminMapper.toDto(order));
@@ -174,10 +185,11 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         order = orderAdminRepository.save(order);
         if(order != null){
             OrderHistory orderHistory = new OrderHistory();
-            orderHistory.setStatus(AppConstant.HOAN_THANH);
+            orderHistory.setStatus(AppConstant.HOAN_THANH_HISTORY);
             orderHistory.setCreateDate(Instant.now());
             orderHistory.setIdOrder(order.getId());
             orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
             orderHistoryAdminRepository.save(orderHistory);
         }
         result.setData(orderAdminMapper.toDto(order));
@@ -210,10 +222,37 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         }
         if(order.getMissedOrder() == AppConstant.BO_LO_LAN2){
             order.setMissedOrder(AppConstant.BO_LO_LAN3);
-            order.setStatus(AppConstant.HOAN_HUY);
+            order.setStatus(AppConstant.HUY_DON_HANG);
         }
         order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
+        if(order.getMissedOrder() == null || order.getMissedOrder() == 0){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.BO_LO_LAN1_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
+        if(order.getMissedOrder() == AppConstant.BO_LO_LAN1){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.BO_LO_LAN2_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
+        if(order.getMissedOrder() == AppConstant.BO_LO_LAN2){
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.BO_LO_LAN3_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
+            orderHistory.setNote(orderAdminDTO.getNote());
+            orderHistoryAdminRepository.save(orderHistory);
+        }
         result.setData(orderAdminMapper.toDto(order));
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");

@@ -6,6 +6,7 @@ import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Address;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderHistory;
 import com.example.backend.core.model.Voucher;
 import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.view.dto.AddressDTO;
@@ -17,6 +18,7 @@ import com.example.backend.core.view.mapper.OrderMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
 import com.example.backend.core.view.repository.CustomerRepository;
 import com.example.backend.core.view.repository.OrderCustomRepository;
+import com.example.backend.core.view.repository.OrderHistoryRepository;
 import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
 import com.example.backend.core.view.repository.VoucherRepository;
@@ -53,6 +55,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderCustomRepository orderCustomRepository;
+
+    @Autowired
+    private OrderHistoryRepository orderHistoryRepository;
 
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -115,8 +120,15 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = orderRepository.findById(orderDTO.getId()).orElse(null);
         if(order != null){
-            order.setStatus(AppConstant.HOAN_HUY);
+            order.setStatus(AppConstant.HUY_DON_HANG);
             order = orderRepository.save(order);
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.HUY_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdCustomer(orderDTO.getIdCustomer());
+            orderHistory.setNote(orderDTO.getNote());
+            orderHistoryRepository.save(orderHistory);
             result.setData(orderMapper.toDto(order));
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");

@@ -7,12 +7,23 @@ public class AppConstant {
         public static final Integer CHO_XU_LY = 1;
         public static final Integer DANG_GIAO_HANG = 2;
         public static final Integer HOAN_THANH = 3;
-        public static final Integer HOAN_HUY = 4;
+        public static final Integer HUY_DON_HANG = 4;
         public static final Integer CHUA_THANH_TOAN = 1;
         public static final Integer DA_THANH_TOAN = 0;
         public static final Integer BO_LO_LAN1 = 1;
         public static final Integer BO_LO_LAN2 = 2;
         public static final Integer BO_LO_LAN3 = 3;
+        public static final Integer XU_LY_HISTORY = 1;
+        public static final Integer GIAO_HANG_HISTORY = 2;
+        public static final Integer BO_LO_LAN1_HISTORY = 3;
+        public static final Integer BO_LO_LAN2_HISTORY = 4;
+        public static final Integer BO_LO_LAN3_HISTORY = 5;
+        public static final Integer HUY_HISTORY = 6;
+        public static final Integer HOAN_THANH_HISTORY = 7;
+
+
+
+
         public static final String ALIGN_LEFT = "LEFT";
         public static final String ALIGN_RIGHT = "RIGHT";
         public static final String STRING = "STRING";
@@ -105,5 +116,6 @@ public class AppConstant {
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
+                "view/api/get-all-voucher-ship",
         };
 }
