@@ -637,9 +637,9 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "FROM discount d " +
                     "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                     "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
-                    "WHERE d.start_date >= :fromDate AND d.end_date <= :toDate\n" +
+                    "WHERE d.start_date >= :fromDate AND d.end_date <= :toDate and d.dele = 0\n" +
                     "GROUP BY d.id, d.code, d.name, d.start_date, d.end_date, d.description, d.idel" +
-                    " where dele=0;\n");
+                    " \n");
 
             Query query = entityManager.createNativeQuery(sql.toString());
             query.setParameter("fromDate", fromDate);
