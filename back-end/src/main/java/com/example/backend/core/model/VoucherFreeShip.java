@@ -1,6 +1,12 @@
 package com.example.backend.core.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +17,12 @@ import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Date;
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -62,9 +74,6 @@ public class VoucherFreeShip {
 
     @Column(name = "limit_customer")
     private Integer limitCustomer;
-
-    @Column(name = "allow", columnDefinition = "int default 0")
-    private Integer allow;
 
     @Column(name = "option_customer", columnDefinition = "int default 0")
     private Integer optionCustomer;

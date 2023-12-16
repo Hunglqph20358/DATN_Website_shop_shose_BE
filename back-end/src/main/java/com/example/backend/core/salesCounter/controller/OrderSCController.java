@@ -17,4 +17,8 @@ public class OrderSCController {
     public ResponseEntity<?> createOrderSC(@RequestBody OrderSalesDTO orderSalesDTO){
         return ResponseEntity.ok(service.createOrderSales(orderSalesDTO));
     }
+    @GetMapping("/list-bill-all")
+    public ResponseEntity<?> getAllBill(){
+        return ResponseEntity.ok(service.getAllOrder());
+    }
 }

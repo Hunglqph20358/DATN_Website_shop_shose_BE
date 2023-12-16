@@ -1,11 +1,17 @@
 package com.example.backend.core.admin.dto;
 
-import com.example.backend.core.view.dto.CustomerDTO;
-import lombok.*;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +24,7 @@ public class OrderAdminDTO {
     private Long idCustomer;
     private Long idStaff;
     private String codeVoucher;
+    private String codeVoucherShip;
     private Instant createDate;
     private Instant paymentDate;
     private Date deliveryDate;
@@ -34,5 +41,12 @@ public class OrderAdminDTO {
     private Integer status;
     private Integer missedOrder;
     private Integer statusPayment;
+    private Integer type;
     private CustomerAdminDTO customerAdminDTO;
+    private StaffAdminDTO staffAdminDTO;
+    private String dateFrom;
+    private String dateTo;
+    private String note;
+    private List<OrderHistoryAdminDTO> orderHistoryAdminDTOList;
+
 }
