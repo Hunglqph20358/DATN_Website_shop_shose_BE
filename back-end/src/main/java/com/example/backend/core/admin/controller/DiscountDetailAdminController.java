@@ -75,9 +75,9 @@ public class DiscountDetailAdminController {
     }
     @GetMapping("/searchByDate")
     public List<DiscountAdminDTO> searchByDateRange(
-            @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-            @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate) {
-
+            @RequestParam(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss") Date fromDate,
+            @RequestParam(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss") Date toDate) {
+        System.out.println( "fromdate");
         return discountService.getAllByDateRange(fromDate, toDate);
     }
 

@@ -567,7 +567,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
                         "LEFT JOIN product AS p ON dd.id_product = p.id\n" +
                         "LEFT JOIN brand AS b ON p.id_brand = b.id\n" +
-                        "WHERE LOWER(b.name) = LOWER(:brand) AND d.dele = 0\n" +
+                        "WHERE LOWER(b.name) LIKE LOWER(:brand) AND d.dele = 0\n" +
                         "GROUP BY d.id, d.code, d.name, d.start_date, d.end_date, d.description, d.idel;\n");
 
                 Query query = entityManager.createNativeQuery(sql.toString());
