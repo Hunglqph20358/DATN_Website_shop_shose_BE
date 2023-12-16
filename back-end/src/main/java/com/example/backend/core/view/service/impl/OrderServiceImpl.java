@@ -6,7 +6,9 @@ import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Address;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderHistory;
 import com.example.backend.core.model.Voucher;
+import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.view.dto.AddressDTO;
 import com.example.backend.core.view.dto.CustomerDTO;
@@ -16,8 +18,11 @@ import com.example.backend.core.view.mapper.CustomerMapper;
 import com.example.backend.core.view.mapper.OrderMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
 import com.example.backend.core.view.repository.CustomerRepository;
+import com.example.backend.core.view.repository.OrderCustomRepository;
+import com.example.backend.core.view.repository.OrderHistoryRepository;
 import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
+import com.example.backend.core.view.repository.VoucherFreeShipRepository;
 import com.example.backend.core.view.repository.VoucherRepository;
 import com.example.backend.core.view.service.OrderService;
 import org.apache.commons.lang3.StringUtils;
@@ -48,8 +53,16 @@ public class OrderServiceImpl implements OrderService {
     private VoucherRepository voucherRepository;
 
     @Autowired
+    private VoucherFreeShipRepository voucherFreeShipRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private OrderCustomRepository orderCustomRepository;
+
+    @Autowired
+    private OrderHistoryRepository orderHistoryRepository;
 
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -66,6 +79,8 @@ public class OrderServiceImpl implements OrderService {
             order.setTotalPrice(orderDTO.getTotalPrice());
             order.setReceiverPhone(orderDTO.getReceiverPhone());
             order.setAddressReceived(orderDTO.getAddressReceived());
+            order.setDescription(orderDTO.getDescription());
+            order.setType(0);
             if (orderDTO.getPaymentType() == 1) {
                 order.setPaymentType(orderDTO.getPaymentType());
                 order.setTotalPayment(orderDTO.getTotalPayment());
@@ -85,13 +100,20 @@ public class OrderServiceImpl implements OrderService {
                     voucherRepository.save(voucher);
                 }
             }
+            if (StringUtils.isNotBlank(orderDTO.getCodeVoucherShip())) {
+                VoucherFreeShip voucherFreeShip = voucherFreeShipRepository.findByCode(orderDTO.getCodeVoucherShip());
+                if (null != voucherFreeShip) {
+                    voucherFreeShip.setQuantity(voucherFreeShip.getQuantity() - 1);
+                    order.setCodeVoucherShip(voucherFreeShip.getCode());
+                    voucherFreeShipRepository.save(voucherFreeShip);
+                }
+            }
             order = orderRepository.save(order);
             dto = orderMapper.toDto(order);
             result.setData(dto);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");
         }
-
         return result;
     }
 
@@ -112,8 +134,15 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = orderRepository.findById(orderDTO.getId()).orElse(null);
         if(order != null){
-            order.setStatus(AppConstant.HOAN_HUY);
+            order.setStatus(AppConstant.HUY_DON_HANG);
             order = orderRepository.save(order);
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.HUY_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdCustomer(orderDTO.getIdCustomer());
+            orderHistory.setNote(orderDTO.getNote());
+            orderHistoryRepository.save(orderHistory);
             result.setData(orderMapper.toDto(order));
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");
@@ -126,10 +155,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderDTO.getIdCustomer() == null) {
             return null;
         }
-        if (null != orderDTO.getStatus() && orderDTO.getStatus() != 6) {
-            return orderMapper.toDto(orderRepository.findByIdCustomerAndStatusOrderByCreateDateDesc(orderDTO.getIdCustomer(), orderDTO.getStatus()));
-        }
-        return orderMapper.toDto(orderRepository.findByIdCustomerOrderByCreateDateDesc(orderDTO.getIdCustomer()));
+        return orderCustomRepository.getAllOrderByCustomerSearch(orderDTO);
     }
 
     @Override

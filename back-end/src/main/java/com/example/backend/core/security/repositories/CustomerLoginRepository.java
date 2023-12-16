@@ -9,4 +9,5 @@ public interface CustomerLoginRepository extends JpaRepository<CustomerLogin, Lo
     CustomerLogin findByUsername(String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
 }

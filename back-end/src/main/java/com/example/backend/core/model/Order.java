@@ -54,6 +54,8 @@ public class Order implements Serializable {
     private BigDecimal totalPrice;
     @Column(name = "total_payment")
     private BigDecimal totalPayment;
+    @Column(name = "type")
+    private Integer type;
     @Column(name = "payment_type")
     private Integer paymentType;
     @Column(name = "description")

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderAdminService {
 
-    List<OrderAdminDTO> getAllOrderAdmin(Integer status);
+    List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO);
 
     ServiceResult<OrderAdminDTO> updateStatusChoXuLy(OrderAdminDTO orderAdminDTO);
 

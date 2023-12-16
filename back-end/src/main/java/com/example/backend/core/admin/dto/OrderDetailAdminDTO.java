@@ -19,4 +19,5 @@ public class OrderDetailAdminDTO {
     private String codeDiscount;
     private Integer status;
     private ProductDetailAdminDTO productDetailDTO;
+    private OrderAdminDTO orderAdminDTO;
 }

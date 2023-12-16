@@ -31,4 +31,9 @@ public class CustomerLoginServiceImpl implements CustomerLoginService {
     public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
     }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        return repository.existsByPhone(phone);
+    }
 }

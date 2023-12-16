@@ -2,6 +2,7 @@ package com.example.backend.core.security.config;
 
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.security.config.custom.CustomUserDetailService;
+import com.example.backend.core.security.config.custom.CustomerUserDetalsService;
 import com.example.backend.core.security.jwt.JwtAuthenticationFillter;
 import com.example.backend.core.security.jwt.JwtEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class webConfig{
     public CustomUserDetailService customUserDetailService;
 
     @Autowired
+    public CustomerUserDetalsService customerUserDetalsService;
+
+    @Autowired
     private JwtEntryPoint jwtEntryPoint;
 
     @Bean
@@ -43,23 +47,21 @@ public class webConfig{
     public AuthenticationManager authenticationManager()throws Exception{
         return new ProviderManager(Arrays.asList(daoAuthenticationProvider()));
     }
-    @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(customUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(c -> c.disable()).csrf(cf -> cf.disable());
         http.authorizeHttpRequests(author -> {
             try {
-                author.requestMatchers("view/api/sign-in").permitAll()
-                        .requestMatchers("view/api/sign-up").permitAll()
-                        .requestMatchers("admin/api/sign-in").permitAll()
-                        .requestMatchers("admin/api/sign-up").permitAll()
+                author.requestMatchers("/view/api/sign-in").permitAll()
+                        .requestMatchers("/view/api/sign-up").permitAll()
+                        .requestMatchers("/admin/api/sign-in").permitAll()
+                        .requestMatchers("/admin/api/sign-up").permitAll()
                         .requestMatchers(AppConstant.API_VIEW_PERMIT).permitAll()
                         .requestMatchers(AppConstant.API_ADMIN).permitAll()
                         .requestMatchers(AppConstant.API_STAFF).permitAll()
