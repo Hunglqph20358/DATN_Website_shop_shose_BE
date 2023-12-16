@@ -3,10 +3,7 @@ import com.example.backend.core.admin.dto.*;
 import com.example.backend.core.admin.mapper.DiscountAdminMapper;
 import com.example.backend.core.admin.mapper.DiscountDetailAdminMapper;
 import com.example.backend.core.admin.mapper.ProductAdminMapper;
-import com.example.backend.core.admin.repository.DiscountAdminCustomRepository;
-import com.example.backend.core.admin.repository.DiscountAdminRepository;
-import com.example.backend.core.admin.repository.DiscountDetailAdminRepository;
-import com.example.backend.core.admin.repository.ProductAdminRepository;
+import com.example.backend.core.admin.repository.*;
 import com.example.backend.core.admin.service.DiscountAdminService;
 import com.example.backend.core.admin.service.DiscountDetailAdminService;
 import com.example.backend.core.commons.CellConfigDTO;
@@ -16,6 +13,8 @@ import com.example.backend.core.commons.SheetConfigDTO;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Discount;
 import com.example.backend.core.model.DiscountDetail;
+import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderDetail;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,12 +47,22 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     private DiscountAdminCustomRepository discountAdminCustomRepository;
     @Autowired
     FileExportUtil fileExportUtil;
+    @Autowired
+    private OrderDetailAdminRepository orderDetailAdminRepository;
 
 
 
     @Override
     public List<DiscountAdminDTO> getAll() {
         List<DiscountAdminDTO> list= discountAdminCustomRepository.getAll();
+        Iterator<DiscountAdminDTO> iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            DiscountAdminDTO discountAdminDTO = iterator.next();
+            List<OrderDetail> orderList = orderDetailAdminRepository.findByCodeDiscount(discountAdminDTO.getCode());
+            if (orderList.size() > 0) {
+                discountAdminDTO.setIsUpdate(1);
+            }
+        }
         return list;
     }
 
@@ -147,21 +156,15 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
 
         discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
-        DiscountDetail discountDetailEntity = discountDetailAdminMapper.toEntity(discountDetailAdminDTO);
         for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
-            ProductAdminDTO productDTO = discountDetailAdminDTO.getProductDTOList().get(i);
-            discountDetailEntity.setIdProduct(productDTO.getId());
-            BigDecimal reducedValue = discountDetailAdminDTO.getReducedValue();
-            if (reducedValue != null && reducedValue.doubleValue() <= productDTO.getPrice().doubleValue()) {
-                // Nếu giảm giá không lớn hơn hoặc bằng giá sản phẩm, thì thực hiện lưu thông tin giảm giá
-                discountDetailEntity.setIdDiscount(discountAdminEntity.getId());
-                discountDetailEntity.setReducedValue(discountDetailAdminDTO.getReducedValue());
-                discountDetailEntity.setDiscountType(discountDetailAdminDTO.getDiscountType());
-                if (discountDetailEntity.getDiscountType() == 0) {
-                    discountDetailEntity.setMaxReduced(discountDetailAdminDTO.getReducedValue());
-                }
-            }
-            discountDetailRepository.save(discountDetailEntity);
+            DiscountDetail discountDetail = new DiscountDetail();
+            discountDetail.setIdDiscount(discountAdminEntity.getId());
+            discountDetail.setIdProduct(discountDetailAdminDTO.getProductDTOList().get(i).getId());
+            discountDetail.setDiscountType(discountDetailAdminDTO.getDiscountType());
+            discountDetail.setReducedValue(discountDetailAdminDTO.getReducedValue());
+            discountDetail.setStatus(0);
+            discountDetail.setMaxReduced(discountDetailAdminDTO.getMaxReduced() != null ? discountDetailAdminDTO.getMaxReduced() : null);
+            discountDetailRepository.save(discountDetail);
         }
 
         serviceResult.setData(discountDetailAdminDTO);
@@ -269,27 +272,17 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     @Override
     public byte[] exportExcelDiscount() throws IOException {
         List<SheetConfigDTO> sheetConfigList = new ArrayList<>();
-        List<DiscountAdminDTO> discountAdminDTOS = discountAdminCustomRepository.getAll();
-        sheetConfigList = getDataForExcel("Danh Sách Giảm giá", discountAdminDTOS, sheetConfigList, AppConstant.EXPORT_DATA);
+        List<DiscountDetailAdminDTO> discountAdminDTOS = discountAdminCustomRepository.discountExport();
+        sheetConfigList = getDataForExcel("Danh Sách Giảm Giá", discountAdminDTOS, sheetConfigList, AppConstant.EXPORT_DATA);
         try {
-            String title = "DANH SÁCH SẢN PHẨM";
+            String title = "DANH SÁCH GIẢM GIÁ";
             return fileExportUtil.exportXLSX(false, sheetConfigList, title);
         } catch (IOException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ioE) {
             throw new IOException("Lỗi Export" + ioE.getMessage(), ioE);
         }
     }
-    @Override
-    public byte[] exportExcelProductErrors(List<DiscountAdminDTO> listDataErrors) throws IOException {
-        List<SheetConfigDTO> sheetConfigList = getDataForExcel("DANH SÁCH SẢN PHẨM", listDataErrors, new ArrayList<>(), AppConstant.EXPORT_ERRORS);
-        try {
-            return fileExportUtil.exportXLSX(true, sheetConfigList, null);
-        } catch (IOException | ReflectiveOperationException ioE) {
-            throw new IOException("Lỗi Export Error" + ioE.getMessage(), ioE);
-        }
-    }
-
     private List<SheetConfigDTO> getDataForExcel(String sheetName,
-                                                 List<DiscountAdminDTO> listDataSheet,
+                                                 List<DiscountDetailAdminDTO> listDataSheet,
                                                  List<SheetConfigDTO> sheetConfigList,
                                                  Long exportType) {
         SheetConfigDTO sheetConfig = new SheetConfigDTO();
@@ -300,49 +293,16 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                             "STT",
                             "Mã Giảm Giá",
                             "Tên Giảm Giá",
+                            "Ngày Tạo",
+                            "Người Tạo",
                             "Ngày Bắt Đầu",
                             "Ngày Kết Thúc",
-                            "Danh Mục",
-                            "Chất Liệu",
-                            "Đế giày",
-                            "Gía sản phẩm",
-                            "Mô Tả",
-                            "Trạng Thái",
-                    };
-        } else if(AppConstant.EXPORT_ERRORS.equals(exportType)){
-            headerArr =
-                    new String[]{
-                            "STT",
-                            "Mã Giảm Giá",
-                            "Tên Giảm Giá",
-                            "Ngày Bắt Đầu",
-                            "Ngày Kết Thúc",
-                            "Hãng (*) \n",
-                            "Danh Mục (*) \n",
-                            "Chất Liệu (*) \n",
-                            "Đế giày (*) \n",
-                            "Gía sản phẩm (*) \n (Gía phải là số)",
-                            "Mô Tả \n",
-                            "Trạng Thái \n",
-                            "Ảnh sản phẩm (*) \n (Link ảnh và cách nhau bởi dấu phẩy)",
-                            "Mô tả lỗi"
-                    };
-        } else {
-            headerArr =
-                    new String[]{
-                            "STT",
-                            "Mã Giảm Giá",
-                            "Tên Giảm Giá",
-                            "Ngày Bắt Đầu",
-                            "Ngày Kết Thúc",
-                            "Hãng (*) \n",
-                            "Danh Mục (*) \n",
-                            "Chất Liệu (*) \n",
-                            "Đế giày (*) \n",
-                            "Gía sản phẩm (*) \n (Gía phải là số)",
-                            "Mô Tả \n",
-                            "Trạng Thái \n",
-                            "Ảnh sản phẩm (*) \n (Link ảnh và cách nhau bởi dấu phẩy)",
+                            "Nội Dung",
+                            "Số Lượng",
+                            "Giá Trị Giảm",
+                            "Loại Giảm Giá",
+                            "Giá trị Giảm Tối Đa",
+                            "Tên Sản Phẩm",
                     };
         }
         sheetConfig.setSheetName(sheetName);
@@ -356,29 +316,31 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
             );
             if (AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
                 for (int i = 1; i < 4; i++) {
-                    DiscountAdminDTO data = new DiscountAdminDTO();
+                    DiscountDetailAdminDTO data = new DiscountDetailAdminDTO();
                     data.setRecordNo(i);
                     listDataSheet.add(data);
                 }
             }
         } else {
-            for (DiscountAdminDTO item : listDataSheet) {
+            for (DiscountDetailAdminDTO item : listDataSheet) {
                 item.setRecordNo(recordNo++);
             }
         }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
         cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
-        cellConfigList.add(new CellConfigDTO("code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("brandName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("categoryName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("materialName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("soleHeight", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("price", AppConstant.ALIGN_LEFT, AppConstant.DOUBLE));
-        cellConfigList.add(new CellConfigDTO("description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.createName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.startDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.endDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.quantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountTypeStr", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("maxReduced", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        cellConfigList.add(new CellConfigDTO("productDTO.name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
         }

@@ -7,6 +7,7 @@ import com.example.backend.core.commons.ServiceResult;
 import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Page;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -20,10 +21,11 @@ public interface VoucherAdminService {
 //    List<VoucherAdminDTO> detailById(Long voucherId);
     List<VoucherAdminDTO> getAllVouchers();
     List<CustomerAdminDTO> getAllCustomer();
-    List<VoucherAdminDTO> getVouchersByTimeRange(Date fromDate, Date toDate);
+    List<VoucherAdminDTO> getVouchersByTimeRange(VoucherAdminDTO voucherAdminDTO);
     List<VoucherAdminDTO> getVouchersByKeyword(String keyword);
     List<VoucherAdminDTO> getAllKhongKH();
     List<VoucherAdminDTO> getAllKichHoat();
     List<VoucherAdminDTO> getVouchersByCustomer(String searchTerm);
     void sendMessageUsingThymeleafTemplate(VoucherAdminDTO voucherAdminDTO) throws MessagingException;
+    byte[] exportExcelVoucher() throws IOException;
 }

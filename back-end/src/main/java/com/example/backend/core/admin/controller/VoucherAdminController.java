@@ -5,14 +5,19 @@ import com.example.backend.core.admin.dto.DiscountDetailAdminDTO;
 import com.example.backend.core.admin.dto.VoucherAdminDTO;
 import com.example.backend.core.admin.service.DiscountDetailAdminService;
 import com.example.backend.core.admin.service.VoucherAdminService;
+import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.constant.AppConstant;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +27,11 @@ import java.util.List;
 public class VoucherAdminController {
     @Autowired
     private VoucherAdminService voucherAdminService;
+    @Autowired
+    private FileExportUtil fileExportUtil;
+    private static final Logger log = LoggerFactory.getLogger(DiscountDetailAdminDTO.class);
+
+
     @GetMapping()
     public ResponseEntity<?> getAllVoucher(){
         return ResponseEntity.ok(voucherAdminService.getAllVouchers());
@@ -53,10 +63,9 @@ public class VoucherAdminController {
     }
     @GetMapping("/searchByDate")
     public List<VoucherAdminDTO> searchByDateRange(
-            @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-            @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate) {
+            @RequestBody VoucherAdminDTO voucherAdminDTO) {
 
-        return voucherAdminService.getVouchersByTimeRange(fromDate, toDate);
+        return voucherAdminService.getVouchersByTimeRange(voucherAdminDTO);
     }
     @GetMapping("/searchByVoucher")
     public List<VoucherAdminDTO> searchByVoucher(
@@ -77,5 +86,17 @@ public class VoucherAdminController {
     @GetMapping("/KKH")
     public ResponseEntity<?> getAllDiscountKhongKH(){
         return ResponseEntity.ok(voucherAdminService.getAllKhongKH());
+    }
+    @GetMapping("/export-data")
+    public ResponseEntity<?> exportData() {
+        try {
+            byte[] fileData = voucherAdminService.exportExcelVoucher();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(AppConstant.YYYYMMDDHHSS);
+            String fileName = "DS_CBGV" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
+            return fileExportUtil.responseFileExportWithUtf8FileName(fileData, fileName, AppConstant.MIME_TYPE_XLSX);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 }

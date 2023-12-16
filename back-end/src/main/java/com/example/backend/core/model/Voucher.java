@@ -30,7 +30,7 @@ public class Voucher implements Serializable {
   private String name;
 
   @Column(name = "id_customer")
-  private Long idCustomer;
+  private String idCustomer;
 
   @Column(name = "create_date")
   private Date createDate;

@@ -31,4 +31,6 @@ public class DiscountAdminDTO extends ExportDTO {
     private List<ProductAdminDTO> productDTOList;
     private BigDecimal reducedValue;
     private Integer discountType;
+    private Integer isUpdate = 0;
+
 }

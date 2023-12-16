@@ -9,9 +9,10 @@ import java.util.List;
 public interface VoucherAdminCustomRepository {
     List<VoucherAdminDTO> getAllVouchers();
     List<CustomerAdminDTO> getAllCustomer();
-    List<VoucherAdminDTO> getVouchersByTimeRange(Date fromDate, Date toDate);
+    List<VoucherAdminDTO> getVouchersByTimeRange(VoucherAdminDTO voucherAdminDTO);
     List<VoucherAdminDTO> getVouchersByKeyword(String keyword);
     List<VoucherAdminDTO> getAllKhongKH();
     List<VoucherAdminDTO> getAllKichHoat();
     List<VoucherAdminDTO> getVouchersByCustomer(String searchTerm);
+    List<VoucherAdminDTO> getAllVouchersExport();
 }

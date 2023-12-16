@@ -26,6 +26,8 @@ public class DiscountDetailAdminDTO extends ExportDTO {
     private DiscountAdminDTO discountAdminDTO;
     private ProductAdminDTO productDTO;
     private List<ProductAdminDTO> productDTOList;
+    private String discountTypeStr;
+    private Integer isUpdate = 0;
 
 
 

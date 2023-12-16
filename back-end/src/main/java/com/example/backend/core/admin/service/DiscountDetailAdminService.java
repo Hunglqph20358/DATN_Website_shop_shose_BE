@@ -25,7 +25,6 @@ public interface DiscountDetailAdminService {
     List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);
     List<DiscountAdminDTO> getAllByBrand(String brand);
     ServiceResult<Void> deleteDiscount(Long discountId);
-    byte[] exportExcelProductErrors(List<DiscountAdminDTO> listDataErrors)  throws IOException;
     byte[] exportExcelDiscount() throws IOException;
 
 }

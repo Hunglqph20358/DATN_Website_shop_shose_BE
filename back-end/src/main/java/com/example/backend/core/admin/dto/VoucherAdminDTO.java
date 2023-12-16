@@ -1,5 +1,6 @@
 package com.example.backend.core.admin.dto;
 
+import com.example.backend.core.commons.ExportDTO;
 import com.example.backend.core.model.Staff;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -16,11 +17,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoucherAdminDTO {
+public class VoucherAdminDTO extends ExportDTO {
     private Long id;
     private String code;
     private String name;
-    private Long idCustomer;
+    private String idCustomer;
     private Date createDate;
     private Date startDate;
     private Date endDate;
@@ -41,6 +42,9 @@ public class VoucherAdminDTO {
     private Integer  delete;
     private CustomerAdminDTO customerAdminDTO;
     private List<CustomerAdminDTO> customerAdminDTOList;
-
+    private String dateFrom;
+    private String dateTo;
+    private String nameCustomer;
+    private Integer isUpdate = 0;
 
 }

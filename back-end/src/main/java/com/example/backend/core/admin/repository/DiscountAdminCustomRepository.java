@@ -1,6 +1,7 @@
 package com.example.backend.core.admin.repository;
 
 import com.example.backend.core.admin.dto.DiscountAdminDTO;
+import com.example.backend.core.admin.dto.DiscountDetailAdminDTO;
 import com.example.backend.core.admin.dto.ProductAdminDTO;
 
 import java.util.Date;
@@ -18,4 +19,5 @@ public interface DiscountAdminCustomRepository {
     List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);
     List<DiscountAdminDTO> getAllByBrand(String brand);
     List<ProductAdminDTO> getAllProduct();
+    List<DiscountDetailAdminDTO> discountExport();
 }

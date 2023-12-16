@@ -1,16 +1,22 @@
 package com.example.backend.core.admin.controller;
 
+import com.example.backend.core.admin.dto.DiscountDetailAdminDTO;
 import com.example.backend.core.admin.dto.VoucherAdminDTO;
 import com.example.backend.core.admin.dto.VoucherFreeShipDTO;
 import com.example.backend.core.admin.service.VoucherAdminService;
 import com.example.backend.core.admin.service.VoucherFSService;
+import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.constant.AppConstant;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +26,11 @@ import java.util.List;
 public class VoucherFreeShipController {
     @Autowired
     private VoucherFSService voucherAdminService;
+    @Autowired
+    private FileExportUtil fileExportUtil;
+    private static final Logger log = LoggerFactory.getLogger(DiscountDetailAdminDTO.class);
+
+
     @GetMapping()
     public ResponseEntity<?> getAllVoucher(){
         return ResponseEntity.ok(voucherAdminService.getAllVouchers());
@@ -75,5 +86,17 @@ public class VoucherFreeShipController {
     @GetMapping("/KKH")
     public ResponseEntity<?> getAllDiscountKhongKH(){
         return ResponseEntity.ok(voucherAdminService.getAllKhongKH());
+    }
+    @GetMapping("/export-data")
+    public ResponseEntity<?> exportData() {
+        try {
+            byte[] fileData = voucherAdminService.exportExcelVoucher();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(AppConstant.YYYYMMDDHHSS);
+            String fileName = "DS_VC" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
+            return fileExportUtil.responseFileExportWithUtf8FileName(fileData, fileName, AppConstant.MIME_TYPE_XLSX);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 }

@@ -15,4 +15,5 @@ public interface VoucherFSCustomerRepository {
     List<VoucherFreeShipDTO> getVouchersByCustomer(String searchTerm);
     List<VoucherFreeShipDTO> getAllKhongKH();
     List<VoucherFreeShipDTO> getAllKichHoat();
+    List<VoucherFreeShipDTO> getAllVoucherFSsExport();
 }

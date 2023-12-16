@@ -4,7 +4,9 @@ import com.example.backend.core.admin.dto.CustomerAdminDTO;
 import com.example.backend.core.admin.dto.VoucherAdminDTO;
 import com.example.backend.core.admin.dto.VoucherFreeShipDTO;
 import com.example.backend.core.commons.ServiceResult;
+import jakarta.mail.MessagingException;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -23,4 +25,6 @@ public interface VoucherFSService {
     List<VoucherFreeShipDTO> getVouchersByCustomer(String searchTerm);
     List<VoucherFreeShipDTO> getAllKhongKH();
     List<VoucherFreeShipDTO> getAllKichHoat();
+    void sendMessageUsingThymeleafTemplate(VoucherFreeShipDTO voucherAdminDTO) throws MessagingException;
+    byte[] exportExcelVoucher() throws IOException;
 }

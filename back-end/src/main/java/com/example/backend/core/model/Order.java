@@ -30,6 +30,8 @@ public class Order implements Serializable {
     private Long idStaff;
     @Column(name = "code_voucher")
     private String codeVoucher;
+    @Column(name = "code_voucher_ship")
+    private String codeVoucherShip;
     @Column(name = "create_date")
     private Instant createDate;
     @Column(name = "payment_date")

@@ -120,17 +120,5 @@ public class DiscountDetailAdminController {
             return null;
         }
     }
-    @PostMapping("/product/exportDataErrors")
-    public ResponseEntity<?> exportDataErrors(@RequestBody List<DiscountAdminDTO> listErr) {
-        log.info("export data lỗi ");
-        try {
-            byte[] fileData = discountService.exportExcelProductErrors(listErr);
-            SimpleDateFormat dateFormat = new SimpleDateFormat(AppConstant.YYYYMMDDHHSS);
-            String fileName = "DS_SanPham_errors" + dateFormat.format(new Date()) + AppConstant.DOT + AppConstant.EXTENSION_XLSX;
-            return fileExportUtil.responseFileExportWithUtf8FileName(fileData, fileName, AppConstant.MIME_TYPE_XLSX);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return null;
-        }
-    }
+
 }
