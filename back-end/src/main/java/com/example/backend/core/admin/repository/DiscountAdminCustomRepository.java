@@ -13,7 +13,7 @@ public interface DiscountAdminCustomRepository {
     List<DiscountAdminDTO> getAll();
     List<DiscountAdminDTO> getAllKichHoat();
     List<DiscountAdminDTO> getAllKhongKichHoat();
-    List<DiscountAdminDTO> getAllByDateRange(Date fromDate, Date toDate);
+    List<DiscountAdminDTO> getAllByDateRange(String fromDate, String toDate);
     List<DiscountAdminDTO> getAllByCodeOrName(String search);
     List<DiscountAdminDTO> getAllByCategory(String category);
     List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);

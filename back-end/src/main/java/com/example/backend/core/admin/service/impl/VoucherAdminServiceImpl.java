@@ -16,28 +16,20 @@ import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.Voucher;
-import com.example.backend.core.view.repository.*;
-import com.example.backend.core.view.service.OrderDetailService;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 import java.util.*;
@@ -77,37 +69,38 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     }
 
 
-    public void sendHtmlEmail(List<String> toList, String subject, String htmlBody) throws MessagingException {
-        for (String to : toList) {
+    public void sendHtmlEmail(String toEmail, String subject, String htmlBody) throws MessagingException {
+
             MimeMessagePreparator preparator = mimeMessage -> {
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-                helper.setFrom("hunglqph20358@fpt.edu.vn");
-                helper.setTo(to);
+                helper.setFrom("xuanntph21397@fpt.edu.vn");
+                helper.setTo(toEmail);
                 helper.setSubject(subject);
                 helper.setText(htmlBody, true);
             };
             javaMailSender.send(preparator);
-        }
+
     }
 
     @Override
+    @Async
     public void sendMessageUsingThymeleafTemplate(VoucherAdminDTO voucherAdminDTO) throws MessagingException {
-        Context thymeleafContext = new Context();
 
         String id = voucherAdminDTO.getIdCustomer();
         String[] idArray = id.split(",");
 
-        List<String> toList = new ArrayList<>();
-
         for (String idCustomer : idArray) {
+            Context thymeleafContext = new Context();
             try {
                 Long customerId = Long.parseLong(idCustomer.trim());
                 Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
 
                 if (optionalCustomer.isPresent()) {
                     Customer customer = optionalCustomer.get();
-                    toList.add(customer.getEmail());
                     thymeleafContext.setVariable("voucher", voucherAdminDTO);
+                    String subject = "Voucher xịn 2T Store tặng bạn";
+                    String htmlBody = templateEngine.process("sendEmailVoucher", thymeleafContext);
+                    sendHtmlEmail(customer.getEmail(), subject, htmlBody);
                 } else {
                     // Handle the case where customer is not found by id
                     System.out.println("Customer with id " + customerId + " not found.");
@@ -117,10 +110,6 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                 System.out.println("Invalid id format: " + idCustomer);
             }
         }
-
-        String subject = "Voucher xịn 2T Store tặng bạn";
-        String htmlBody = templateEngine.process("sendEmailVoucher", thymeleafContext);
-        sendHtmlEmail(toList, subject, htmlBody);
     }
 
 
@@ -151,8 +140,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     }
 
     @Override
-    public List<VoucherAdminDTO> getVouchersByTimeRange(VoucherAdminDTO voucherAdminDTO) {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getVouchersByTimeRange(voucherAdminDTO);
+    public List<VoucherAdminDTO> getVouchersByTimeRange(String fromDate, String toDate) {
+        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getVouchersByTimeRange(fromDate,toDate);
         return list;
     }
 
@@ -347,29 +336,21 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     }
 
     @Override
-    public ServiceResult<Void> KichHoat(Long idVoucher) throws MessagingException {
-        ServiceResult<Void> serviceResult = new ServiceResult<>();
+    public ServiceResult<VoucherAdminDTO> KichHoat(Long idVoucher) {
+        ServiceResult<VoucherAdminDTO> serviceResult = new ServiceResult<>();
         Optional<Voucher> optionalVoucher = voucherAdminRepository.findById(idVoucher);
 
         if (optionalVoucher.isPresent()) {
             Voucher voucher = optionalVoucher.get();
 
-            // Invert the value of idel
             voucher.setIdel(voucher.getIdel() == 1 ? 0 : 1);
-
+            voucher =  voucherAdminRepository.save(voucher);
             VoucherAdminDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+            serviceResult.setData(voucherAdminDTO);
+            serviceResult.setStatus(HttpStatus.OK);
+            serviceResult.setMessage("Thành công");
 
-            // Ensure that the email sending logic is within the transaction
-            try {
-                sendMessageUsingThymeleafTemplate(voucherAdminDTO);
-            } catch (MessagingException e) {
-                // Handle the exception or log it, depending on your requirements
-                serviceResult.setMessage("Lỗi khi gửi email");
-                serviceResult.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-                return serviceResult;
-            }
-
-            voucherAdminRepository.save(voucher); // Lưu lại thay đổi vào cơ sở dữ liệu
+            // Lưu lại thay đổi vào cơ sở dữ liệu
         } else {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);

@@ -74,18 +74,25 @@
                 <tr>
                     <th scope="col">Mã</th>
                     <th scope="col">Tên</th>
-                    <th scope="col">Nội dung</th>
-                    <th scope="col">Giá trị giảm</th>
-                    <th scope="col">Áp dụng</th>
+                    <th scope="col">Điều Kiện Áp Dụng</th>
+                    <th scope="col">Ngày Bắt Đầu</th>
+                    <th scope="col">Ngày Kết Thúc</th>
+                    <th scope="col">Giá Trị Giảm</th>
+                    <th scope="col">Số Lượng</th>
+                    <th scope="col">Mô Tả</th>
                 </tr>
                 </thead>
                 <tbody>
-                <!-- Dòng này có thể được lặp lại cho từng sản phẩm trong đơn hàng -->
+                <!-- Giả sử chỉ có một voucher; điều này có thể thay đổi nếu có danh sách các voucher -->
                 <tr>
                     <td th:text="${voucher.code}"></td>
                     <td th:text="${voucher.name}"></td>
-                    <td th:text="${voucher.description}"></td>
+                    <td th:text="${voucher.conditions}"></td>
+                    <td th:text="${voucher.startDate}"></td>
+                    <td th:text="${voucher.endDate}"></td>
                     <td th:text="${voucher.reducedValue}"></td>
+                    <td th:text="${voucher.quantity}"></td>
+                    <td th:text="${voucher.description}"></td>
                 </tr>
                 </tbody>
             </table>

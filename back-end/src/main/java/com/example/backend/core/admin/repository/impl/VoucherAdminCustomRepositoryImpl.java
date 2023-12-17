@@ -6,6 +6,7 @@ import com.example.backend.core.admin.repository.VoucherAdminCustomRepository;
 import com.example.backend.core.admin.repository.VoucherAdminRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,8 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     "FROM voucher v " +
                     "LEFT JOIN `order` o ON o.code_voucher = v.code " +
                     "where v.dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -174,8 +175,8 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     "FROM voucher v " +
                     "LEFT JOIN `order` o ON o.code_voucher = v.code " +
                     "where v.idel = 1 and v.dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
+                   "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -248,9 +249,8 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     "FROM voucher v " +
                     "LEFT JOIN `order` o ON o.code_voucher = v.code " +
                     "where idel=0 and dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
+                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ";
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
 
@@ -302,32 +302,44 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
     }
 
     @Override
-    public List<VoucherAdminDTO> getVouchersByTimeRange(VoucherAdminDTO voucherAdminDTO) {
+    public List<VoucherAdminDTO> getVouchersByTimeRange(String fromDate, String toDate) {
         try {
-            String sql = "SELECT " +
-                    "  v.id, " +
-                    "  v.code, " +
-                    "  v.name, " +
-                    "  v.start_date," +
-                    "  v.end_date, " +
-                    "  v.conditions, " +
-                    "  v.voucher_type, " +
-                    "  v.reduced_value, " +
-                    "  v.description, " +
-                    "  v.idel, " +
-                    "  v.quantity," +
-                    "v.max_reduced," +
-                    "v.allow ," +
-                    "  COUNT(o.id) AS use_voucher " +
-                    "FROM voucher v " +
-                    "LEFT JOIN 'order' o ON o.code_voucher = v.code " +
-                    "WHERE v.start_date BETWEEN :fromDate AND :toDate and dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
+            StringBuilder sql =new StringBuilder(
+                    "SELECT " +
+                            "  v.id, " +
+                            "  v.code, " +
+                            "  v.name, " +
+                            "  v.start_date," +
+                            "  v.end_date, " +
+                            "  v.conditions, " +
+                            "  v.voucher_type, " +
+                            "  v.reduced_value, " +
+                            "  v.description, " +
+                            "  v.idel, " +
+                            "  v.quantity," +
+                            "v.max_reduced," +
+                            "v.allow ," +
+                            "  COUNT(o.id) AS use_voucher " +
+                            "FROM voucher v " +
+                            "LEFT JOIN `order` o ON o.code_voucher = v.code " +
+                            "where  dele=0 "
+            );
 
-            Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("fromDate", voucherAdminDTO.getDateFrom());
-            query.setParameter("toDate", voucherAdminDTO.getDateTo());
+            if(StringUtils.isNotBlank(fromDate)){
+                sql.append("and  (:dateFrom is null or STR_TO_DATE(DATE_FORMAT(v.start_date, '%Y/%m/%d'), '%Y/%m/%d') >= STR_TO_DATE(:dateFrom , '%d/%m/%Y')) ");
+            }
+            if (StringUtils.isNotBlank(toDate)){
+                sql.append("  and (:dateTo is null or STR_TO_DATE(DATE_FORMAT(v.start_date, '%Y/%m/%d'), '%Y/%m/%d') <= STR_TO_DATE(:dateTo , '%d/%m/%Y'))  ");
+            }
+            sql.append(" GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ");
+            Query query = entityManager.createNativeQuery(sql.toString());
+            if (StringUtils.isNotBlank(fromDate)){
+                query.setParameter("dateFrom", fromDate);
+            }
+            if (StringUtils.isNotBlank(toDate)) {
+                query.setParameter("dateTo",toDate);
+            }
 
             List<Object[]> resultList = query.getResultList();
 
@@ -399,9 +411,8 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     "FROM voucher v " +
                     "LEFT JOIN `order` o ON o.code_voucher = v.code " +
                     "WHERE v.name LIKE :keyword OR v.code LIKE :keyword and dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
+                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ";
             Query query = entityManager.createNativeQuery(sql);
             query.setParameter("keyword", "%" + keyword + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
 
@@ -479,9 +490,8 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     "WHERE LOWER(c.code) LIKE LOWER(:searchTerm) " +
                     "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
                     "   OR c.phone LIKE  :searchTerm and dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.create_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.status, v.idel, v.quantity";
-
+                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
+                    "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ";
 
             Query query = entityManager.createNativeQuery(sql);
             query.setParameter("searchTerm", "%" + searchTerm + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.

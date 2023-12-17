@@ -59,37 +59,50 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h3>Voucher xịn tặng bạn</h3>
+            <h3>Thông Tin Voucher</h3>
         </div>
         <div class="card-body">
             <!-- Assuming 'voucher' is the model attribute -->
             <span th:if="${voucher != null and voucher.customerAdminDTO != null}" th:text="${voucher.customerAdminDTO.fullname}"></span>
             <p>
-                Cảm ơn bạn đã ủng hộ chúng tôi trong suốt thời gian vừa qua
+                Cảm ơn bạn đã ủng hộ chúng tôi trong suốt thời gian vừa qua.
             </p>
 
-            <!-- Thông tin đơn hàng -->
+            <!-- Bảng Thông Tin Voucher -->
             <table class="table">
                 <thead>
                 <tr>
                     <th scope="col">Mã</th>
                     <th scope="col">Tên</th>
-                    <th scope="col">Nội dung</th>
-                    <th scope="col">Giá trị giảm</th>
-                    <th scope="col">Áp dụng</th>
+                    <th scope="col">Điều Kiện Áp Dụng</th>
+                    <th scope="col">Ngày Bắt Đầu</th>
+                    <th scope="col">Ngày Kết Thúc</th>
+                    <th scope="col">Loại Voucher</th>
+                    <th scope="col">Giá Trị Giảm</th>
+                    <th scope="col">Số Lượng</th>
+                    <th scope="col">Mô Tả</th>
+                    <th scope="col">Áp Dụng</th>
+                    <th scope="col">Giảm Tối Đa</th>
                 </tr>
                 </thead>
                 <tbody>
-                <!-- Dòng này có thể được lặp lại cho từng sản phẩm trong đơn hàng -->
+                <!-- Giả sử chỉ có một voucher; điều này có thể thay đổi nếu có danh sách các voucher -->
                 <tr>
                     <td th:text="${voucher.code}"></td>
                     <td th:text="${voucher.name}"></td>
-                    <td th:text="${voucher.description}"></td>
+                    <td th:text="${voucher.conditions}"></td>
+                    <td th:text="${voucher.startDate}"></td>
+                    <td th:text="${voucher.endDate}"></td>
+                    <td th:text="${voucher.voucherType}"></td>
                     <td th:text="${voucher.reducedValue}"></td>
+                    <td th:text="${voucher.quantity}"></td>
+                    <td th:text="${voucher.description}"></td>
                     <td th:text="${voucher.apply}"></td>
+                    <td th:text="${voucher.maxReduced}"></td>
                 </tr>
                 </tbody>
             </table>
+
             <p>Trân trọng,</p>
             <p style="font-weight: 600">T2 STORE</p>
         </div>

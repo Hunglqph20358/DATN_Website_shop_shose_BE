@@ -74,6 +74,7 @@ public class AppConstant {
                 "/api/admin/voucher/KH",
                 "/api/admin/voucher/KKH",
                 "/api/admin/voucher/export-data",
+                "/api/admin/voucher/sendEmail",
 
                 "/api/admin/voucherFS",
                 "/api/admin/voucherFS/*",
@@ -83,6 +84,7 @@ public class AppConstant {
                 "/api/admin/voucherFS/kichHoat/*",
                 "/api/admin/voucherFS/KH",
                 "/api/admin/voucherFS/KKH",
+                "/api/admin/voucherFS/sendEmail",
                 "/api/admin/voucherFS/export-data",
 
                 "/api/admin/home",

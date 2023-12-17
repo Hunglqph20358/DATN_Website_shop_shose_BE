@@ -6,8 +6,8 @@ import com.example.backend.core.admin.mapper.CustomerAdminMapper;
 import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.OrderAdminRepository;
 import com.example.backend.core.admin.repository.VoucherFSCustomerRepository;
-import com.example.backend.core.admin.repository.VoucherFreeShipRepository;
-import com.example.backend.core.admin.service.VoucherFSService;
+import com.example.backend.core.admin.repository.VoucherFreeShipAdminRepository;
+import com.example.backend.core.admin.service.VoucherFSAdminService;
 import com.example.backend.core.commons.CellConfigDTO;
 import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ServiceResult;
@@ -19,37 +19,32 @@ import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.view.mapper.VoucherFSMapper;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class VoucherFSServiceImpl implements VoucherFSService {
+public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
     private final JavaMailSender javaMailSender;
 
     private final MessageSource messageSource;
 
     private final SpringTemplateEngine templateEngine;
     @Autowired
-    private VoucherFreeShipRepository voucherFreeShipRepository;
+    private VoucherFreeShipAdminRepository voucherFreeShipAdminRepository;
     @Autowired
     private CustomerAdminRepository  customerAdminRepository;
 
@@ -65,44 +60,45 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     private OrderAdminRepository orderAdminRepository;
 
 
-    public VoucherFSServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
+    public VoucherFSAdminServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
         this.templateEngine = templateEngine;
     }
 
 
-    public void sendHtmlEmail(List<String> toList, String subject, String htmlBody) throws MessagingException {
-        for (String to : toList) {
-            MimeMessagePreparator preparator = mimeMessage -> {
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-                helper.setFrom("hunglqph20358@fpt.edu.vn");
-                helper.setTo(to);
-                helper.setSubject(subject);
-                helper.setText(htmlBody, true);
-            };
-            javaMailSender.send(preparator);
-        }
+    public void sendHtmlEmail(String toEmail, String subject, String htmlBody) throws MessagingException {
+
+        MimeMessagePreparator preparator = mimeMessage -> {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            helper.setFrom("xuanntph21397@fpt.edu.vn");
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+        };
+        javaMailSender.send(preparator);
+
     }
 
     @Override
+    @Async
     public void sendMessageUsingThymeleafTemplate(VoucherFreeShipDTO voucherAdminDTO) throws MessagingException {
-        Context thymeleafContext = new Context();
 
         String id = voucherAdminDTO.getIdCustomer();
         String[] idArray = id.split(",");
 
-        List<String> toList = new ArrayList<>();
-
         for (String idCustomer : idArray) {
+            Context thymeleafContext = new Context();
             try {
                 Long customerId = Long.parseLong(idCustomer.trim());
                 Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
 
                 if (optionalCustomer.isPresent()) {
                     Customer customer = optionalCustomer.get();
-                    toList.add(customer.getEmail());
                     thymeleafContext.setVariable("voucher", voucherAdminDTO);
+                    String subject = "Voucher xịn 2T Store tặng bạn";
+                    String htmlBody = templateEngine.process("sendEmailVoucherFS", thymeleafContext);
+                    sendHtmlEmail(customer.getEmail(), subject, htmlBody);
                 } else {
                     // Handle the case where customer is not found by id
                     System.out.println("Customer with id " + customerId + " not found.");
@@ -112,10 +108,6 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                 System.out.println("Invalid id format: " + idCustomer);
             }
         }
-
-        String subject = "Voucher xịn 2T Store tặng bạn";
-        String htmlBody = templateEngine.process("sendEmailVoucherFS", thymeleafContext);
-        sendHtmlEmail(toList, subject, htmlBody);
     }
 
     @Override
@@ -143,7 +135,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     }
 
     @Override
-    public List<VoucherFreeShipDTO> getVouchersByTimeRange(Date fromDate, Date toDate) {
+    public List<VoucherFreeShipDTO> getVouchersByTimeRange(String fromDate, String toDate) {
         List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getVouchersByTimeRange(fromDate,toDate);
         return list;
     }
@@ -173,7 +165,6 @@ public class VoucherFSServiceImpl implements VoucherFSService {
         voucher.setCreateName(voucherAdminDTO.getCreateName());
         voucher.setStartDate(voucherAdminDTO.getStartDate());
         voucher.setEndDate(voucherAdminDTO.getEndDate());
-        voucher.setAllow(voucher.getAllow());
         if (voucher.getOptionCustomer() == 0) {
             voucher.setIdCustomer(null);
         } else {
@@ -198,7 +189,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                 // Xử lý trường hợp không có customer nào
                 voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
             }
-            voucherFreeShipRepository.save(voucher);
+            voucherFreeShipAdminRepository.save(voucher);
         }
         serviceResult.setData(voucherAdminDTO);
         serviceResult.setMessage("Thêm thành công!");
@@ -210,9 +201,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     @Override
     public ServiceResult<VoucherFreeShipDTO> updateVoucher(Long id, VoucherFreeShipDTO voucherAdminDTO) {
         ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
-
-        // Tìm kiếm đối tượng Voucher trong cơ sở dữ liệu dựa trên id
-        Optional<VoucherFreeShip> voucherOptional = voucherFreeShipRepository.findById(id);
+        Optional<VoucherFreeShip> voucherOptional = voucherFreeShipAdminRepository.findById(id);
 
         if (voucherOptional.isPresent()) {
             VoucherFreeShip voucher = voucherOptional.get();
@@ -226,7 +215,6 @@ public class VoucherFSServiceImpl implements VoucherFSService {
             voucher.setCreateName(voucherAdminDTO.getCreateName());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
-            voucher.setAllow(voucher.getAllow());
             if (voucher.getOptionCustomer() == 0) {
                 voucher.setIdCustomer(null);
             } else {
@@ -251,7 +239,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
                     // Xử lý trường hợp không có customer nào
                     voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
                 }
-                voucherFreeShipRepository.save(voucher);
+                voucherFreeShipAdminRepository.save(voucher);
             }
             serviceResult.setData(voucherAdminDTO);
             serviceResult.setMessage("Cập nhật thành công!");
@@ -262,7 +250,6 @@ public class VoucherFSServiceImpl implements VoucherFSService {
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
         }
 
-
         return serviceResult;
     }
 
@@ -270,12 +257,12 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     @Override
     public ServiceResult<Void> deleteVoucher(Long voucherId) {
         ServiceResult<Void> serviceResult = new ServiceResult<>();
-        Optional<VoucherFreeShip> voucher = voucherFreeShipRepository.findById(voucherId);
+        Optional<VoucherFreeShip> voucher = voucherFreeShipAdminRepository.findById(voucherId);
 
         if (voucher.isPresent()) {
             VoucherFreeShip voucher1 = voucher.get();
             voucher1.setDelete(1); // Sửa thành setIdel(1) để đánh dấu đã xóa
-            voucherFreeShipRepository.save(voucher1); // Lưu lại thay đổi vào cơ sở dữ liệu
+            voucherFreeShipAdminRepository.save(voucher1); // Lưu lại thay đổi vào cơ sở dữ liệu
 
             serviceResult.setMessage("Xóa thành công!");
             serviceResult.setStatus(HttpStatus.OK);
@@ -289,7 +276,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
     @Override
     public VoucherFreeShipDTO getDetailVoucher(Long id) {
 
-        VoucherFreeShip voucher = voucherFreeShipRepository.findById(id).get();
+        VoucherFreeShip voucher = voucherFreeShipAdminRepository.findById(id).get();
 
         VoucherFreeShipDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
 
@@ -332,20 +319,19 @@ public class VoucherFSServiceImpl implements VoucherFSService {
         return list;
     }
     @Override
-    public ServiceResult<Void> KichHoat(Long idVoucher) {
-        ServiceResult<Void> serviceResult = new ServiceResult<>();
-        Optional<VoucherFreeShip> optionalVoucher = voucherFreeShipRepository.findById(idVoucher);
+    public ServiceResult<VoucherFreeShipDTO> KichHoat(Long idVoucher) {
+        ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
+        Optional<VoucherFreeShip> optionalVoucher = voucherFreeShipAdminRepository.findById(idVoucher);
 
         if (optionalVoucher.isPresent()) {
             VoucherFreeShip voucher = optionalVoucher.get();
 
-            if (voucher.getIdel() ==1) {
-                voucher.setIdel(0);
-
-            } else {
-                voucher.setIdel(1);
-            }
-            voucherFreeShipRepository.save(voucher); // Lưu lại thay đổi vào cơ sở dữ liệu
+            voucher.setIdel(voucher.getIdel() == 1 ? 0 : 1);
+            voucher =  voucherFreeShipAdminRepository.save(voucher);
+            VoucherFreeShipDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+            serviceResult.setData(voucherAdminDTO);
+            serviceResult.setStatus(HttpStatus.OK);
+            serviceResult.setMessage("Thành công");
         } else {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
@@ -435,7 +421,7 @@ public class VoucherFSServiceImpl implements VoucherFSService {
         return sheetConfigList;
     }
     public List<String> getAllVoucherExport() {
-        List<String> lstStr = voucherFreeShipRepository.findAll()
+        List<String> lstStr = voucherFreeShipAdminRepository.findAll()
                 .stream()
                 .map(b -> b.getId() + "-" + b.getName())
                 .collect(Collectors.toList());

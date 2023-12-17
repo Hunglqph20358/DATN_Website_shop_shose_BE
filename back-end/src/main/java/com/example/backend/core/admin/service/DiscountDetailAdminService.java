@@ -14,12 +14,13 @@ import java.util.List;
 public interface DiscountDetailAdminService {
     List<DiscountAdminDTO> getAll();
     ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO khuyenMaiDTO);
-    ServiceResult<DiscountDetailAdminDTO> updateDiscount( DiscountDetailAdminDTO discountDetailAdminDTO);    ServiceResult<Void> KichHoat(Long idDiscount);
+    ServiceResult<DiscountDetailAdminDTO> updateDiscount( DiscountDetailAdminDTO discountDetailAdminDTO);
+    ServiceResult<DiscountAdminDTO> KichHoat(Long idDiscount);
     List<ProductAdminDTO> getAllProduct();
     DiscountAdminDTO getDetailDiscount(Long id);
      List<DiscountAdminDTO> getAllKichHoat();
      List<DiscountAdminDTO> getAllKhongKichHoat();
-    List<DiscountAdminDTO> getAllByDateRange(Date fromDate, Date toDate);
+    List<DiscountAdminDTO> getAllByDateRange(String fromDate, String toDate);
     List<DiscountAdminDTO> getAllByCodeOrName(String search);
     List<DiscountAdminDTO> getAllByCategory(String category);
     List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);

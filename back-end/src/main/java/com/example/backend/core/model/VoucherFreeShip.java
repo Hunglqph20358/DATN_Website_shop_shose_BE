@@ -1,6 +1,5 @@
 package com.example.backend.core.model;
 
-import jakarta.persistence.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,12 +13,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
-@NoArgsConstructor
-@AllArgsConstructor
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor

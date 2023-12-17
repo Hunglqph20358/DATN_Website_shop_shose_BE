@@ -122,7 +122,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     }
 
     @Override
-    public List<DiscountAdminDTO> getAllByDateRange(Date fromDate, Date toDate) {
+    public List<DiscountAdminDTO> getAllByDateRange(String fromDate, String toDate) {
         List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllByDateRange(fromDate,toDate);
         return list;
     }
@@ -151,7 +151,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         discountAdminEntity.setStatus(0);
         discountAdminEntity.setIdel(0);
         discountAdminEntity.setDelete(0);
-        discountAdminEntity.setQuantity(discountDetailAdminDTO.getDiscountAdminDTO().getQuantity());
         discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
         discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
 
@@ -184,7 +183,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
             discountAdminEntity.setStatus(0);
             discountAdminEntity.setIdel(0);
             discountAdminEntity.setDelete(0);
-            discountAdminEntity.setQuantity(discountDetailAdminDTO.getDiscountAdminDTO().getQuantity());
             discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
             discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
             discountAdminEntity.setDescription(discountDetailAdminDTO.getDiscountAdminDTO().getDescription());
@@ -218,20 +216,19 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
 
     @Override
-    public ServiceResult<Void> KichHoat(Long idDiscount) {
-        ServiceResult<Void> serviceResult = new ServiceResult<>();
+    public ServiceResult<DiscountAdminDTO> KichHoat(Long idDiscount) {
+        ServiceResult<DiscountAdminDTO> serviceResult = new ServiceResult<>();
         Optional<Discount> optionalDiscount = discountAdminRepository.findById(idDiscount);
 
         if (optionalDiscount.isPresent()) {
             Discount discount = optionalDiscount.get();
 
-            if (discount.getIdel() == 1) {
-                discount.setIdel(0);
-
-            } else {
-                discount.setIdel(1);
-            }
-            discountAdminRepository.save(discount); // Lưu lại thay đổi vào cơ sở dữ liệu
+            discount.setIdel(discount.getIdel() == 1 ? 0 : 1);
+            discount =  discountAdminRepository.save(discount);
+            DiscountAdminDTO voucherAdminDTO = discountAdminMapper.toDto(discount);
+            serviceResult.setData(voucherAdminDTO);
+            serviceResult.setStatus(HttpStatus.OK);
+            serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
         } else {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
@@ -259,6 +256,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
             }
             discountAdminDTO.setReducedValue(discountDetailList.get(0).getReducedValue());
             discountAdminDTO.setDiscountType(discountDetailList.get(0).getDiscountType());
+            discountAdminDTO.setMaxReduced(discountDetailList.get(0).getMaxReduced());
             discountAdminDTO.setProductDTOList(lstPruct);
         }
         return discountAdminDTO;
@@ -298,7 +296,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                             "Ngày Bắt Đầu",
                             "Ngày Kết Thúc",
                             "Nội Dung",
-                            "Số Lượng",
                             "Giá Trị Giảm",
                             "Loại Giảm Giá",
                             "Giá trị Giảm Tối Đa",
@@ -336,7 +333,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         cellConfigList.add(new CellConfigDTO("discountAdminDTO.startDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("discountAdminDTO.endDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("discountAdminDTO.description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("discountAdminDTO.quantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
         cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("discountTypeStr", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("maxReduced", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));

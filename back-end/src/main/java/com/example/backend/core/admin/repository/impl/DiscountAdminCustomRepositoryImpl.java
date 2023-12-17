@@ -4,6 +4,7 @@ import com.example.backend.core.admin.repository.DiscountAdminCustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "    discount.start_date,\n" +
                     "    discount.end_date,\n" +
                     "    discount.description,\n" +
-                    "    discount.quantity ,\n" +
                     "    discount_detail.reduced_value ,\n" +
                     "    if(discount_detail.discount_type = 0, 'Tiền' , 'Phần trăm') as type ,\n" +
                     "    discount_detail.max_reduced ,\n" +
@@ -67,7 +67,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                 discount.setName(row[2].toString());
                 discount.setCreateName(row[4].toString());
                 discount.setDescription(row[7].toString());
-                discount.setQuantity(Integer.valueOf(row[8].toString()));
 
 
                 DiscountDetailAdminDTO discountDetailAdminDTO= new DiscountDetailAdminDTO();
@@ -125,9 +124,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "    d.end_date,\n" +
                     "    d.description,\n" +
                     "    d.idel, " +
-                    "COUNT(od.id) AS used_count\n" +
-                    ", d.quantity " +
-
+                    "COUNT(od.quantity) AS used_count\n" +
                     "FROM discount d " +
                     "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                     "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
@@ -149,9 +146,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                 discount.setName(row[2].toString());
                 discount.setDescription(row[5].toString());
                 discount.setIdel(Integer.valueOf(row[6].toString()));
-                discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                discount.setQuantity(Integer.valueOf(row[8].toString()));
-
+                discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
@@ -193,8 +188,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "    d.end_date,\n" +
                         "    d.description,\n" +
                         "    d.idel," +
-                        "COUNT(od.id) AS used_count\n" +
-                        ", d.quantity " +
+                        "COUNT(od.quantity) AS used_count\n" +
                         "FROM discount d LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
                         "where idel = 1 and dele= 0 \n" +
@@ -215,8 +209,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setName(row[2].toString());
                     discount.setDescription(row[5].toString());
                     discount.setIdel(Integer.valueOf(row[6].toString()));
-                    discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                    discount.setQuantity(Integer.valueOf(row[8].toString()));
+                    discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -260,8 +253,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "    d.end_date,\n" +
                         "    d.description,\n" +
                         "    d.idel, " +
-                        "COUNT(od.id) AS used_count\n" +
-                        ", d.quantity " +
+                        "sum(od.quantity) AS used_count\n" +
                         "FROM discount d LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
                         "where idel = 0 and dele=0 \n" +
@@ -282,8 +274,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setName(row[2].toString());
                     discount.setDescription(row[5].toString());
                     discount.setIdel(Integer.valueOf(row[6].toString()));
-                    discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                    discount.setQuantity(Integer.valueOf(row[8].toString()));
+                    discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -329,8 +320,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "   d.end_date,\n" +
                         "   d.description,\n" +
                         "   d.idel, " +
-                        "COUNT(od.id) AS used_count\n" +
-                        ", d.quantity " +
+                        "COUNT(od.quantity) AS used_count\n" +
                         "FROM discount d " +
                         "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount ");
@@ -360,8 +350,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setName(row[2].toString());
                     discount.setDescription(row[5].toString());
                     discount.setIdel(Integer.valueOf(row[6].toString()));
-                    discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                    discount.setQuantity(Integer.valueOf(row[8].toString()));
+                    discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -410,8 +399,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "   d.end_date,\n" +
                         "   d.description,\n" +
                         "   d.idel,\n" +
-                        "COUNT(od.id) AS used_count\n" +
-                        ", d.quantity " +
+                        "COUNT(od.quantity) AS used_count\n" +
                         "FROM discount d\n" +
                         "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
@@ -437,8 +425,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setName(row[2].toString());
                     discount.setDescription(row[5].toString());
                     discount.setIdel(Integer.valueOf(row[6].toString()));
-                    discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                    discount.setQuantity(Integer.valueOf(row[8].toString()));
+                    discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -487,8 +474,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "   d.end_date,\n" +
                         "   d.description,\n" +
                         "   d.idel, " +
-                        "COUNT(od.id) AS used_count\n" +
-                        ", d.quantity " +
+                        "COUNT(od.quantity) AS used_count\n" +
                         "FROM discount d\n" +
                         "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
@@ -510,8 +496,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setName(row[2].toString());
                     discount.setDescription(row[5].toString());
                     discount.setIdel(Integer.valueOf(row[6].toString()));
-                    discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                    discount.setQuantity(Integer.valueOf(row[8].toString()));
+                    discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -560,8 +545,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "    d.end_date,\n" +
                         "    d.description,\n" +
                         "    d.idel, \n" +
-                        "    COUNT(od.id) AS used_count,\n" +
-                        "    d.quantity \n" +
+                        "    COUNT(od.quantity) AS used_count,\n" +
                         "FROM discount d\n" +
                         "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
@@ -583,8 +567,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setName(row[2].toString());
                     discount.setDescription(row[5].toString());
                     discount.setIdel(Integer.valueOf(row[6].toString()));
-                    discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                    discount.setQuantity(Integer.valueOf(row[8].toString()));
+                    discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -622,7 +605,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
             }
         }
     @Override
-    public List<DiscountAdminDTO> getAllByDateRange(Date fromDate, Date toDate) {
+    public List<DiscountAdminDTO> getAllByDateRange(String fromDate, String toDate) {
         try {
             StringBuilder sql = new StringBuilder("SELECT \n" +
                     "   d.id, " +
@@ -632,18 +615,25 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "   d.end_date,\n" +
                     "   d.description,\n" +
                     "   d.idel, " +
-                    "COUNT(od.id) AS used_count\n" +
-                    ", d.quantity " +
+                    "COUNT(od.quantity) AS used_count\n" +
                     "FROM discount d " +
                     "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                     "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
-                    "WHERE d.start_date >= :fromDate AND d.end_date <= :toDate and d.dele = 0\n" +
-                    "GROUP BY d.id, d.code, d.name, d.start_date, d.end_date, d.description, d.idel" +
-                    " \n");
-
+                    "WHERE d.dele = 0 " );
+            if(StringUtils.isNotBlank(fromDate)){
+                sql.append("and  (:dateFrom is null or STR_TO_DATE(DATE_FORMAT(d.start_date, '%Y/%m/%d'), '%Y/%m/%d') >= STR_TO_DATE(:dateFrom , '%d/%m/%Y')) ");
+            }
+            if (StringUtils.isNotBlank(toDate)){
+                sql.append("  and (:dateTo is null or STR_TO_DATE(DATE_FORMAT(d.start_date, '%Y/%m/%d'), '%Y/%m/%d') <= STR_TO_DATE(:dateTo , '%d/%m/%Y'))  ");
+            }
+            sql.append(" GROUP BY d.id, d.code, d.name, d.start_date, d.end_date, d.description, d.idel");
             Query query = entityManager.createNativeQuery(sql.toString());
-            query.setParameter("fromDate", fromDate);
-            query.setParameter("toDate", toDate);
+            if (StringUtils.isNotBlank(fromDate)){
+                query.setParameter("dateFrom", fromDate);
+            }
+            if (StringUtils.isNotBlank(toDate)) {
+                query.setParameter("dateTo",toDate);
+            }
 
             List<Object[]> resultList = query.getResultList();
             List<DiscountAdminDTO> discounts = new ArrayList<>();
@@ -655,8 +645,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                 discount.setName(row[2].toString());
                 discount.setDescription(row[5].toString());
                 discount.setIdel(Integer.valueOf(row[6].toString()));
-                discount.setUsed_count(Integer.valueOf(row[7].toString()));
-                discount.setQuantity(Integer.valueOf(row[8].toString()));
+                discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 

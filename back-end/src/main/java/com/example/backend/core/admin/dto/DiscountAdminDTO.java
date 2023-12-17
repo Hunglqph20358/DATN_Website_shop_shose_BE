@@ -24,12 +24,12 @@ public class DiscountAdminDTO extends ExportDTO {
     private String createName;
     private Integer status;
     private Integer idel;
-    private Integer quantity;
     private Integer  used_count;
     private Integer  delete;
 
     private List<ProductAdminDTO> productDTOList;
     private BigDecimal reducedValue;
+    private BigDecimal maxReduced;
     private Integer discountType;
     private Integer isUpdate = 0;
 

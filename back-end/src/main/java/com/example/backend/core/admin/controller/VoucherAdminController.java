@@ -63,9 +63,15 @@ public class VoucherAdminController {
     }
     @GetMapping("/searchByDate")
     public List<VoucherAdminDTO> searchByDateRange(
-            @RequestBody VoucherAdminDTO voucherAdminDTO) {
+            @RequestParam(name = "fromDate") String fromDate,
+            @RequestParam(name = "toDate") String toDate) {
 
-        return voucherAdminService.getVouchersByTimeRange(voucherAdminDTO);
+        return voucherAdminService.getVouchersByTimeRange(fromDate,toDate);
+    }
+    @PostMapping("/sendEmail")
+    public ResponseEntity<?> sendEmail(@RequestBody VoucherAdminDTO voucherAdminDTO) throws MessagingException {
+        voucherAdminService.sendMessageUsingThymeleafTemplate(voucherAdminDTO);
+        return ResponseEntity.ok("Success");
     }
     @GetMapping("/searchByVoucher")
     public List<VoucherAdminDTO> searchByVoucher(

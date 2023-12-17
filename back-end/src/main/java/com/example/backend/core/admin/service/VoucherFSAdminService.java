@@ -1,16 +1,14 @@
 package com.example.backend.core.admin.service;
 
 import com.example.backend.core.admin.dto.CustomerAdminDTO;
-import com.example.backend.core.admin.dto.VoucherAdminDTO;
 import com.example.backend.core.admin.dto.VoucherFreeShipDTO;
 import com.example.backend.core.commons.ServiceResult;
 import jakarta.mail.MessagingException;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
-public interface VoucherFSService {
+public interface VoucherFSAdminService {
 
     ServiceResult<VoucherFreeShipDTO> createVoucher(VoucherFreeShipDTO voucherDTO);
     ServiceResult<VoucherFreeShipDTO> updateVoucher(Long id, VoucherFreeShipDTO updatedVoucherAdminDTO);
@@ -18,9 +16,9 @@ public interface VoucherFSService {
 //    List<VoucherFreeShipDTO> detailById(Long voucherId);
     List<VoucherFreeShipDTO> getAllVouchers();
     List<CustomerAdminDTO> getAllCustomer();
-    List<VoucherFreeShipDTO> getVouchersByTimeRange(Date fromDate, Date toDate);
+    List<VoucherFreeShipDTO> getVouchersByTimeRange(String fromDate, String toDate);
     List<VoucherFreeShipDTO> getVouchersByKeyword(String keyword);
-    ServiceResult<Void> KichHoat(Long idVoucher);
+    ServiceResult<VoucherFreeShipDTO> KichHoat(Long idVoucher);
     VoucherFreeShipDTO getDetailVoucher(Long id);
     List<VoucherFreeShipDTO> getVouchersByCustomer(String searchTerm);
     List<VoucherFreeShipDTO> getAllKhongKH();
