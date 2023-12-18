@@ -151,6 +151,7 @@ public class AppConstant {
                 "/view/api/get-order-detail/by-order/*",
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
+                "/view/api/send-email-from-customer",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
                 "view/api/get-all-voucher-ship",

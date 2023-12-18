@@ -2,6 +2,7 @@ package com.example.backend.core.view.service.impl;
 
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Customer;
+import com.example.backend.core.model.Order;
 import com.example.backend.core.view.dto.ColorDTO;
 import com.example.backend.core.view.dto.ImagesDTO;
 import com.example.backend.core.view.dto.OrderDTO;
@@ -19,6 +20,7 @@ import com.example.backend.core.view.repository.ColorRepository;
 import com.example.backend.core.view.repository.CustomerRepository;
 import com.example.backend.core.view.repository.ImagesRepository;
 import com.example.backend.core.view.repository.OrderDetailRepository;
+import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
 import com.example.backend.core.view.repository.ProductRepository;
 import com.example.backend.core.view.repository.SizeRepository;
@@ -90,6 +92,9 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private SizeMapper sizeMapper;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     public EmailServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
@@ -121,6 +126,33 @@ public class EmailServiceImpl implements EmailService {
         String emailTo = orderDTO.getEmail();
         String subject =  " Thông tin đơn hàng";
         Map<String, Object> map = orderDetailService.getAllByOrder(orderDTO.getId());
+
+        List<OrderDetailDTO> list = (List<OrderDetailDTO>) map.get("orderDetail");
+        thymeleafContext.setVariable("order", orderDTO);
+        thymeleafContext.setVariable("orderDetail", list);
+        String htmlBody = templateEngine.process("sendEmailOrder", thymeleafContext);
+        sendHtmlEmail(emailTo, subject, htmlBody);
+        result.setMessage("Success");
+        result.setStatus(HttpStatus.OK);
+        result.setData("Send Mail Thành công!");
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String> sendEmailFromCustomer(OrderDTO orderDTO) throws MessagingException {
+        Context thymeleafContext = new Context();
+        ServiceResult<String> result = new ServiceResult<>();
+//        Customer customer = customerRepository.findById(orderDTO.getIdCustomer()).get();
+        if(orderDTO.getId() == null){
+            result.setMessage("Error");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setData("Lỗi send Email");
+            return result;
+        }
+        Order order = orderRepository.findById(orderDTO.getId()).orElse(null);
+        String emailTo = order.getEmail();
+        String subject =  " Thông tin đơn hàng";
+        Map<String, Object> map = orderDetailService.getAllByOrder(order.getId());
 
         List<OrderDetailDTO> list = (List<OrderDetailDTO>) map.get("orderDetail");
         thymeleafContext.setVariable("order", orderDTO);

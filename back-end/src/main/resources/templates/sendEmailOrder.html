@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Xác nhận Đơn Hàng</title>
+  <title>Thông tin Đơn Hàng</title>
   <style>
     body {
       font-family: "Arial", sans-serif;
@@ -59,10 +59,10 @@
 <div class="container">
   <div class="card">
     <div class="card-header">
-      <h3>Xác Nhận Đơn Hàng</h3>
+      <h3>Thông tin Đơn Hàng</h3>
     </div>
     <div class="card-body">
-      <p>Xin chào [<span th:text="${order.receiver}" style="font-weight: 400"></span>]</p>
+      <p>Xin chào:  [<span th:text="${order.receiver}" style="font-weight: 400"></span>]</p>
       <p>
         Cảm ơn bạn đã mua giày tại cửa hàng chúng tôi. Dưới đây là thông tin
         xác nhận đơn hàng của bạn:
@@ -102,7 +102,10 @@
       </table>
 
       <p>Tổng số tiền: [[${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
-      <p>Phương thức thanh toán: [Phương Thức Thanh Toán]</p>
+      <p>Tổng số tiền: [[${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
+      <p>Tổng số tiền phải thanh toán: [[${#numbers.formatDecimal(order.totalPrice + order.shipPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
+      <p>Phương thức thanh toán: [[${order.paymentType == 0 ? 'Thanh toán COD' : 'Thanh toán VNPay'}]]</p>
+      <p>Trạng thái đơn hàng: [[${order.statusSendEmail}]]</p>
       <!-- Thêm thông tin khác nếu cần -->
       <p>
         Cảm ơn bạn đã chọn chúng tôi. Chúng tôi hy vọng bạn sẽ hài lòng với
