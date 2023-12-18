@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring", uses = {})
-public interface StaffMapper extends EntityMapper<StaffAdminDTO, Staff> {
+public interface StaffAdminMapper extends EntityMapper<StaffAdminDTO, Staff> {
 }

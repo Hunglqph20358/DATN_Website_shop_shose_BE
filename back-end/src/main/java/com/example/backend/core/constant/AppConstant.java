@@ -7,12 +7,23 @@ public class AppConstant {
         public static final Integer CHO_XU_LY = 1;
         public static final Integer DANG_GIAO_HANG = 2;
         public static final Integer HOAN_THANH = 3;
-        public static final Integer HOAN_HUY = 4;
+        public static final Integer HUY_DON_HANG = 4;
         public static final Integer CHUA_THANH_TOAN = 1;
         public static final Integer DA_THANH_TOAN = 0;
         public static final Integer BO_LO_LAN1 = 1;
         public static final Integer BO_LO_LAN2 = 2;
         public static final Integer BO_LO_LAN3 = 3;
+        public static final Integer XU_LY_HISTORY = 1;
+        public static final Integer GIAO_HANG_HISTORY = 2;
+        public static final Integer BO_LO_LAN1_HISTORY = 3;
+        public static final Integer BO_LO_LAN2_HISTORY = 4;
+        public static final Integer BO_LO_LAN3_HISTORY = 5;
+        public static final Integer HUY_HISTORY = 6;
+        public static final Integer HOAN_THANH_HISTORY = 7;
+
+
+
+
         public static final String ALIGN_LEFT = "LEFT";
         public static final String ALIGN_RIGHT = "RIGHT";
         public static final String STRING = "STRING";
@@ -40,12 +51,42 @@ public class AppConstant {
 
 
         public static final  String[] API_ADMIN = {
-                "/api/admin/home",
+
                 "/api/admin/discount",
-                "/api/admin/product",
                 "/api/admin/discount/*",
+                "/api/admin/discount/product",
+                "/api/admin/discount/searchByDate*",
+                "/api/admin/discount/searchByDiscount*",
+                "/api/admin/discount/searchByCategory*",
+                "/api/admin/discount/searchByProduct*",
+                "/api/admin/discount/searchByBrand*",
+                "/api/admin/discount/kichHoat/*",
+                "/api/admin/discount/KH",
+                "/api/admin/discount/KKH",
+                "/api/admin/discount/discount/export-data",
+
                 "/api/admin/voucher",
                 "/api/admin/voucher/*",
+                "/api/admin/voucher/searchByDate*",
+                "/api/admin/voucher/kichHoat/*",
+                "/api/admin/voucher/searchByCustomer*",
+                "/api/admin/voucher/searchByVoucher*",
+                "/api/admin/voucher/KH",
+                "/api/admin/voucher/KKH",
+                "/api/admin/voucher/export-data",
+                "/api/admin/voucher/sendEmail",
+
+                "/api/admin/voucherFS",
+                "/api/admin/voucherFS/*",
+                "/api/admin/voucherFS/searchByDate*",
+                "/api/admin/voucherFS/searchByVoucherFS*",
+                "/api/admin/voucherFS/searchByCustomer*",
+                "/api/admin/voucherFS/kichHoat/*",
+                "/api/admin/voucherFS/KH",
+                "/api/admin/voucherFS/KKH",
+                "/api/admin/voucherFS/sendEmail",
+                "/api/admin/voucherFS/export-data",
+
                 "/api/admin/home",
                 "/api/admin/brand/*/*",
                 "/api/admin/brand/*",
@@ -83,6 +124,7 @@ public class AppConstant {
                 "/api/admin/staff-update/*",
                 "/api/admin/staff-search/*",
                 "/sales-counter/api/get-all-order",
+
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -113,11 +155,15 @@ public class AppConstant {
                 "/view/api/send-email-completeOrder",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
+                "view/api/get-all-voucher-ship",
+                "view/api/get-voucher-ship",
                 "/view/api/update-infor/*",
                 "/view/api/changePass/*",
                 "/view/api/send-mail-otp",
                 "/view/api/verify-otp",
                 "/view/api/reset-pass",
+                "/view/api/get-brand-top",
+                "/view/api/get-product-tuong-tu",
                 "/sales-counter/api/list-bill-all",
         };
 }

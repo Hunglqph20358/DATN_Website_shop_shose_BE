@@ -12,4 +12,5 @@ public interface ProductService {
 
     ServiceResult<?> getDetailProduct(Long idProduct);
 
+    List<ProductDTO> getProductTuongTu(Long idProduct, Long idCategory);
 }

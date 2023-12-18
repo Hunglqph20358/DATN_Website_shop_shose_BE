@@ -41,8 +41,8 @@ public class Customer implements Serializable {
     @Column(name = "update_date")
     private Instant updateDate;
     @Column(name = "status")
-    private Integer status;
+    private Integer status = 0;
     @Column(name = "idel")
-    private Integer idel;
+    private Integer idel = 0;
 
 }

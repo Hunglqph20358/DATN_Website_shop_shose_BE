@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,10 +62,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private DiscountDetailRepository discountDetailRepository;
+
     @Override
     public List<ProductDTO> getProductNoiBatByBrand(Long thuongHieu) {
         List<ProductDTO> lst = productCustomRepository.getProductNoiBatByBrand(thuongHieu);
-
         return lst;
     }
 
@@ -90,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
         SoleDTO soleDTO = soleMapper.toDto(sole.get());
         CategoryDTO categoryDTO = categoryMapper.toDto(category.get());
         BrandDTO brandDTO = brandMapper.toDto(brand.orElse(null));
-        for (ProductDetail pd: listProductDetail) {
+        for (ProductDetail pd : listProductDetail) {
             totalQuantity += pd.getQuantity();
         }
         productDTO.setProductDetailDTOList(productDetailMapper.toDto(listProductDetail));
@@ -102,21 +103,33 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setTotalQuantity(totalQuantity);
         List<Discount> discountList = discountRepository.getDiscountConApDung();
         for (int i = 0; i < discountList.size(); i++) {
-            List<DiscountDetail> discountDetailList = discountDetailRepository.findByIdDiscount(discountList.get(i).getId());
-            for (int j = 0; j < discountDetailList.size(); j++) {
-                if(discountDetailList.get(i).getDiscountType() == 0){
-                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
-                    productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+            DiscountDetail discountDetail = discountDetailRepository.findByIdDiscountAndIdProduct(discountList.get(i).getId(), productDTO.getId());
+            if (null != discountDetail) {
+                if (discountDetail.getDiscountType() == 0) {
+                    productDTO.setReducePrice(discountDetail.getReducedValue());
+                    productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
                 }
-                if(discountDetailList.get(i).getDiscountType() == 1){
-                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
-                    productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
+                if (discountDetail.getDiscountType() == 1) {
+                    BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());
+                    if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
+                        productDTO.setReducePrice(discountDetail.getMaxReduced());
+                    }else {
+                        productDTO.setReducePrice(discountDetail.getReducedValue());
+                    }
+                    productDTO.setPercentageReduce(discountDetail.getReducedValue().intValue());
                 }
             }
+
         }
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
         result.setData(productDTO);
         return result;
+    }
+
+    @Override
+    public List<ProductDTO> getProductTuongTu(Long idProduct, Long idCategory) {
+        List<ProductDTO> lst = productCustomRepository.getProductTuongTu(idProduct, idCategory);
+        return lst;
     }
 }

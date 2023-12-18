@@ -108,17 +108,29 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendMessageUsingThymeleafTemplate(OrderDTO orderDTO) throws MessagingException {
+    public ServiceResult<String> sendMessageUsingThymeleafTemplate(OrderDTO orderDTO) throws MessagingException {
         Context thymeleafContext = new Context();
-
-        Customer customer = customerRepository.findById(orderDTO.getIdCustomer()).get();
-        String emailTo = customer.getEmail();
+        ServiceResult<String> result = new ServiceResult<>();
+//        Customer customer = customerRepository.findById(orderDTO.getIdCustomer()).get();
+        if(orderDTO.getId() == null || StringUtils.isBlank(orderDTO.getEmail())){
+            result.setMessage("Error");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setData("Lỗi send Email");
+            return result;
+        }
+        String emailTo = orderDTO.getEmail();
         String subject =  " Thông tin đơn hàng";
-        List<OrderDetailDTO> list = orderDetailService.getAllByOrder(orderDTO.getId());
+        Map<String, Object> map = orderDetailService.getAllByOrder(orderDTO.getId());
+
+        List<OrderDetailDTO> list = (List<OrderDetailDTO>) map.get("orderDetail");
         thymeleafContext.setVariable("order", orderDTO);
         thymeleafContext.setVariable("orderDetail", list);
         String htmlBody = templateEngine.process("sendEmailOrder", thymeleafContext);
         sendHtmlEmail(emailTo, subject, htmlBody);
+        result.setMessage("Success");
+        result.setStatus(HttpStatus.OK);
+        result.setData("Send Mail Thành công!");
+        return result;
     }
 
     @Override

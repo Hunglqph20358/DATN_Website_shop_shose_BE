@@ -31,6 +31,8 @@ public class DiscountDetail {
     private Integer discountType;
     @Column(name = "status")
     private Integer status;
+    @Column(name = "max_reduced")
+    private BigDecimal maxReduced;
 
 
 }

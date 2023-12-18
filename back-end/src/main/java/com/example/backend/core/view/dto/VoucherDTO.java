@@ -17,6 +17,7 @@ public class VoucherDTO {
     private Long id;
     private String code;
     private BigDecimal conditionApply;
+    private String idCustomer;
     private Date createDate;
     private Date startDate;
     private Date endDate;
@@ -24,6 +25,7 @@ public class VoucherDTO {
     private Integer voucherType;
     private BigDecimal reducedValue;
     private Integer quantity;
+    private Integer amountUsed;
     private String description;
     private Integer status;
     private Integer isdel;
@@ -32,4 +34,6 @@ public class VoucherDTO {
     private BigDecimal maxReduced;
     private Integer limitCustomer;
     private Integer allow;
+    private Long idCustomerLogin;
+    private Integer delete;
 }

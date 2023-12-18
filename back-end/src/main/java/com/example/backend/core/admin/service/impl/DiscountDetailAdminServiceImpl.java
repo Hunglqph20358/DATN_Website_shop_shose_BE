@@ -1,193 +1,171 @@
 package com.example.backend.core.admin.service.impl;
-
-import com.example.backend.core.admin.dto.DiscountAdminDTO;
-import com.example.backend.core.admin.dto.DiscountDetailAdminDTO;
+import com.example.backend.core.admin.dto.*;
 import com.example.backend.core.admin.mapper.DiscountAdminMapper;
 import com.example.backend.core.admin.mapper.DiscountDetailAdminMapper;
-import com.example.backend.core.admin.repository.DiscountAdminRepository;
-import com.example.backend.core.admin.repository.DiscountDetailAdminRepository;
+import com.example.backend.core.admin.mapper.ProductAdminMapper;
+import com.example.backend.core.admin.repository.*;
+import com.example.backend.core.admin.service.DiscountAdminService;
 import com.example.backend.core.admin.service.DiscountDetailAdminService;
+import com.example.backend.core.commons.CellConfigDTO;
+import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.commons.SheetConfigDTO;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Discount;
 import com.example.backend.core.model.DiscountDetail;
-import com.example.backend.core.view.dto.BrandDTO;
-import com.example.backend.core.view.dto.CategoryDTO;
-import com.example.backend.core.view.dto.ProductDTO;
+import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderDetail;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
-import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminService {
     @Autowired
     private DiscountDetailAdminRepository discountDetailRepository;
     @Autowired
-    private DiscountAdminRepository discountAdminRepository;
+    private DiscountAdminService discountAdminService;
     @Autowired
     private DiscountDetailAdminMapper discountDetailAdminMapper;
     @Autowired
+    private DiscountAdminRepository discountAdminRepository;
+    @Autowired
     private DiscountAdminMapper discountAdminMapper;
     @Autowired
-    EntityManager entityManager;
+    private ProductAdminRepository productAdminRepository;
+    @Autowired
+    private ProductAdminMapper productAdminMapper;
+    @Autowired
+    private DiscountAdminCustomRepository discountAdminCustomRepository;
+    @Autowired
+    FileExportUtil fileExportUtil;
+    @Autowired
+    private OrderDetailAdminRepository orderDetailAdminRepository;
+
+
 
     @Override
-    public List<DiscountAdminDTO> getAllDiscount() {
-        List<DiscountAdminDTO> list = discountAdminMapper.toDto(discountAdminRepository.getAll());
-        return list ;
-    }
-
-
-    @Override
-    public List<DiscountDetailAdminDTO> getAll() {
-        try {
-            StringBuilder sql = new StringBuilder("SELECT\n" +
-                    "    dd.id,\n" +
-                    "    dd.id_product,\n" +
-                    "    dd.id_discount,\n" +
-                    "    dd.reduced_value,\n" +
-                    "    dd.discount_type,\n" +
-                    "    dd.status,\n" +
-                    "    d.code,\n" +
-                    "    d.name,\n" +
-                    "    d.create_date,\n" +
-                    "    d.start_date,\n" +
-                    "    d.end_date,\n" +
-                    "    d.description,\n" +
-                    "    d.idel,\n" +
-                    "    p.name AS product_name,\n" +
-                    "    p.create_date AS product_create_date,\n" +
-                    "    p.code AS product_code,\n" +
-                    "    p.update_name AS product_update_name,\n" +
-                    "    p.id_brand,\n" +
-                    "    p.id_category,\n" +
-                    "    p.id_material,\n" +
-                    "    p.id_sole,\n" +
-                    "    p.description AS product_description,\n" +
-                    "    p.status AS product_status,\n" +
-                    "    p.idel AS product_idel,\n" +
-                    "    b.name AS brand_name, -- Tên thương hiệu\n" +
-                    "    c.name AS category_name -- Tên danh mục\n" +
-                    "FROM\n" +
-                    "    discount_detail dd\n" +
-                    "INNER JOIN\n" +
-                    "    discount d ON dd.id_discount = d.id\n" +
-                    "Inner JOIN\n" +
-                    "    product p ON dd.id_product = p.id\n" +
-                    "LEFT JOIN\n" +
-                    "    brand b ON p.id_brand = b.id -- Liên kết với bảng brand\n" +
-                    "LEFT JOIN\n" +
-                    "    category c ON p.id_category = c.id -- Liên kết với bảng category\n" +
-                    "where d.idel= 0");
-
-            String sqlStr = sql.toString();
-            Query query = entityManager.createNativeQuery(sqlStr);
-            List<Object[]> resultList = query.getResultList();
-            List<DiscountDetailAdminDTO> discountDetails = new ArrayList<>();
-
-            for (Object[] row : resultList) {
-                DiscountDetailAdminDTO discountDetail = new DiscountDetailAdminDTO();
-                discountDetail.setId(Long.valueOf(row[0].toString()));
-                discountDetail.setIdProduct(( row[1].toString()));
-                discountDetail.setIdDiscount(( row[2].toString()));
-                discountDetail.setReducedValue( row[3].toString());
-                discountDetail.setDiscountType( row[4].toString());
-                discountDetail.setStatus((Integer) row[5]);
-
-                DiscountAdminDTO discount = new DiscountAdminDTO();
-                discount.setCode( row[6].toString());
-                discount.setName( row[7].toString());
-                discount.setCreateDate((Date) row[8]);
-                discount.setStartDate((Date) row[9]);
-                discount.setEndDate((Date) row[10]);
-                discount.setDescription( row[11].toString());
-                discount.setIdel( row[12].toString());
-
-                ProductDTO product = new ProductDTO();
-                product.setName((String) row[13]);
-                product.setCreateDate(((Timestamp) row[14]).toInstant());
-                product.setCode((String) row[15]);
-                product.setUpdateName((String) row[16]);
-                product.setIdBrand(((Number) row[17]).longValue());
-                product.setIdCategory(((Number) row[18]).longValue());
-                product.setIdMaterial(((Number) row[19]).longValue());
-                product.setIdSole(((Number) row[20]).longValue());
-                product.setDescription((String) row[21]);
-                product.setStatus((Integer) row[22]);
-                product.setIdel((Integer) row[23]);
-
-                BrandDTO brand = new BrandDTO();
-                brand.setName((String) row[24]);
-                product.setBrandDTO(brand);
-
-                CategoryDTO category = new CategoryDTO();
-                category.setName((String) row[25]);
-                product.setCategoryDTO(category);
-
-                discountDetail.setDiscountAdminDTO(discount);
-                discountDetail.setProductDTO(product);
-
-                discountDetails.add(discountDetail);
+    public List<DiscountAdminDTO> getAll() {
+        List<DiscountAdminDTO> list = discountAdminCustomRepository.getAll();
+        for (int i =0; i< list.size(); i++ ) {
+            if (list.get(i).getUsed_count() > 0) {
+                DiscountAdminDTO discountAdminDTO = list.get(i);
+                discountAdminDTO.setIsUpdate(1);
             }
-
-            return discountDetails;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
+        return list;
     }
 
 
+    @Override
+    public List<DiscountAdminDTO> getAllKichHoat() {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllKichHoat();
+        return list;
+    }
 
+    @Override
+    public List<DiscountAdminDTO> getAllKhongKichHoat() {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllKhongKichHoat();
+        return list;
+    }
 
+    @Override
+    public List<DiscountAdminDTO> getAllByCodeOrName(String search) {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllByCodeOrName(search);
+        return list;
+    }
+
+    @Override
+    public List<DiscountAdminDTO> getAllByCategory(String category) {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllByCategory(category);
+        return list;
+    }
+
+    @Override
+    public List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode) {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllByProductNameOrCode(productNameOrCode);
+        return list;
+    }
+
+    @Override
+    public List<DiscountAdminDTO> getAllByBrand(String brand) {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllByBrand(brand);
+        return list;
+    }
+
+    @Override
+    public ServiceResult<Void> deleteDiscount(Long discountId) {
+        ServiceResult<Void> serviceResult = new ServiceResult<>();
+        Optional<Discount> discount = discountAdminRepository.findById(discountId);
+
+        if (discount.isPresent()) {
+            Discount discount1 = discount.get();
+            discount1.setDelete(1); // Sửa thành setIdel(1) để đánh dấu đã xóa
+            discountAdminRepository.save(discount1); // Lưu lại thay đổi vào cơ sở dữ liệu
+
+            serviceResult.setMessage("Xóa thành công!");
+            serviceResult.setStatus(HttpStatus.OK);
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public List<DiscountAdminDTO> getAllByDateRange(String fromDate, String toDate) {
+        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAllByDateRange(fromDate,toDate);
+        return list;
+    }
 
 
     @Override
     public ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO discountDetailAdminDTO) {
         ServiceResult<DiscountDetailAdminDTO> serviceResult = new ServiceResult<>();
+        for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
+            ProductAdminDTO productDTO1 = discountDetailAdminDTO.getProductDTOList().get(i);
+            BigDecimal reducedValue1 = discountDetailAdminDTO.getReducedValue();
 
+            if (reducedValue1 == null && reducedValue1.doubleValue() > productDTO1.getPrice().doubleValue()) {
+                serviceResult.setData(null);
+                serviceResult.setMessage("ERROR");
+                serviceResult.setStatus(HttpStatus.BAD_REQUEST);
+                return serviceResult;
+
+            }
+        }
         // Chuyển DTO sang Entity cho DiscountAdmin
         Discount discountAdminEntity = discountAdminMapper.toEntity(discountDetailAdminDTO.getDiscountAdminDTO());
         discountAdminEntity.setCode("GG" + Instant.now().getEpochSecond());
-        discountAdminEntity.setCreateDate(Date.valueOf(LocalDate.now()));
+        Date nowDate = new Date();
+        discountAdminEntity.setCreateDate(nowDate);
         discountAdminEntity.setStatus(0);
         discountAdminEntity.setIdel(0);
-
-//        String startDateStr = discountDetailAdminDTO.getDiscountAdminDTO().getStartDateStr();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        LocalDate localStartDate = LocalDate.parse(startDateStr, formatter);
-//        Instant endDateInstant = localStartDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-//        String endDateStr = discountDetailAdminDTO.getDiscountAdminDTO().getStartDateStr();
-//        LocalDate localStartDate2 = LocalDate.parse(endDateStr, formatter);
-//        Instant startDateInstant = localStartDate2.atStartOfDay(ZoneId.systemDefault()).toInstant();
-
+        discountAdminEntity.setDelete(0);
         discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
         discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
 
         discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
         for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
-            DiscountDetail discountDetailEntity = discountDetailAdminMapper.toEntity(discountDetailAdminDTO);
-            discountDetailEntity.setIdDiscount(discountAdminEntity.getId());
-            discountDetailEntity.setIdProduct(discountDetailAdminDTO.getProductDTOList().get(i).getId());
-            discountDetailRepository.save(discountDetailEntity);
+            DiscountDetail discountDetail = new DiscountDetail();
+            discountDetail.setIdDiscount(discountAdminEntity.getId());
+            discountDetail.setIdProduct(discountDetailAdminDTO.getProductDTOList().get(i).getId());
+            discountDetail.setDiscountType(discountDetailAdminDTO.getDiscountType());
+            discountDetail.setReducedValue(discountDetailAdminDTO.getReducedValue());
+            discountDetail.setStatus(0);
+            discountDetail.setMaxReduced(discountDetailAdminDTO.getMaxReduced() != null ? discountDetailAdminDTO.getMaxReduced() : null);
+            discountDetailRepository.save(discountDetail);
         }
+
         serviceResult.setData(discountDetailAdminDTO);
         serviceResult.setMessage("Thêm thành công!");
         serviceResult.setStatus(HttpStatus.OK);
@@ -196,39 +174,57 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     }
 
     @Override
-    public ServiceResult<DiscountDetailAdminDTO> updateDiscount(Long idDiscount, DiscountDetailAdminDTO updatedDiscountDetailAdminDTO) {
+    public ServiceResult<DiscountDetailAdminDTO> updateDiscount(DiscountDetailAdminDTO discountDetailAdminDTO) {
         ServiceResult<DiscountDetailAdminDTO> serviceResult = new ServiceResult<>();
+        Optional<Discount> discountAdminOptional = discountAdminRepository.findById(discountDetailAdminDTO.getDiscountAdminDTO().getId());
 
-        // Kiểm tra xem discountDetailId có tồn tại trong cơ sở dữ liệu không
-        Optional<DiscountDetail> existingDiscount = discountDetailRepository.findById(updatedDiscountDetailAdminDTO.getId());
+        if (discountAdminOptional.isPresent()) {
+            Discount discountAdminEntity = discountAdminOptional.get();
+            discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
+            discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
+            discountAdminEntity.setDescription(discountDetailAdminDTO.getDiscountAdminDTO().getDescription());
 
-        if (existingDiscount.isPresent()) {
-            // Cập nhật thông tin của bản ghi đã tồn tại dựa trên updatedDiscountDetailAdminDTO
-            DiscountDetail existingEntity = existingDiscount.get();
-            existingEntity.setDiscountType(Integer.valueOf(updatedDiscountDetailAdminDTO.getDiscountType()));
-            existingEntity.setStatus(1);
-            existingEntity.setReducedValue(new BigDecimal(updatedDiscountDetailAdminDTO.getReducedValue()));
-            for (int i = 0; i < updatedDiscountDetailAdminDTO.getProductDTOList().size(); i++) {
-               existingEntity.setIdProduct(updatedDiscountDetailAdminDTO.getProductDTOList().get(i).getId());
+            discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
+
+
+            discountAdminCustomRepository.deleteAllDiscountDetailByDiscount(discountDetailAdminDTO.getIdDiscount());
+
+            for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
+                DiscountDetail discountDetail = new DiscountDetail();
+                discountDetail.setIdDiscount(discountAdminEntity.getId());
+                discountDetail.setIdProduct(discountDetailAdminDTO.getProductDTOList().get(i).getId());
+                discountDetail.setDiscountType(discountDetailAdminDTO.getDiscountType());
+                discountDetail.setReducedValue(discountDetailAdminDTO.getReducedValue());
+                discountDetail.setMaxReduced(discountDetailAdminDTO.getMaxReduced() != null ? discountDetailAdminDTO.getMaxReduced() : null);
+                discountDetailRepository.save(discountDetail);
             }
+        serviceResult.setData(discountDetailAdminDTO);
+        serviceResult.setMessage("Cập nhật thành công!");
+        serviceResult.setStatus(HttpStatus.OK);
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+        }
 
-            Optional<Discount> discountAdmin= discountAdminRepository.findById(idDiscount);
-            if(discountAdmin.isPresent()){
-                Discount discount=discountAdmin.get();
-//
+        return serviceResult;
+    }
 
-                discount.setStartDate(updatedDiscountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
-                discount.setEndDate(updatedDiscountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
-                discount.setName(updatedDiscountDetailAdminDTO.getDiscountAdminDTO().getName());
-                discount.setDescription(updatedDiscountDetailAdminDTO.getDiscountAdminDTO().getDescription());
-                System.out.println(discount.toString());
-                discountDetailRepository.save(existingEntity);
-                discountAdminRepository.save(discount);
-                serviceResult.setData(updatedDiscountDetailAdminDTO);
-                serviceResult.setMessage("Cập nhật thành công!");
-                serviceResult.setStatus(HttpStatus.OK);
-            }
 
+
+    @Override
+    public ServiceResult<DiscountAdminDTO> KichHoat(Long idDiscount) {
+        ServiceResult<DiscountAdminDTO> serviceResult = new ServiceResult<>();
+        Optional<Discount> optionalDiscount = discountAdminRepository.findById(idDiscount);
+
+        if (optionalDiscount.isPresent()) {
+            Discount discount = optionalDiscount.get();
+
+            discount.setIdel(discount.getIdel() == 1 ? 0 : 1);
+            discount =  discountAdminRepository.save(discount);
+            DiscountAdminDTO voucherAdminDTO = discountAdminMapper.toDto(discount);
+            serviceResult.setData(voucherAdminDTO);
+            serviceResult.setStatus(HttpStatus.OK);
+            serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
         } else {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
@@ -239,161 +235,100 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
 
     @Override
-    public ServiceResult<Void> deleteDiscount(Long idDiscount) {
-        ServiceResult<Void> serviceResult = new ServiceResult<>();
-        // Chuyển DTO sang Entity cho DiscountAdmin
-        Optional<Discount> discount=discountAdminRepository.findById(idDiscount);
-        if (discount.isPresent()) {
-        Discount discount1=discount.get();
-        discount1.setIdel(1);
-            discountAdminRepository.save(discount1); // Lưu lại thay đổi vào cơ sở dữ liệu
-        } else {
-            serviceResult.setMessage("Không tìm thấy khuyến mãi");
-            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+    public DiscountAdminDTO getDetailDiscount(Long id) {
+        Discount discount = discountAdminRepository.findById(id).get();
+        if (discount == null) {
+            return null;
         }
-        return serviceResult;
+        DiscountAdminDTO discountAdminDTO = discountAdminMapper.toDto(discount);
+        List<DiscountDetail> discountDetailList = discountDetailRepository.findAllByDiscount(discount.getId());
+
+        List<ProductAdminDTO> lstPruct = new ArrayList<>();
+        if (discountDetailList.size() > 0) {
+            for (int i = 0; i < discountDetailList.size(); i++) {
+                ProductAdminDTO productAdminDTO = productAdminMapper.toDto(productAdminRepository.findById(discountDetailList.get(i).getIdProduct()).orElse(null));
+                lstPruct.add(productAdminDTO);
+
+            }
+            discountAdminDTO.setReducedValue(discountDetailList.get(0).getReducedValue());
+            discountAdminDTO.setDiscountType(discountDetailList.get(0).getDiscountType());
+            discountAdminDTO.setMaxReduced(discountDetailList.get(0).getMaxReduced());
+            discountAdminDTO.setProductDTOList(lstPruct);
+        }
+        return discountAdminDTO;
+    }
+
+
+    public List<ProductAdminDTO> getAllProduct() {
+        List<ProductAdminDTO> list= discountAdminCustomRepository.getAllProduct();
+        return list;
     }
     @Override
-    public List<DiscountDetailAdminDTO> getDetailDiscount(long id) {
+    public byte[] exportExcelDiscount() throws IOException {
+        List<SheetConfigDTO> sheetConfigList = new ArrayList<>();
+        List<DiscountDetailAdminDTO> discountAdminDTOS = discountAdminCustomRepository.discountExport();
+        sheetConfigList = getDataForExcel("Danh Sách Giảm Giá", discountAdminDTOS, sheetConfigList, AppConstant.EXPORT_DATA);
         try {
-            StringBuilder sql = new StringBuilder("SELECT\n" +
-                    "    dd.id,\n" +
-                    "    dd.id_product,\n" +
-                    "    dd.id_discount,\n" +
-                    "    dd.reduced_value,\n" +
-                    "    dd.discount_type,\n" +
-                    "    dd.status,\n" +
-                    "    d.code,\n" +
-                    "    d.id,\n" +
-                    "    d.name,\n" +
-                    "    d.start_date,\n" +
-                    "    d.end_date,\n" +
-                    "    d.description,\n" +
-                    "    d.idel,\n" +
-                    "    p.name AS product_name,\n" +
-                    "    p.code AS product_code,\n" +
-                    "    p.id AS product_id,\n" +
-                    "    p.id_brand,\n" +
-                    "    p.id_category,\n" +
-                    "    p.id_material,\n" +
-                    "    p.id_sole,\n" +
-                    "    p.description AS product_description,\n" +
-                    "    p.status AS product_status,\n" +
-                    "    p.idel AS product_idel,\n" +
-                    "    b.name AS brand_name, -- Tên thương hiệu\n" +
-                    "    c.name AS category_name -- Tên danh mục\n" +
-                    "FROM\n" +
-                    "    discount d\n" +
-                    "LEFT JOIN\n" +
-                    "   discount_detail dd \n" +
-                    "            ON dd.id_discount = d.id \n" +
-                    "LEFT JOIN\n" +
-                    "    product p ON dd.id_product = p.id\n" +
-                    "LEFT JOIN\n" +
-                    "    brand b ON p.id_brand = b.id -- Liên kết với bảng brand\n" +
-                    "LEFT JOIN\n" +
-                    "    category c ON p.id_category = c.id -- Liên kết với bảng category\n" +
-                    "WHERE d.id = :id"); // Thêm điều kiện WHERE để lọc theo id
-
-            String sqlStr = sql.toString();
-            Query query = entityManager.createNativeQuery(sqlStr);
-            query.setParameter("id", id); // Đặt giá trị tham số id
-            List<Object[]> resultList = query.getResultList();
-            List<DiscountDetailAdminDTO> discountDetails = new ArrayList<>();
-            for (Object[] row : resultList) {
-                DiscountDetailAdminDTO discountDetail = new DiscountDetailAdminDTO();
-
-                discountDetail.setId(row[0] != null ? Long.valueOf(row[0].toString()) : null);
-                discountDetail.setIdProduct(row[1] != null ? row[1].toString() : null);
-                discountDetail.setIdDiscount(row[2] != null ? row[2].toString() : null);
-                discountDetail.setReducedValue(row[3] != null ? row[3].toString() : null);
-                discountDetail.setDiscountType(row[4] != null ? row[4].toString() : null);
-                discountDetail.setStatus(row[5] != null ? Integer.parseInt(row[5].toString()) : 0);
-
-                DiscountAdminDTO discount = new DiscountAdminDTO();
-                discount.setCode(row[6] != null ? row[6].toString() : null);
-                discount.setId(row[7] != null ? Long.valueOf(row[7].toString()) : null);
-                discount.setName(row[8] != null ? row[8].toString() : null);
-                discount.setStartDate(row[9] != null ? (Date) row[9] : null);
-                discount.setEndDate(row[10] != null ? (Date) row[10] : null);
-                discount.setDescription(row[11] != null ? row[11].toString() : null);
-                discount.setIdel(row[12] != null ? row[12].toString() : null);
-
-                ProductDTO product = new ProductDTO();
-                product.setName(row[13] != null ? (String) row[13] : null);
-                product.setCode(row[14] != null ? (String) row[14] : null);
-                product.setId(row[15] != null ? Long.valueOf(row[15].toString()) : null);
-                product.setIdBrand(row[16] != null ? ((Number) row[16]).longValue() : null);
-                product.setIdCategory(row[17] != null ? ((Number) row[17]).longValue() : null);
-                product.setIdMaterial(row[18] != null ? ((Number) row[18]).longValue() : null);
-                product.setIdSole(row[19] != null ? ((Number) row[19]).longValue() : null);
-                product.setDescription(row[20] != null ? (String) row[20] : null);
-                product.setStatus(row[21] != null ? (Integer) row[21] : null);
-                product.setIdel(row[22] != null ? (Integer) row[22] : null);
-
-                BrandDTO brand = new BrandDTO();
-                brand.setName(row[23] != null ? (String) row[23] : null);
-                product.setBrandDTO(brand);
-
-                CategoryDTO category = new CategoryDTO();
-                category.setName(row[24] != null ? (String) row[24] : null);
-                product.setCategoryDTO(category);
-
-                discountDetail.setDiscountAdminDTO(discount);
-                discountDetails.add(discountDetail);
-                List<ProductDTO> productList = new ArrayList<>();
-                for (int i = 0; i < discountDetails.size(); i++) {
-                    productList.add(product);
-                    discountDetails.get(i).setProductDTOList(productList);
-                }
-                System.out.println(productList.size());
-
-            }
-
-            return discountDetails;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            String title = "DANH SÁCH GIẢM GIÁ";
+            return fileExportUtil.exportXLSX(false, sheetConfigList, title);
+        } catch (IOException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ioE) {
+            throw new IOException("Lỗi Export" + ioE.getMessage(), ioE);
         }
     }
-
-    public List<ProductDTO> getAllProduct() {
-        try {
-            String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold\n" +
-                    "FROM product p\n" +
-                    "JOIN product_detail pd ON p.id = pd.id_product\n" +
-                    "LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
-                    "LEFT JOIN brand b ON p.id_brand = b.id\n" +
-                    "LEFT JOIN category c ON p.id_category = c.id\n" +
-                    "GROUP BY p.id, p.code, p.name, brand_name, category_name\n" +
-                    "ORDER BY total_sold;";
-
-            Query query = entityManager.createNativeQuery(sql);
-            List<Object[]> resultList = query.getResultList();
-            List<ProductDTO> productDTOList = new ArrayList<>();
-
-            for (Object[] row : resultList) {
-                ProductDTO product = new ProductDTO();
-                product.setId(((Number) row[0]).longValue());
-                product.setCode((String) row[1]);
-                product.setName((String) row[2]);
-                BrandDTO brand = new BrandDTO();
-                brand.setName((String) row[3]);
-                product.setBrandDTO(brand);
-
-                CategoryDTO category = new CategoryDTO();
-                category.setName((String) row[4]);
-                product.setCategoryDTO(category);
-                product.setTotalSold(new BigDecimal(((Number) row[5]).doubleValue()));
-
-                productDTOList.add(product);
-            }
-
-            return productDTOList;
-        } catch (PersistenceException e) {
-            e.printStackTrace(); // Handle the exception properly, e.g., log it or throw a custom exception
-            return null;
+    private List<SheetConfigDTO> getDataForExcel(String sheetName,
+                                                 List<DiscountDetailAdminDTO> listDataSheet,
+                                                 List<SheetConfigDTO> sheetConfigList,
+                                                 Long exportType) {
+        SheetConfigDTO sheetConfig = new SheetConfigDTO();
+        String[] headerArr = null;
+        if (AppConstant.EXPORT_DATA.equals(exportType)) {
+            headerArr =
+                    new String[]{
+                            "STT",
+                            "Mã Giảm Giá",
+                            "Tên Giảm Giá",
+                            "Ngày Tạo",
+                            "Người Tạo",
+                            "Ngày Bắt Đầu",
+                            "Ngày Kết Thúc",
+                            "Nội Dung",
+                            "Giá Trị Giảm",
+                            "Loại Giảm Giá",
+                            "Giá trị Giảm Tối Đa",
+                            "Tên Sản Phẩm",
+                    };
         }
+        sheetConfig.setSheetName(sheetName);
+        sheetConfig.setHeaders(headerArr);
+        int recordNo = 1;
+        List<CellConfigDTO> cellConfigCustomList = new ArrayList<>();
+            for (DiscountDetailAdminDTO item : listDataSheet) {
+                item.setRecordNo(recordNo++);
+            }
+        List<CellConfigDTO> cellConfigList = new ArrayList<>();
+        sheetConfig.setList(listDataSheet);
+        cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.createName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.startDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.endDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountAdminDTO.description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("discountTypeStr", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("maxReduced", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("productDTO.name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
+        }
+        sheetConfig.setHasIndex(false);
+        sheetConfig.setHasBorder(true);
+        sheetConfig.setExportType(exportType.intValue());
+        sheetConfig.setCellConfigList(cellConfigList);
+        sheetConfig.setCellCustomList(cellConfigCustomList);
+        sheetConfigList.add(sheetConfig);
+        return sheetConfigList;
     }
 
 

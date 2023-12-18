@@ -8,22 +8,12 @@ import com.example.backend.core.view.dto.ProductDTO;
 import com.mysql.cj.util.SaslPrep;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.hibernate.Session;
-import org.hibernate.metamodel.model.domain.BasicDomainType;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.descriptor.java.BigDecimalJavaType;
-import org.hibernate.type.descriptor.java.InstantJavaType;
-import org.hibernate.type.descriptor.java.IntegerJavaType;
-import org.hibernate.type.descriptor.java.StringJavaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +74,7 @@ public class ProductAdminCustomRepositoryImpl implements ProductAdminCustomRepos
                     "    GROUP BY id_product\n" +
                     ") images ON images.id_product = p.id\n" +
                     "left join `order` o on o.id = od.id_order\n" +
-                    "where month(o.create_date) = month(now())\n" +
+                    "where month(o.payment_date) = month(now())\n" +
                     "GROUP BY p.id, p.code, p.name, p.price, images.image_names, b.name\n" +
                     "ORDER BY total_sold DESC\n" +
                     "LIMIT 5;");

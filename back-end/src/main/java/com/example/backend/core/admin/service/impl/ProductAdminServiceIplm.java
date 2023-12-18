@@ -61,7 +61,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     @Autowired
     private StaffAdminRepository strp;
     @Autowired
-    private StaffMapper staffMapper;
+    private StaffAdminMapper staffMapper;
     @Autowired
     private EntityManager entityManager;
     @Autowired
