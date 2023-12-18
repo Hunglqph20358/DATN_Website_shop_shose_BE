@@ -52,6 +52,11 @@
         p {
             margin-bottom: 10px;
             font-size: 16px;
+            line-height: 1.5;
+        }
+
+        h3 {
+            margin: 0;
         }
     </style>
 </head>
@@ -64,22 +69,20 @@
         <div class="card-body">
             <!-- Assuming 'voucher' is the model attribute -->
             <span th:if="${voucher != null and voucher.customerAdminDTO != null}" th:text="${voucher.customerAdminDTO.fullname}"></span>
-            <p>
-                Cảm ơn bạn đã ủng hộ chúng tôi trong suốt thời gian vừa qua
-            </p>
+            <p>Cảm ơn bạn đã ủng hộ chúng tôi trong suốt thời gian vừa qua.</p>
 
             <!-- Thông tin đơn hàng -->
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">Mã</th>
-                    <th scope="col">Tên</th>
-                    <th scope="col">Điều Kiện Áp Dụng</th>
-                    <th scope="col">Ngày Bắt Đầu</th>
-                    <th scope="col">Ngày Kết Thúc</th>
-                    <th scope="col">Giá Trị Giảm</th>
-                    <th scope="col">Số Lượng</th>
-                    <th scope="col">Mô Tả</th>
+                    <th>Mã</th>
+                    <th>Tên</th>
+                    <th>Điều Kiện Áp Dụng</th>
+                    <th>Ngày Bắt Đầu</th>
+                    <th>Ngày Kết Thúc</th>
+                    <th>Giá Trị Giảm</th>
+                    <th>Số Lượng</th>
+                    <th>Mô Tả</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -87,7 +90,7 @@
                 <tr>
                     <td th:text="${voucher.code}"></td>
                     <td th:text="${voucher.name}"></td>
-                    <td th:text="${voucher.conditions}"></td>
+                    <td th:text="${voucher.conditionApply}"></td>
                     <td th:text="${voucher.startDate}"></td>
                     <td th:text="${voucher.endDate}"></td>
                     <td th:text="${voucher.reducedValue}"></td>

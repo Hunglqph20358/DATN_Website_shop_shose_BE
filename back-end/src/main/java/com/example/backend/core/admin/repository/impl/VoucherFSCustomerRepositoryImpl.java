@@ -59,7 +59,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setReducedValue(new BigDecimal(row[6].toString()));
                 voucher.setDescription(row[7].toString());
                 voucher.setIdel(Integer.valueOf(row[8].toString()));
@@ -112,7 +112,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
                 voucher.setIdCustomer((String) row[3]);
-                voucher.setConditions(new BigDecimal(row[7].toString()));
+                voucher.setConditionApply(new BigDecimal(row[7].toString()));
                 voucher.setReducedValue(new BigDecimal(row[9].toString()));
                 voucher.setQuantity(Integer.valueOf(row[14].toString()));
                 voucher.setLimitCustomer(row[15] != null ? Integer.valueOf((row[15].toString())) : null);
@@ -187,7 +187,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setReducedValue(new BigDecimal(row[6].toString()));
                 voucher.setDescription(row[7].toString());
                 voucher.setIdel(Integer.valueOf(row[8].toString()));
@@ -254,7 +254,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setReducedValue(new BigDecimal(row[6].toString()));
                 voucher.setDescription(row[7].toString());
                 voucher.setIdel(Integer.valueOf(row[8].toString()));
@@ -336,7 +336,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setReducedValue(new BigDecimal(row[6].toString()));
                 voucher.setDescription(row[7].toString());
                 voucher.setIdel(Integer.valueOf(row[8].toString()));
@@ -404,7 +404,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setReducedValue(new BigDecimal(row[6].toString()));
                 voucher.setDescription(row[7].toString());
                 voucher.setIdel(Integer.valueOf(row[8].toString()));
@@ -442,7 +442,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
     @Override
     public List<VoucherFreeShipDTO> getVouchersByCustomer(String searchTerm) {
         try {
-            String sql = "SELECT " +
+            StringBuilder sql =new StringBuilder("SELECT " +
                     "  v.id, " +
                     "  v.code, " +
                     "  v.name, " +
@@ -457,16 +457,21 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                     "FROM voucher_free_ship v " +
                     "LEFT JOIN `order` o ON o.code_voucher_ship = v.code " +
                     "LEFT JOIN customer c ON v.id_customer = c.id " +
-                    "WHERE LOWER(c.code) LIKE LOWER(:searchTerm) " +
-                    "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
-                    "   OR c.phone LIKE  :searchTerm and dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
-                    " v.reduced_value, v.description, v.idel, v.quantity";
+                    "WHERE  dele=0 ") ;
 
 
-            Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("searchTerm", "%" + searchTerm + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                sql.append(" and LOWER(c.code) LIKE LOWER(:searchTerm) " +
+                        "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
+                        "   OR c.phone LIKE  :searchTerm ");
+            }
+            sql.append(" GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions,v.reduced_value, v.description, v.idel, v.quantity" );
 
+            Query query = entityManager.createNativeQuery(sql.toString());
+
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                query.setParameter("searchTerm", "%" + searchTerm + "%");
+            }
             List<Object[]> resultList = query.getResultList();
 
             List<VoucherFreeShipDTO> vouchers = new ArrayList<>();
@@ -476,7 +481,7 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setReducedValue(new BigDecimal(row[6].toString()));
                 voucher.setDescription(row[7].toString());
                 voucher.setIdel(Integer.valueOf(row[8].toString()));

@@ -25,7 +25,7 @@ public class VoucherAdminDTO extends ExportDTO {
     private Date createDate;
     private Date startDate;
     private Date endDate;
-    private BigDecimal conditions;
+    private BigDecimal conditionApply;
     private String createName;
     private Integer voucherType;
     private BigDecimal reducedValue;
@@ -39,6 +39,7 @@ public class VoucherAdminDTO extends ExportDTO {
     private Integer optionCustomer;
     private Integer apply;
     private Integer useVoucher;
+    private Integer amountUsed;
     private Integer  delete;
     private CustomerAdminDTO customerAdminDTO;
     private List<CustomerAdminDTO> customerAdminDTOList;
@@ -46,5 +47,5 @@ public class VoucherAdminDTO extends ExportDTO {
     private String dateTo;
     private String nameCustomer;
     private Integer isUpdate = 0;
-
+    private String listCodeCustomerExport;
 }

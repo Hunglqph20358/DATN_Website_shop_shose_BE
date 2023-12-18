@@ -169,7 +169,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setStatus(0);
         voucher.setIdel(0);
         voucher.setDelete(0);
-        voucher.setConditions(voucherAdminDTO.getConditions());
+        voucher.setConditionApply(voucherAdminDTO.getConditionApply());
         voucher.setDescription(voucherAdminDTO.getDescription());
         voucher.setApply(voucherAdminDTO.getApply());
         voucher.setCreateName(voucherAdminDTO.getCreateName());
@@ -221,10 +221,10 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             Voucher voucher = voucherOptional.get();
 
             // Cập nhật các thuộc tính cần thiết dựa trên updatedVoucherAdminDTO
-            voucher.setStatus(0);
-            voucher.setIdel(0);
-            voucher.setDelete(0);
-            voucher.setConditions(voucherAdminDTO.getConditions());
+            voucher.setName(voucherAdminDTO.getName());
+            voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
+            voucher.setQuantity(voucherAdminDTO.getQuantity());
+            voucher.setConditionApply(voucherAdminDTO.getConditionApply());
             voucher.setDescription(voucherAdminDTO.getDescription());
             voucher.setApply(voucherAdminDTO.getApply());
             voucher.setCreateName(voucherAdminDTO.getCreateName());
@@ -388,25 +388,19 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                             "Ngày Bắt Đầu",
                             "Ngày Kết Thúc",
                             "Điều kiện áp dụng",
-                            "Loại voucher",
                             "Giá Trị Giảm",
                             "Số lượng",
                             "Giới hạn sử dụng với mỗi khách hàng",
-                            "Trạng thái",
                             "Tên khách hàng",
-
-
                     };
         }
         sheetConfig.setSheetName(sheetName);
         sheetConfig.setHeaders(headerArr);
         int recordNo = 1;
         List<CellConfigDTO> cellConfigCustomList = new ArrayList<>();
-
-            for (VoucherAdminDTO item : listDataSheet) {
-                item.setRecordNo(recordNo++);
-            }
-
+        for (VoucherAdminDTO item : listDataSheet) {
+            item.setRecordNo(recordNo++);
+        }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
         cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
@@ -414,14 +408,11 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("startDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("endDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("conditions", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("voucherType", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        cellConfigList.add(new CellConfigDTO("conditionApply", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("quantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
         cellConfigList.add(new CellConfigDTO("limitCustomer", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
-//        cellConfigList.add(new CellConfigDTO("allow", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
-        cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
-        cellConfigList.add(new CellConfigDTO("nameCustomer", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("listCodeCustomerExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
         }

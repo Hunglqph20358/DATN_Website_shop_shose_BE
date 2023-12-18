@@ -26,7 +26,7 @@ public class VoucherFreeShipDTO extends ExportDTO {
     private Date createDate;
     private Date startDate;
     private Date endDate;
-    private BigDecimal conditions;
+    private BigDecimal conditionApply;
     private String createName;
     private BigDecimal reducedValue;
     private String description;
@@ -37,6 +37,7 @@ public class VoucherFreeShipDTO extends ExportDTO {
     private Integer allow;
     private Integer optionCustomer;
     private Integer useVoucher;
+    private Integer amountUsed;
     private Integer  delete;
     private CustomerAdminDTO customerAdminDTO;
     private String nameCustomer;

@@ -2,8 +2,10 @@ package com.example.backend.core.admin.repository.impl;
 
 import com.example.backend.core.admin.dto.CustomerAdminDTO;
 import com.example.backend.core.admin.dto.VoucherAdminDTO;
+import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.VoucherAdminCustomRepository;
 import com.example.backend.core.admin.repository.VoucherAdminRepository;
+import com.example.backend.core.model.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,9 @@ import java.util.List;
 public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepository {
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private CustomerAdminRepository customerAdminRepository;
+
     @Override
     public List<VoucherAdminDTO> getAllVouchers() {
         try {
@@ -57,7 +62,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(new BigDecimal(row[7].toString()));
                 voucher.setDescription(row[8].toString());
@@ -99,10 +104,9 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
     @Override
     public List<VoucherAdminDTO> getAllVouchersExport() {
         try {
-            String sql = "SELECT v.id, v.code, v.name,v.start_date, v.end_date,v.conditions,v.voucher_type, v.reduced_value,v.quantity,v.limit_customer,v.allow,v.status, c.fullname \n" +
+            String sql = "SELECT v.* \n" +
                     "FROM voucher v\n" +
-                    "JOIN customer c ON FIND_IN_SET(c.id, v.id_customer) > 0" +
-                    " where v.dele=0 ;";
+                    " where v.dele=0;";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -114,21 +118,16 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setVoucherType(Integer.valueOf(row[6].toString()));
-                voucher.setReducedValue(new BigDecimal(row[7].toString()));
-                voucher.setQuantity(Integer.valueOf(row[8].toString()));
-                voucher.setLimitCustomer(Integer.valueOf(row[9].toString()));
-                voucher.setAllow(row[10] != null ? Integer.valueOf((row[10].toString())) : null);
-                voucher.setStatus(row[11] != null ? Integer.valueOf((row[11].toString())) : null);
-                voucher.setNameCustomer(row[12].toString());
-
-
+                voucher.setIdCustomer((String) row[3]);
+                voucher.setConditionApply(new BigDecimal(row[7].toString()));
+                voucher.setReducedValue(new BigDecimal(row[10].toString()));
+                voucher.setQuantity(Integer.valueOf(row[15].toString()));
+                voucher.setLimitCustomer(row[20] != null ? Integer.valueOf((row[20].toString())) : null);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
+                    java.util.Date startDate = dateFormat.parse(row[5].toString());
+                    java.util.Date endDate = dateFormat.parse(row[6].toString());
 
                     voucher.setStartDate(startDate);
                     voucher.setEndDate(endDate);
@@ -143,7 +142,16 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     e.printStackTrace();
                     continue;
                 }
-
+                if(StringUtils.isNotBlank(voucher.getIdCustomer()) || null != voucher.getIdCustomer()){
+                    String listCodeCustomer = "";
+                    for (String str: voucher.getIdCustomer().split(",")) {
+                        Customer customer = customerAdminRepository.findById(Long.parseLong(str)).orElse(null);
+                        if(customer != null){
+                            listCodeCustomer += customer.getCode() + ",";
+                        }
+                    }
+                    voucher.setListCodeCustomerExport(listCodeCustomer);
+                }
                 vouchers.add(voucher);
             }
             return vouchers;
@@ -188,7 +196,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(new BigDecimal(row[7].toString()));
                 voucher.setDescription(row[8].toString());
@@ -261,7 +269,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(new BigDecimal(row[7].toString()));
                 voucher.setDescription(row[8].toString());
@@ -350,7 +358,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(new BigDecimal(row[7].toString()));
                 voucher.setDescription(row[8].toString());
@@ -425,7 +433,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(new BigDecimal(row[7].toString()));
                 voucher.setDescription(row[8].toString());
@@ -469,7 +477,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
     @Override
     public List<VoucherAdminDTO> getVouchersByCustomer(String searchTerm) {
         try {
-            String sql = "SELECT " +
+            StringBuilder sql = new StringBuilder("SELECT " +
                     "  v.id, " +
                     "  v.code, " +
                     "  v.name, " +
@@ -487,15 +495,19 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                     "FROM voucher v " +
                     "LEFT JOIN `order` o ON o.code_voucher = v.code " +
                     "LEFT JOIN customer c ON v.id_customer = c.id " +
-                    "WHERE LOWER(c.code) LIKE LOWER(:searchTerm) " +
-                    "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
-                    "   OR c.phone LIKE  :searchTerm and dele=0 " +
-                    "GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, " +
-                    "v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow ";
+                    "WHERE dele=0 ");
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                sql.append(" and LOWER(c.code) LIKE LOWER(:searchTerm) " +
+                        "   OR LOWER(c.fullname) LIKE LOWER(:searchTerm) " +
+                        "   OR c.phone LIKE  :searchTerm ");
+            }
+            sql.append(" GROUP BY v.id, v.code, v.name, v.start_date, v.end_date, v.conditions, v.voucher_type, v.reduced_value, v.description, v.idel, v.quantity,v.max_reduced,v.allow " );
 
-            Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("searchTerm", "%" + searchTerm + "%"); // Sử dụng % để tìm kiếm mọi nơi trong chuỗi.
+            Query query = entityManager.createNativeQuery(sql.toString());
 
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                query.setParameter("searchTerm", "%" + searchTerm + "%");
+            }
             List<Object[]> resultList = query.getResultList();
 
             List<VoucherAdminDTO> vouchers = new ArrayList<>();
@@ -505,7 +517,7 @@ public class VoucherAdminCustomRepositoryImpl implements VoucherAdminCustomRepos
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
+                voucher.setConditionApply(new BigDecimal(row[5].toString()));
                 voucher.setVoucherType(Integer.valueOf(row[6].toString()));
                 voucher.setReducedValue(new BigDecimal(row[7].toString()));
                 voucher.setDescription(row[8].toString());

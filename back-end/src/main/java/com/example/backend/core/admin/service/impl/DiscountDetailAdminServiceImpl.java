@@ -180,9 +180,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
         if (discountAdminOptional.isPresent()) {
             Discount discountAdminEntity = discountAdminOptional.get();
-            discountAdminEntity.setStatus(0);
-            discountAdminEntity.setIdel(0);
-            discountAdminEntity.setDelete(0);
             discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
             discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
             discountAdminEntity.setDescription(discountDetailAdminDTO.getDiscountAdminDTO().getDescription());
@@ -198,7 +195,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
                 discountDetail.setIdProduct(discountDetailAdminDTO.getProductDTOList().get(i).getId());
                 discountDetail.setDiscountType(discountDetailAdminDTO.getDiscountType());
                 discountDetail.setReducedValue(discountDetailAdminDTO.getReducedValue());
-                discountDetail.setStatus(0);
                 discountDetail.setMaxReduced(discountDetailAdminDTO.getMaxReduced() != null ? discountDetailAdminDTO.getMaxReduced() : null);
                 discountDetailRepository.save(discountDetail);
             }

@@ -161,7 +161,7 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         voucher.setStatus(0);
         voucher.setIdel(0);
         voucher.setDelete(0);
-        voucher.setConditions(voucherAdminDTO.getConditions());
+        voucher.setConditionApply(voucherAdminDTO.getConditionApply());
         voucher.setDescription(voucherAdminDTO.getDescription());
         voucher.setCreateName(voucherAdminDTO.getCreateName());
         voucher.setStartDate(voucherAdminDTO.getStartDate());
@@ -208,12 +208,12 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
             VoucherFreeShip voucher = voucherOptional.get();
 
             // Cập nhật các thuộc tính cần thiết dựa trên updatedVoucherAdminDTO
-            voucher.setStatus(0);
-            voucher.setIdel(0);
-            voucher.setDelete(0);
-            voucher.setConditions(voucherAdminDTO.getConditions());
+            voucher.setConditionApply(voucherAdminDTO.getConditionApply());
             voucher.setDescription(voucherAdminDTO.getDescription());
             voucher.setCreateName(voucherAdminDTO.getCreateName());
+            voucher.setName(voucherAdminDTO.getName());
+            voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
+            voucher.setQuantity(voucherAdminDTO.getQuantity());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
             if (voucherAdminDTO.getOptionCustomer() == 0) {
@@ -390,7 +390,7 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("startDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("endDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("conditions", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("conditionApply", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("quantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
         cellConfigList.add(new CellConfigDTO("limitCustomer", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
