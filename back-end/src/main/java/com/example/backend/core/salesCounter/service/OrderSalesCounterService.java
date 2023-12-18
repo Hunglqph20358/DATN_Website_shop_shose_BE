@@ -13,5 +13,5 @@ public interface OrderSalesCounterService {
     ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO);
     ServiceResult<OrderSalesDTO> updateOrderSales(OrderSalesDTO orderSalesDTO);
     List<OrderSalesDTO> getAllOrder();
-    public List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO);
+    List<OrderAdminDTO> getAllOrderSalesAdmin(OrderAdminDTO orderAdminDTO);
 }
