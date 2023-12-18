@@ -26,9 +26,9 @@ public class Discount {
     @Column(name = "create_date")
     private Date createDate;
     @Column(name = "start_date")
-    private java.util.Date startDate;
+    private Date startDate;
     @Column(name = "end_date")
-    private java.util.Date endDate;
+    private Date endDate;
     @Column(name = "description")
     private String description;
     @Column(name = "create_name")

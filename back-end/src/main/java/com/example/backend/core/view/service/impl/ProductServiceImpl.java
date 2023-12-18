@@ -110,7 +110,12 @@ public class ProductServiceImpl implements ProductService {
                     productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
                 }
                 if (discountDetail.getDiscountType() == 1) {
-                    productDTO.setReducePrice(discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice()));
+                    BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());
+                    if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
+                        productDTO.setReducePrice(discountDetail.getMaxReduced());
+                    }else {
+                        productDTO.setReducePrice(discountDetail.getReducedValue());
+                    }
                     productDTO.setPercentageReduce(discountDetail.getReducedValue().intValue());
                 }
             }

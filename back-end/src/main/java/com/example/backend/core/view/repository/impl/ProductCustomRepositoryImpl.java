@@ -88,7 +88,12 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                             productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
                         }
                         if (discountDetai.getDiscountType() == 1) {
-                            productDTO.setReducePrice(discountDetai.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice()));
+                            BigDecimal price = discountDetai.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());
+                            if(price.compareTo(discountDetai.getMaxReduced()) >= 0){
+                                productDTO.setReducePrice(discountDetai.getMaxReduced());
+                            }else {
+                                productDTO.setReducePrice(discountDetai.getReducedValue());
+                            }
                             productDTO.setPercentageReduce(discountDetai.getReducedValue().intValue());
                         }
                     }

@@ -527,8 +527,8 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                     "  c.phone, " +
                     "  c.email, " +
                     "  c.gender, " +
-                    "  c.status, " +
-                    "  c.idel, " +
+                    " ifnull( c.status, 0), " +
+                    " ifnull( c.idel, 0), " +
                     "  COUNT(o.id) AS order_count " +
                     "FROM customer c " +
                     "LEFT JOIN `order` o ON c.id = o.id_customer " +

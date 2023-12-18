@@ -30,4 +30,5 @@ public class VoucherFreeShipDTO {
     private Integer optionCustomer;
     private Integer limitCustomer;
     private Long idCustomerLogin;
+    private Integer delete;
 }

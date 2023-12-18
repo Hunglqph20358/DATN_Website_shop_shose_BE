@@ -10,6 +10,6 @@ import java.util.Map;
 public interface EmailService {
 //    void sendHtmlEmail(String to, String subject, String htmlBody) throws MessagingException;
 
-    void sendMessageUsingThymeleafTemplate(OrderDTO orderDTO) throws MessagingException;
+    ServiceResult<String> sendMessageUsingThymeleafTemplate(OrderDTO orderDTO) throws MessagingException;
     ServiceResult<?> sendMailOrderNotLogin(OrderDTO orderDTO) throws MessagingException;
 }

@@ -230,8 +230,10 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             voucher.setCreateName(voucherAdminDTO.getCreateName());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
+            voucher.setReducedValue(voucherAdminDTO.getReducedValue());
+            voucher.setVoucherType(voucherAdminDTO.getVoucherType());
             voucher.setAllow(voucherAdminDTO.getAllow());
-            if (voucherAdminDTO.getVoucherType() == 0) {
+            if (voucherAdminDTO.getVoucherType() == 1) {
                 voucher.setMaxReduced(voucherAdminDTO.getMaxReduced());
             }
             if (voucherAdminDTO.getOptionCustomer() == 0) {
