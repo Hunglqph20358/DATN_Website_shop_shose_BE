@@ -39,7 +39,7 @@ public class StatisticalAdminCustomRepositoryImpl implements StatisticalAdminCus
                     "    count(o.id) AS totalQuantity,\n" +
                     "    coalesce(SUM(o.total_payment), 0.00) AS TotalPayment\n" +
                     "FROM DateRange  ");
-            sql.append("  LEFT JOIN `order` o ON DATE(o.create_date) = DateRange.DateValue and o.status = 3\n" +
+            sql.append("  LEFT JOIN `order` o ON DATE(o.payment_date) = DateRange.DateValue and o.status = 3\n" +
                     "GROUP BY DateRange.DateValue\n" +
                     "ORDER BY DateRange.DateValue; ");
             Query query =entityManager.createNativeQuery(sql.toString());
@@ -69,13 +69,13 @@ public class StatisticalAdminCustomRepositoryImpl implements StatisticalAdminCus
         int currentYear = currentDate.getYear();
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("SELECT count(o.id) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment, sum(od.quantity) as totalQuantityProduct\n" +
+            sql.append("SELECT COALESCE(COUNT(o.id), 0) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment, sum(od.quantity) as totalQuantityProduct\n" +
                     "FROM `order` o left join order_detail od on o.id = od.id_order\n" +
-                    "WHERE o.status = 3 AND YEAR(o.create_date) = YEAR(NOW()) and month(o.create_date) = :month");
+                    "WHERE o.status = 3 AND YEAR(o.payment_date) = YEAR(NOW()) and month(o.payment_date) = :month");
             StringBuilder sql2 = new StringBuilder();
-            sql2.append("SELECT count(o.id) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment\n" +
+            sql2.append("SELECT COALESCE(COUNT(o.id), 0) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment\n" +
                     "FROM `order` o\n" +
-                    "WHERE o.status = 3 AND  o.create_date = now();");
+                    "WHERE o.status = 3 AND  DATE(o.payment_date) = CURDATE();");
             Query query = entityManager.createNativeQuery(sql.toString());
             Query query2 = entityManager.createNativeQuery(sql2.toString());
             query.setParameter("month", currentMonth);

@@ -38,5 +38,7 @@ public class Discount {
     @Column(name = "idel")
     private Integer idel;
     @Column(name = "dele")
-    private Integer delete;
+    private Integer dele;
+
+
 }

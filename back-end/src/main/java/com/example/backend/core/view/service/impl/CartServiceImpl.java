@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,15 +60,15 @@ public class CartServiceImpl implements CartService {
         ServiceResult<CartDTO> result = new ServiceResult<>();
         CartDTO dto = new CartDTO();
         Optional<Product> product = productRepository.findById(cartDTO.getProductId());
-        if(!product.isPresent()){
+        if (!product.isPresent()) {
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Không tìm thấy product!");
             return result;
         }
         ProductDTO productDTO = productMapper.toDto(product.get());
-        ProductDetail productDetail = productDetailRepository.findByIdSizeAndIdColorAndIdProduct(cartDTO.getProductDetailDTO().getColorDTO().getId(),cartDTO.getProductDetailDTO().getSizeDTO().getId(), cartDTO.getProductId());
-        if(null == productDetail){
+        ProductDetail productDetail = productDetailRepository.findByIdSizeAndIdColorAndIdProduct(cartDTO.getProductDetailDTO().getColorDTO().getId(), cartDTO.getProductDetailDTO().getSizeDTO().getId(), cartDTO.getProductId());
+        if (null == productDetail) {
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("product detail is null");
@@ -86,16 +87,16 @@ public class CartServiceImpl implements CartService {
         dto.setQuantity(cartDTO.getQuantity());
         List<Discount> discountList = discountRepository.getDiscountConApDung();
         for (int i = 0; i < discountList.size(); i++) {
-            List<DiscountDetail> discountDetailList = discountDetailRepository.findByIdDiscount(discountList.get(i).getId());
-            for (int j = 0; j < discountDetailList.size(); j++) {
-                if(discountDetailList.get(i).getDiscountType() == 0){
-                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
-                    productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+            DiscountDetail discountDetail = discountDetailRepository.findByIdDiscountAndIdProduct(discountList.get(i).getId(), productDTO.getId());
+            if (null != discountDetail) {
+                if (discountDetail.getDiscountType() == 0) {
+                    productDTO.setReducePrice(discountDetail.getReducedValue());
+                    productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
                     productDTO.setCodeDiscount(discountList.get(i).getCode());
                 }
-                if(discountDetailList.get(i).getDiscountType() == 1){
-                    productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
-                    productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
+                if (discountDetail.getDiscountType() == 1) {
+                    productDTO.setReducePrice(discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice()));
+                    productDTO.setPercentageReduce(discountDetail.getReducedValue().intValue());
                     productDTO.setCodeDiscount(discountList.get(i).getCode());
                 }
             }

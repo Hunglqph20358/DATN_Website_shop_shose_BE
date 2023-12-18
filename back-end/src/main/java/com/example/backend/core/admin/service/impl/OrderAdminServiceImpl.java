@@ -186,6 +186,11 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             return result;
         }
         Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        if(order.getPaymentType() == 0){
+            order.setPaymentDate(Instant.now());
+            order.setTotalPayment(order.getTotalPrice().add(order.getShipPrice()));
+            order.setStatusPayment(AppConstant.DA_THANH_TOAN);
+        }
         order.setReceivedDate(Instant.now());
         order.setStatus(AppConstant.HOAN_THANH);
 //        order.setIdStaff(orderAdminDTO.getIdStaff());
@@ -221,19 +226,18 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             return result;
         }
         Order order = orderAdminRepository.findById(orderAdminDTO.getId()).get();
+        orderAdminDTO.setMissedOrder(order.getMissedOrder());
         if(order.getMissedOrder() == null || order.getMissedOrder() == 0){
             order.setMissedOrder(AppConstant.BO_LO_LAN1);
-        }
-        if(order.getMissedOrder() == AppConstant.BO_LO_LAN1){
+        }else if(order.getMissedOrder() == AppConstant.BO_LO_LAN1) {
             order.setMissedOrder(AppConstant.BO_LO_LAN2);
-        }
-        if(order.getMissedOrder() == AppConstant.BO_LO_LAN2){
+        }else {
             order.setMissedOrder(AppConstant.BO_LO_LAN3);
             order.setStatus(AppConstant.HUY_DON_HANG);
         }
         order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
-        if(order.getMissedOrder() == null || order.getMissedOrder() == 0){
+        if(orderAdminDTO.getMissedOrder() == null || orderAdminDTO.getMissedOrder() == 0){
             OrderHistory orderHistory = new OrderHistory();
             orderHistory.setStatus(AppConstant.BO_LO_LAN1_HISTORY);
             orderHistory.setCreateDate(Instant.now());
@@ -241,8 +245,7 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
             orderHistory.setNote(orderAdminDTO.getNote());
             orderHistoryAdminRepository.save(orderHistory);
-        }
-        if(order.getMissedOrder() == AppConstant.BO_LO_LAN1){
+        }else if(orderAdminDTO.getMissedOrder() == AppConstant.BO_LO_LAN1){
             OrderHistory orderHistory = new OrderHistory();
             orderHistory.setStatus(AppConstant.BO_LO_LAN2_HISTORY);
             orderHistory.setCreateDate(Instant.now());
@@ -250,8 +253,7 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             orderHistory.setIdStaff(orderAdminDTO.getIdStaff());
             orderHistory.setNote(orderAdminDTO.getNote());
             orderHistoryAdminRepository.save(orderHistory);
-        }
-        if(order.getMissedOrder() == AppConstant.BO_LO_LAN2){
+        }else {
             OrderHistory orderHistory = new OrderHistory();
             orderHistory.setStatus(AppConstant.BO_LO_LAN3_HISTORY);
             orderHistory.setCreateDate(Instant.now());

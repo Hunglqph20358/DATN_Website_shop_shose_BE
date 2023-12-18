@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 sqlStr = sqlStr.replace("{1}", " ");
             }
             Query query = entityManager.createNativeQuery(sqlStr);
-            if(null != thuongHieu && thuongHieu > 0){
+            if (null != thuongHieu && thuongHieu > 0) {
                 query.setParameter("idBrand", thuongHieu);
             }
             List<Object[]> lst = query.getResultList();
@@ -80,27 +81,89 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 productDTO.setImagesDTOList(imagesDTOLis);
                 List<Discount> discountList = discountRepository.getDiscountConApDung();
                 for (int i = 0; i < discountList.size(); i++) {
-                    List<DiscountDetail> discountDetailList = discountDetailRepository.findByIdDiscount(discountList.get(i).getId());
-                    for (int j = 0; j < discountDetailList.size(); j++) {
-                        if(productDTO.getId().equals(discountDetailList.get(i).getIdProduct()) ){
-                            if(discountDetailList.get(i).getDiscountType() == 0){
-                                productDTO.setReducePrice(discountDetailList.get(i).getReducedValue());
-                                productDTO.setPercentageReduce(Math.round(discountDetailList.get(i).getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
-                            }
-                            if(discountDetailList.get(i).getDiscountType() == 1){
-                                productDTO.setReducePrice(discountDetailList.get(i).getReducedValue().divide(new BigDecimal(100).multiply(productDTO.getPrice())));
-                                productDTO.setPercentageReduce(discountDetailList.get(i).getReducedValue().intValue());
-                            }
+                    DiscountDetail discountDetai = discountDetailRepository.findByIdDiscountAndIdProduct(discountList.get(i).getId(), productDTO.getId());
+                    if (null != discountDetai) {
+                        if (discountDetai.getDiscountType() == 0) {
+                            productDTO.setReducePrice(discountDetai.getReducedValue());
+                            productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                        }
+                        if (discountDetai.getDiscountType() == 1) {
+                            productDTO.setReducePrice(discountDetai.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice()));
+                            productDTO.setPercentageReduce(discountDetai.getReducedValue().intValue());
                         }
                     }
                 }
                 lstProduct.add(productDTO);
             }
             return lstProduct;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
+    @Override
+    public List<ProductDTO> getProductTuongTu(Long idProduct, Long idCategory) {
+        List<ProductDTO> lstProduct = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT p.id, p.code, p.name, p.price, images.image_names\n" +
+                    "FROM product p\n" +
+                    "join category c on c.id = p.id_category\n" +
+                    "LEFT JOIN (\n" +
+                    "    SELECT id_product, GROUP_CONCAT(image_name) AS image_names\n" +
+                    "    FROM images\n" +
+                    "    GROUP BY id_product\n" +
+                    ") images ON images.id_product = p.id  ");
+            if(idProduct != null && idCategory != null){
+                sql.append(" where p.id != :idProduct and c.id = :idCategory ");
+            }
+            sql.append("GROUP BY p.id, p.code, p.name, p.price  LIMIT 4;");
+            Query query = entityManager.createNativeQuery(sql.toString());
+            if(idProduct != null && idCategory != null){
+                query.setParameter("idProduct", idProduct);
+                query.setParameter("idCategory", idCategory);
+            }
+            List<Object[]> lst = query.getResultList();
+            for (Object[] obj : lst) {
+                ProductDTO productDTO = new ProductDTO();
+                List<ImagesDTO> imagesDTOLis = new ArrayList<>();
+                productDTO.setId(((Number) obj[0]).longValue());
+                productDTO.setCode((String) obj[1]);
+                productDTO.setName((String) obj[2]);
+                productDTO.setPrice((BigDecimal) obj[3]);
+
+                String imagesString = (String) obj[4];
+                if (imagesString != null && !imagesString.isEmpty()) {
+                    for (String str : imagesString.split(",")) {
+                        if (!str.trim().isEmpty()) { // Kiểm tra và bỏ qua chuỗi trống
+                            ImagesDTO imagesDTO = new ImagesDTO();
+                            imagesDTO.setImageName(str.trim());
+                            imagesDTOLis.add(imagesDTO);
+                        }
+                    }
+                }
+                productDTO.setImagesDTOList(imagesDTOLis);
+                List<Discount> discountList = discountRepository.getDiscountConApDung();
+                for (int i = 0; i < discountList.size(); i++) {
+                    DiscountDetail discountDetai = discountDetailRepository.findByIdDiscountAndIdProduct(discountList.get(i).getId(), productDTO.getId());
+                    if (null != discountDetai) {
+                        if (discountDetai.getDiscountType() == 0) {
+                            productDTO.setReducePrice(discountDetai.getReducedValue());
+                            productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                        }
+                        if (discountDetai.getDiscountType() == 1) {
+                            productDTO.setReducePrice(discountDetai.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice()));
+                            productDTO.setPercentageReduce(discountDetai.getReducedValue().intValue());
+                        }
+                    }
+                }
+                lstProduct.add(productDTO);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return lstProduct;
+    }
 }

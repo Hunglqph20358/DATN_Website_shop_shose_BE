@@ -12,6 +12,10 @@ import java.util.List;
 @Transactional
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
-    @Query(value = "select d.* from discount d where d.end_date > now()", nativeQuery = true)
+    @Query(value = "SELECT d.*\n" +
+            "FROM discount d\n" +
+            "WHERE d.start_date < NOW() AND d.end_date > NOW();\n", nativeQuery = true)
     List<Discount> getDiscountConApDung();
+
+    Discount findByCode(String code);
 }

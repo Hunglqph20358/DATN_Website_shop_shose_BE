@@ -12,5 +12,5 @@ import java.util.List;
 @Transactional
 public interface DiscountDetailRepository extends JpaRepository<DiscountDetail, Long> {
 
-    List<DiscountDetail> findByIdDiscount(Long idDiscount);
+    DiscountDetail findByIdDiscountAndIdProduct(Long idDiscount, Long idProduct);
 }
