@@ -2,6 +2,8 @@ package com.example.backend.core.admin.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.backend.core.admin.repository.ImagesAdminRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,8 @@ import java.util.Objects;
 @Service
 public class CloudinaryService {
     Cloudinary cloudinary;
+    @Autowired
+    private ImagesAdminRepository imagesAdminRepository;
 
     public CloudinaryService() {
         Map<String,String> valuesMap = new HashMap<>();

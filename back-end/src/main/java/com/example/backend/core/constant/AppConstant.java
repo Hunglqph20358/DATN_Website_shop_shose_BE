@@ -88,7 +88,7 @@ public class AppConstant {
                 "/api/admin/product/export-data",
                 "/api/admin/product/export-data-template",
                 "/api/admin/product/exportDataErrors",
-                "/api/admin/upload",
+                "/api/admin/upload-img-file",
                 "/api/admin/get-statistical-by-year",
                 "/sales-customer/findByPhone/*",
                 "/sales-customer/add-customer",
