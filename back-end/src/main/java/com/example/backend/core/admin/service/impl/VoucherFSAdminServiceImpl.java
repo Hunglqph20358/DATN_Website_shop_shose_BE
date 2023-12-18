@@ -1,13 +1,13 @@
 package com.example.backend.core.admin.service.impl;
-
-import com.example.backend.core.admin.dto.*;
+import com.example.backend.core.admin.dto.CustomerAdminDTO;
+import com.example.backend.core.admin.dto.VoucherAdminDTO;
+import com.example.backend.core.admin.dto.VoucherFreeShipDTO;
 import com.example.backend.core.admin.mapper.CustomerAdminMapper;
-import com.example.backend.core.admin.mapper.VoucherAdminMapper;
 import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.OrderAdminRepository;
-import com.example.backend.core.admin.repository.VoucherAdminCustomRepository;
-import com.example.backend.core.admin.repository.VoucherAdminRepository;
-import com.example.backend.core.admin.service.VoucherAdminService;
+import com.example.backend.core.admin.repository.VoucherFSCustomerRepository;
+import com.example.backend.core.admin.repository.VoucherFreeShipAdminRepository;
+import com.example.backend.core.admin.service.VoucherFSAdminService;
 import com.example.backend.core.commons.CellConfigDTO;
 import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ServiceResult;
@@ -16,6 +16,8 @@ import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.Voucher;
+import com.example.backend.core.model.VoucherFreeShip;
+import com.example.backend.core.view.mapper.VoucherFSMapper;
 import jakarta.mail.MessagingException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,38 +34,34 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class VoucherAdminServiceImpl implements VoucherAdminService {
+public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
     private final JavaMailSender javaMailSender;
 
     private final MessageSource messageSource;
 
     private final SpringTemplateEngine templateEngine;
+    @Autowired
+    private VoucherFreeShipAdminRepository voucherFreeShipAdminRepository;
+    @Autowired
+    private CustomerAdminRepository  customerAdminRepository;
 
     @Autowired
-    private VoucherAdminRepository voucherAdminRepository;
-    @Autowired
-    private CustomerAdminRepository customerAdminRepository;
-    @Autowired
-    private VoucherAdminMapper voucherAdminMapper;
+    private VoucherFSMapper voucherAdminMapper;
     @Autowired
     private CustomerAdminMapper customerAdminMapper;
     @Autowired
-    FileExportUtil fileExportUtil;
-
-
-
+    private VoucherFSCustomerRepository voucherFSCustomerRepository;
     @Autowired
-    private VoucherAdminCustomRepository voucherAdminCustomRepository;
-
+    FileExportUtil fileExportUtil;
     @Autowired
     private OrderAdminRepository orderAdminRepository;
 
-    public VoucherAdminServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
+
+    public VoucherFSAdminServiceImpl(JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
         this.templateEngine = templateEngine;
@@ -72,98 +70,92 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
 
     public void sendHtmlEmail(String toEmail, String subject, String htmlBody) throws MessagingException {
 
-            MimeMessagePreparator preparator = mimeMessage -> {
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-                helper.setFrom("xuanntph21397@fpt.edu.vn");
-                helper.setTo(toEmail);
-                helper.setSubject(subject);
-                helper.setText(htmlBody, true);
-            };
-            javaMailSender.send(preparator);
+        MimeMessagePreparator preparator = mimeMessage -> {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            helper.setFrom("xuanntph21397@fpt.edu.vn");
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+        };
+        javaMailSender.send(preparator);
 
     }
 
     @Override
     @Async
-    public void sendMessageUsingThymeleafTemplate(VoucherAdminDTO voucherAdminDTO) throws MessagingException {
+    public void sendMessageUsingThymeleafTemplate(VoucherFreeShipDTO voucherAdminDTO) throws MessagingException {
 
         String id = voucherAdminDTO.getIdCustomer();
-        if(StringUtils.isNotBlank(id)){
-            String[] idArray = id.split(",");
-            for (String idCustomer : idArray) {
-                Context thymeleafContext = new Context();
-                try {
-                    Long customerId = Long.parseLong(idCustomer.trim());
-                    Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
+        String[] idArray = id.split(",");
 
-                    if (optionalCustomer.isPresent()) {
-                        Customer customer = optionalCustomer.get();
-                        thymeleafContext.setVariable("voucher", voucherAdminDTO);
-                        String subject = "Voucher xịn 2T Store tặng bạn";
-                        String htmlBody = templateEngine.process("sendEmailVoucher", thymeleafContext);
-                        sendHtmlEmail(customer.getEmail(), subject, htmlBody);
-                    } else {
-                        // Handle the case where customer is not found by id
-                        System.out.println("Customer with id " + customerId + " not found.");
-                    }
-                } catch (NumberFormatException e) {
-                    // Handle the case where id is not a valid number
-                    System.out.println("Invalid id format: " + idCustomer);
+        for (String idCustomer : idArray) {
+            Context thymeleafContext = new Context();
+            try {
+                Long customerId = Long.parseLong(idCustomer.trim());
+                Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
+
+                if (optionalCustomer.isPresent()) {
+                    Customer customer = optionalCustomer.get();
+                    thymeleafContext.setVariable("voucher", voucherAdminDTO);
+                    String subject = "Voucher xịn 2T Store tặng bạn";
+                    String htmlBody = templateEngine.process("sendEmailVoucherFS", thymeleafContext);
+                    sendHtmlEmail(customer.getEmail(), subject, htmlBody);
+                } else {
+                    // Handle the case where customer is not found by id
+                    System.out.println("Customer with id " + customerId + " not found.");
                 }
+            } catch (NumberFormatException e) {
+                // Handle the case where id is not a valid number
+                System.out.println("Invalid id format: " + idCustomer);
             }
         }
     }
 
-
     @Override
-    public List<VoucherAdminDTO> getAllVouchers() {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getAllVouchers();
-        Iterator<VoucherAdminDTO> iterator = list.listIterator();
+    public List<VoucherFreeShipDTO> getAllVouchers() {
+        List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getAllVouchers();
+        Iterator<VoucherFreeShipDTO> iterator = list.listIterator();
         while (iterator.hasNext()) {
-            VoucherAdminDTO voucherAdminDTO = iterator.next();
-            List<Order> orderList = orderAdminRepository.findByCodeVoucher(voucherAdminDTO.getCode());
+            VoucherFreeShipDTO voucherAdminDTO = iterator.next();
+            List<Order> orderList = orderAdminRepository.findByCodeVoucherShip(voucherAdminDTO.getCode());
             if (orderList.size() > 0) {
                 voucherAdminDTO.setIsUpdate(1);
             }
         }
         return list;
     }
-
     @Override
-    public List<VoucherAdminDTO> getAllKichHoat() {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getAllKichHoat();
+    public List<VoucherFreeShipDTO> getAllKichHoat() {
+        List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getAllKichHoat();
+        return list;
+    }
+    @Override
+    public List<VoucherFreeShipDTO> getAllKhongKH() {
+        List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getAllKhongKH();
         return list;
     }
 
     @Override
-    public List<VoucherAdminDTO> getAllKhongKH() {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getAllKhongKH();
+    public List<VoucherFreeShipDTO> getVouchersByTimeRange(String fromDate, String toDate) {
+        List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getVouchersByTimeRange(fromDate,toDate);
+        return list;
+    }
+    @Override
+    public List<VoucherFreeShipDTO> getVouchersByKeyword(String keyword) {
+        List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getVouchersByKeyword(keyword);
+        return list;
+    }
+    @Override
+    public List<VoucherFreeShipDTO> getVouchersByCustomer(String searchTerm) {
+        List<VoucherFreeShipDTO> list= voucherFSCustomerRepository.getVouchersByCustomer(searchTerm);
         return list;
     }
 
     @Override
-    public List<VoucherAdminDTO> getVouchersByTimeRange(String fromDate, String toDate) {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getVouchersByTimeRange(fromDate,toDate);
-        return list;
-    }
-
-    @Override
-    public List<VoucherAdminDTO> getVouchersByKeyword(String keyword) {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getVouchersByKeyword(keyword);
-        return list;
-    }
-
-    @Override
-    public List<VoucherAdminDTO> getVouchersByCustomer(String searchTerm) {
-        List<VoucherAdminDTO> list = voucherAdminCustomRepository.getVouchersByCustomer(searchTerm);
-        return list;
-    }
-
-    @Override
-    public ServiceResult<VoucherAdminDTO> createVoucher(VoucherAdminDTO voucherAdminDTO) {
-        ServiceResult<VoucherAdminDTO> serviceResult = new ServiceResult<>();
-        Voucher voucher = voucherAdminMapper.toEntity(voucherAdminDTO);
-        List<Voucher> voucherList = new ArrayList<>();
+    public ServiceResult<VoucherFreeShipDTO> createVoucher(VoucherFreeShipDTO voucherAdminDTO) {
+        ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
+        VoucherFreeShip voucher = voucherAdminMapper.toEntity(voucherAdminDTO);
+        List<VoucherFreeShip> voucherList = new ArrayList<>();
         voucher.setCode("VC" + Instant.now().getEpochSecond());
         voucher.setCreateDate(java.util.Date.from(Instant.now()));
         voucher.setStatus(0);
@@ -171,14 +163,9 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setDelete(0);
         voucher.setConditionApply(voucherAdminDTO.getConditionApply());
         voucher.setDescription(voucherAdminDTO.getDescription());
-        voucher.setApply(voucherAdminDTO.getApply());
         voucher.setCreateName(voucherAdminDTO.getCreateName());
         voucher.setStartDate(voucherAdminDTO.getStartDate());
         voucher.setEndDate(voucherAdminDTO.getEndDate());
-        voucher.setAllow(voucherAdminDTO.getAllow());
-        if (voucherAdminDTO.getVoucherType() == 0) {
-            voucher.setMaxReduced(voucher.getMaxReduced());
-        }
         if (voucherAdminDTO.getOptionCustomer() == 0) {
             voucher.setIdCustomer(null);
         } else {
@@ -190,7 +177,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                 customer.append(",");
             }
 
-        // Kiểm tra xem có phần tử nào trong danh sách không
+            // Kiểm tra xem có phần tử nào trong danh sách không
             if (customer.length() > 0) {
                 // Cắt bỏ dấu phẩy cuối cùng
                 customer.setLength(customer.length() - 1);
@@ -204,7 +191,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                 voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
             }
         }
-        voucherAdminRepository.save(voucher);
+        voucherFreeShipAdminRepository.save(voucher);
         serviceResult.setData(voucherAdminDTO);
         serviceResult.setMessage("Thêm thành công!");
         serviceResult.setStatus(HttpStatus.OK);
@@ -213,27 +200,22 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     }
 
     @Override
-    public ServiceResult<VoucherAdminDTO> updateVoucher(Long id, VoucherAdminDTO voucherAdminDTO) {
-        ServiceResult<VoucherAdminDTO> serviceResult = new ServiceResult<>();
-        Optional<Voucher> voucherOptional = voucherAdminRepository.findById(id);
+    public ServiceResult<VoucherFreeShipDTO> updateVoucher(Long id, VoucherFreeShipDTO voucherAdminDTO) {
+        ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
+        Optional<VoucherFreeShip> voucherOptional = voucherFreeShipAdminRepository.findById(id);
 
         if (voucherOptional.isPresent()) {
-            Voucher voucher = voucherOptional.get();
+            VoucherFreeShip voucher = voucherOptional.get();
 
             // Cập nhật các thuộc tính cần thiết dựa trên updatedVoucherAdminDTO
+            voucher.setConditionApply(voucherAdminDTO.getConditionApply());
+            voucher.setDescription(voucherAdminDTO.getDescription());
+            voucher.setCreateName(voucherAdminDTO.getCreateName());
             voucher.setName(voucherAdminDTO.getName());
             voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
             voucher.setQuantity(voucherAdminDTO.getQuantity());
-            voucher.setConditionApply(voucherAdminDTO.getConditionApply());
-            voucher.setDescription(voucherAdminDTO.getDescription());
-            voucher.setApply(voucherAdminDTO.getApply());
-            voucher.setCreateName(voucherAdminDTO.getCreateName());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
-            voucher.setAllow(voucherAdminDTO.getAllow());
-            if (voucherAdminDTO.getVoucherType() == 0) {
-                voucher.setMaxReduced(voucherAdminDTO.getMaxReduced());
-            }
             if (voucherAdminDTO.getOptionCustomer() == 0) {
                 voucher.setIdCustomer(null);
             } else {
@@ -259,7 +241,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                     voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
                 }
             }
-            voucherAdminRepository.save(voucher);
+            voucherFreeShipAdminRepository.save(voucher);
             serviceResult.setData(voucherAdminDTO);
             serviceResult.setMessage("Cập nhật thành công!");
             serviceResult.setStatus(HttpStatus.OK);
@@ -276,12 +258,12 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     @Override
     public ServiceResult<Void> deleteVoucher(Long voucherId) {
         ServiceResult<Void> serviceResult = new ServiceResult<>();
-        Optional<Voucher> voucher = voucherAdminRepository.findById(voucherId);
+        Optional<VoucherFreeShip> voucher = voucherFreeShipAdminRepository.findById(voucherId);
 
         if (voucher.isPresent()) {
-            Voucher voucher1 = voucher.get();
+            VoucherFreeShip voucher1 = voucher.get();
             voucher1.setDelete(1); // Sửa thành setIdel(1) để đánh dấu đã xóa
-            voucherAdminRepository.save(voucher1); // Lưu lại thay đổi vào cơ sở dữ liệu
+            voucherFreeShipAdminRepository.save(voucher1); // Lưu lại thay đổi vào cơ sở dữ liệu
 
             serviceResult.setMessage("Xóa thành công!");
             serviceResult.setStatus(HttpStatus.OK);
@@ -291,16 +273,18 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         }
         return serviceResult;
     }
-
+//
     @Override
-    public VoucherAdminDTO getDetailVoucher(Long id) {
-        Voucher voucher = voucherAdminRepository.findById(id).get();
+    public VoucherFreeShipDTO getDetailVoucher(Long id) {
 
-        VoucherAdminDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+        VoucherFreeShip voucher = voucherFreeShipAdminRepository.findById(id).get();
+
+        VoucherFreeShipDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
 
         String idCustomer = voucherAdminDTO.getIdCustomer();
 
         List<CustomerAdminDTO> toList = new ArrayList<>();
+
         if(StringUtils.isNotBlank(idCustomer)){
             String[] idArray = idCustomer.split(",");
             for (String idCustomer1 : idArray) {
@@ -324,7 +308,6 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                 }
             }
         }
-
         voucherAdminDTO.setCustomerAdminDTOList(toList.isEmpty() ? null : toList);
 
         return voucherAdminDTO;
@@ -334,39 +317,37 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
 
     @Override
     public List<CustomerAdminDTO> getAllCustomer() {
-        List<CustomerAdminDTO> list = voucherAdminCustomRepository.getAllCustomer();
+        List<CustomerAdminDTO> list= voucherFSCustomerRepository.getAllCustomer();
         return list;
     }
-
     @Override
-    public ServiceResult<VoucherAdminDTO> KichHoat(Long idVoucher) {
-        ServiceResult<VoucherAdminDTO> serviceResult = new ServiceResult<>();
-        Optional<Voucher> optionalVoucher = voucherAdminRepository.findById(idVoucher);
+    public ServiceResult<VoucherFreeShipDTO> KichHoat(Long idVoucher) {
+        ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
+        Optional<VoucherFreeShip> optionalVoucher = voucherFreeShipAdminRepository.findById(idVoucher);
 
         if (optionalVoucher.isPresent()) {
-            Voucher voucher = optionalVoucher.get();
+            VoucherFreeShip voucher = optionalVoucher.get();
 
             voucher.setIdel(voucher.getIdel() == 1 ? 0 : 1);
-            voucher =  voucherAdminRepository.save(voucher);
-            VoucherAdminDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+            voucher =  voucherFreeShipAdminRepository.save(voucher);
+            VoucherFreeShipDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
             serviceResult.setData(voucherAdminDTO);
             serviceResult.setStatus(HttpStatus.OK);
             serviceResult.setMessage("Thành công");
-
-            // Lưu lại thay đổi vào cơ sở dữ liệu
         } else {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
         }
+
         return serviceResult;
     }
     @Override
     public byte[] exportExcelVoucher() throws IOException {
         List<SheetConfigDTO> sheetConfigList = new ArrayList<>();
-        List<VoucherAdminDTO> voucherAdminDTOS = voucherAdminCustomRepository.getAllVouchersExport();
-        sheetConfigList = getDataForExcel("Danh Sách Voucher", voucherAdminDTOS, sheetConfigList, AppConstant.EXPORT_DATA);
+        List<VoucherFreeShipDTO> voucherAdminDTOS = voucherFSCustomerRepository.getAllVoucherFSsExport();
+        sheetConfigList = getDataForExcel("Danh Sách Voucher FreeShip", voucherAdminDTOS, sheetConfigList, AppConstant.EXPORT_DATA);
         try {
-            String title = "DANH SÁCH VOUCHER";
+            String title = "DANH SÁCH VOUCHER FREESHIP ";
             return fileExportUtil.exportXLSX(false, sheetConfigList, title);
         } catch (IOException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ioE) {
             throw new IOException("Lỗi Export" + ioE.getMessage(), ioE);
@@ -374,7 +355,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     }
 
     private List<SheetConfigDTO> getDataForExcel(String sheetName,
-                                                 List<VoucherAdminDTO> listDataSheet,
+                                                 List<VoucherFreeShipDTO> listDataSheet,
                                                  List<SheetConfigDTO> sheetConfigList,
                                                  Long exportType) {
         SheetConfigDTO sheetConfig = new SheetConfigDTO();
@@ -391,6 +372,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                             "Giá Trị Giảm",
                             "Số lượng",
                             "Giới hạn sử dụng với mỗi khách hàng",
+                            "Trạng thái",
                             "Tên khách hàng",
                     };
         }
@@ -398,9 +380,9 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         sheetConfig.setHeaders(headerArr);
         int recordNo = 1;
         List<CellConfigDTO> cellConfigCustomList = new ArrayList<>();
-        for (VoucherAdminDTO item : listDataSheet) {
-            item.setRecordNo(recordNo++);
-        }
+            for (VoucherFreeShipDTO item : listDataSheet) {
+                item.setRecordNo(recordNo++);
+            }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
         cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
@@ -412,6 +394,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("quantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
         cellConfigList.add(new CellConfigDTO("limitCustomer", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+//        cellConfigList.add(new CellConfigDTO("allow", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
         cellConfigList.add(new CellConfigDTO("listCodeCustomerExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
@@ -425,7 +409,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         return sheetConfigList;
     }
     public List<String> getAllVoucherExport() {
-        List<String> lstStr = voucherAdminRepository.findAll()
+        List<String> lstStr = voucherFreeShipAdminRepository.findAll()
                 .stream()
                 .map(b -> b.getId() + "-" + b.getName())
                 .collect(Collectors.toList());

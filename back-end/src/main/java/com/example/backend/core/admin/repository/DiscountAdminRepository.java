@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface DiscountAdminRepository extends JpaRepository<Discount,Long> {
-    @Query("select d from Discount d where d.idel=0")
-    List<Discount> getAll();
 }
