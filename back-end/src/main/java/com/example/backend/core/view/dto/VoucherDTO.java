@@ -25,6 +25,7 @@ public class VoucherDTO {
     private Integer voucherType;
     private BigDecimal reducedValue;
     private Integer quantity;
+    private Integer amountUsed;
     private String description;
     private Integer status;
     private Integer isdel;

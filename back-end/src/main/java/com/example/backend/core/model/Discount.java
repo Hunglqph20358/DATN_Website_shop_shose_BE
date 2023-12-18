@@ -37,4 +37,9 @@ public class Discount {
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
+    @Column(name = "dele")
+    private Integer dele;
+    @Column(name = "quantity")
+    private Integer quantity;
+
 }

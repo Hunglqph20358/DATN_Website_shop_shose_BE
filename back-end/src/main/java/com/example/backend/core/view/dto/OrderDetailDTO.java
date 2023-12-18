@@ -18,4 +18,5 @@ public class OrderDetailDTO {
     private String codeDiscount;
     private Integer status;
     private ProductDetailDTO productDetailDTO;
+    private Long productId;
 }

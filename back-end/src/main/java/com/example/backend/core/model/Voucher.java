@@ -51,6 +51,8 @@ public class Voucher {
     private BigDecimal reducedValue;
     @Column(name = "quantity")
     private int quantity;
+    @Column(name = "amount_used")
+    private Integer amountUsed;
     @Column(name = "apply")
     private Integer apply;
     @Column(name = "option_customer")

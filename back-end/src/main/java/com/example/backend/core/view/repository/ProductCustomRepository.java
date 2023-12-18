@@ -9,4 +9,6 @@ public interface ProductCustomRepository {
 
     List<ProductDTO> getProductNoiBatByBrand(Long thuongHieu);
 
+    List<ProductDTO> getProductTuongTu(Long idProduct, Long idCategory);
+
 }
