@@ -85,6 +85,7 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
                 dto.setMissedOrder((Integer) obj[20]);
                 dto.setStatus((Integer) obj[21]);
                 dto.setStatusPayment((Integer) obj[22]);
+                dto.setEmail((String) obj[23]);
                 lstOrderDTOS.add(dto);
             }
         } catch (Exception e) {

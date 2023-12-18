@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
-import java.time.Instant;
-import java.util.UUID;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,8 +31,14 @@ public class Discount {
     private Date endDate;
     @Column(name = "description")
     private String description;
+    @Column(name = "create_name")
+    private String createName;
     @Column(name = "status")
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
+    @Column(name = "dele")
+    private Integer delete;
+
+
 }

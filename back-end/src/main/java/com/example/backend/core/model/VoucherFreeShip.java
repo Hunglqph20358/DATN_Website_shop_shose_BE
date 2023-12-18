@@ -13,7 +13,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -52,8 +52,12 @@ public class VoucherFreeShip implements Serializable {
     private BigDecimal reducedValue;
     @Column(name = "quantity")
     private int quantity;
+    @Column(name = "amount_used")
+    private Integer amountUsed;
     @Column(name = "option_customer")
     private Integer optionCustomer;
     @Column(name = "limit_customer")
     private Integer limitCustomer;
+    @Column(name = "dele")
+    private Integer delete;
 }

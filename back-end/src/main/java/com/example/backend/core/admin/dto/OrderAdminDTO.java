@@ -48,5 +48,5 @@ public class OrderAdminDTO {
     private String dateTo;
     private String note;
     private List<OrderHistoryAdminDTO> orderHistoryAdminDTOList;
-
+    private String email;
 }

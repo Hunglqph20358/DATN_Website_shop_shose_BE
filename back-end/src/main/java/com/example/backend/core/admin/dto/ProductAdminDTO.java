@@ -4,6 +4,8 @@ import com.example.backend.core.commons.ExportDTO;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.backend.core.commons.ExportDTO;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -42,7 +44,23 @@ public class ProductAdminDTO extends ExportDTO {
     private String categoryName;
     private String materialName;
     private String soleHeight;
+
     private String imageNameImport;
     private Integer totalBestSeller;
-    private String image;
+
+    public ProductAdminDTO(Long id, String code, String name,BigDecimal price,Integer totalQuantity) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.price = price;
+        this.totalQuantity= totalQuantity;
+    }
+
+    public List<ProductDetailAdminDTO> getProductDetailDTOList() {
+        return productDetailDTOList;
+    }
+
+    public void setProductDetailDTOList(List<ProductDetailAdminDTO> productDetailDTOList) {
+        this.productDetailDTOList = productDetailDTOList;
+    }
 }

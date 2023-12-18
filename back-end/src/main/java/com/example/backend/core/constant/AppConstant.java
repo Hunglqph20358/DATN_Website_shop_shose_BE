@@ -51,12 +51,42 @@ public class AppConstant {
 
 
         public static final  String[] API_ADMIN = {
-                "/api/admin/home",
+
                 "/api/admin/discount",
-                "/api/admin/product",
                 "/api/admin/discount/*",
+                "/api/admin/discount/product",
+                "/api/admin/discount/searchByDate*",
+                "/api/admin/discount/searchByDiscount*",
+                "/api/admin/discount/searchByCategory*",
+                "/api/admin/discount/searchByProduct*",
+                "/api/admin/discount/searchByBrand*",
+                "/api/admin/discount/kichHoat/*",
+                "/api/admin/discount/KH",
+                "/api/admin/discount/KKH",
+                "/api/admin/discount/discount/export-data",
+
                 "/api/admin/voucher",
                 "/api/admin/voucher/*",
+                "/api/admin/voucher/searchByDate*",
+                "/api/admin/voucher/kichHoat/*",
+                "/api/admin/voucher/searchByCustomer*",
+                "/api/admin/voucher/searchByVoucher*",
+                "/api/admin/voucher/KH",
+                "/api/admin/voucher/KKH",
+                "/api/admin/voucher/export-data",
+                "/api/admin/voucher/sendEmail",
+
+                "/api/admin/voucherFS",
+                "/api/admin/voucherFS/*",
+                "/api/admin/voucherFS/searchByDate*",
+                "/api/admin/voucherFS/searchByVoucherFS*",
+                "/api/admin/voucherFS/searchByCustomer*",
+                "/api/admin/voucherFS/kichHoat/*",
+                "/api/admin/voucherFS/KH",
+                "/api/admin/voucherFS/KKH",
+                "/api/admin/voucherFS/sendEmail",
+                "/api/admin/voucherFS/export-data",
+
                 "/api/admin/home",
                 "/api/admin/brand/*/*",
                 "/api/admin/brand/*",
@@ -94,6 +124,7 @@ public class AppConstant {
                 "/sales-customer/add-customer",
                 "/api/admin/staff-getall",
                 "/api/admin/staff-update/*",
+
         };
         public static final String[] API_STAFF = {
                 "/api/staff/home"
@@ -131,6 +162,8 @@ public class AppConstant {
                 "/view/api/send-mail-otp",
                 "/view/api/verify-otp",
                 "/view/api/reset-pass",
+                "/view/api/get-brand-top",
+                "/view/api/get-product-tuong-tu",
                 "/sales-counter/api/list-bill-all",
         };
 }

@@ -23,10 +23,12 @@ public class VoucherFreeShipDTO {
     private String createName;
     private BigDecimal reducedValue;
     private Integer quantity;
+    private Integer amountUsed;
     private String description;
     private Integer status;
     private Integer isdel;
     private Integer optionCustomer;
     private Integer limitCustomer;
     private Long idCustomerLogin;
+    private Integer delete;
 }

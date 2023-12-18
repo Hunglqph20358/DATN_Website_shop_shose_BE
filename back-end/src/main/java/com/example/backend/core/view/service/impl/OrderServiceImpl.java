@@ -80,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
             order.setReceiverPhone(orderDTO.getReceiverPhone());
             order.setAddressReceived(orderDTO.getAddressReceived());
             order.setDescription(orderDTO.getDescription());
+            order.setEmail(orderDTO.getEmail());
             order.setType(0);
             if (orderDTO.getPaymentType() == 1) {
                 order.setPaymentType(orderDTO.getPaymentType());
@@ -95,7 +96,10 @@ public class OrderServiceImpl implements OrderService {
             if (StringUtils.isNotBlank(orderDTO.getCodeVoucher())) {
                 Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
                 if (null != voucher) {
-                    voucher.setQuantity(voucher.getQuantity() - 1);
+                    voucher.setAmountUsed(voucher.getAmountUsed() + 1);
+                    if (voucher.getAmountUsed() == voucher.getQuantity()) {
+                        voucher.setIdel(0);
+                    }
                     order.setCodeVoucher(voucher.getCode());
                     voucherRepository.save(voucher);
                 }
@@ -103,7 +107,10 @@ public class OrderServiceImpl implements OrderService {
             if (StringUtils.isNotBlank(orderDTO.getCodeVoucherShip())) {
                 VoucherFreeShip voucherFreeShip = voucherFreeShipRepository.findByCode(orderDTO.getCodeVoucherShip());
                 if (null != voucherFreeShip) {
-                    voucherFreeShip.setQuantity(voucherFreeShip.getQuantity() - 1);
+                    voucherFreeShip.setAmountUsed(voucherFreeShip.getAmountUsed() + 1);
+                    if (voucherFreeShip.getAmountUsed() == voucherFreeShip.getQuantity()) {
+                        voucherFreeShip.setIdel(0);
+                    }
                     order.setCodeVoucherShip(voucherFreeShip.getCode());
                     voucherFreeShipRepository.save(voucherFreeShip);
                 }
@@ -120,20 +127,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<OrderDTO> cancelOrderView(OrderDTO orderDTO) {
         ServiceResult<OrderDTO> result = new ServiceResult<>();
-        if(orderDTO.getId() == null) {
+        if (orderDTO.getId() == null) {
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Error");
             return result;
         }
-        if(orderDTO.getIdCustomer() == null){
+        if (orderDTO.getIdCustomer() == null) {
             result.setData(null);
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Error");
             return result;
         }
         Order order = orderRepository.findById(orderDTO.getId()).orElse(null);
-        if(order != null){
+        if (order != null) {
             order.setStatus(AppConstant.HUY_DON_HANG);
             order = orderRepository.save(order);
             OrderHistory orderHistory = new OrderHistory();
@@ -173,6 +180,7 @@ public class OrderServiceImpl implements OrderService {
 //        order.setTotalPayment(orderDTO.getTotalPayment());
         order.setReceiverPhone(orderDTO.getReceiverPhone());
         order.setAddressReceived(orderDTO.getAddressReceived());
+        order.setEmail(orderDTO.getEmail());
         if (orderDTO.getPaymentType() == 1) {
             order.setPaymentType(orderDTO.getPaymentType());
             order.setTotalPayment(orderDTO.getTotalPayment());
@@ -187,8 +195,23 @@ public class OrderServiceImpl implements OrderService {
         if (StringUtils.isNotBlank(orderDTO.getCodeVoucher())) {
             Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
             if (null != voucher) {
-                voucher.setQuantity(voucher.getQuantity() - 1);
+                voucher.setAmountUsed(voucher.getAmountUsed() + 1);
+                if (voucher.getAmountUsed() == voucher.getQuantity()) {
+                    voucher.setIdel(0);
+                }
+                order.setCodeVoucher(voucher.getCode());
                 voucherRepository.save(voucher);
+            }
+        }
+        if (StringUtils.isNotBlank(orderDTO.getCodeVoucherShip())) {
+            VoucherFreeShip voucherFreeShip = voucherFreeShipRepository.findByCode(orderDTO.getCodeVoucherShip());
+            if (null != voucherFreeShip) {
+                voucherFreeShip.setAmountUsed(voucherFreeShip.getAmountUsed() + 1);
+                if (voucherFreeShip.getAmountUsed() == voucherFreeShip.getQuantity()) {
+                    voucherFreeShip.setIdel(0);
+                }
+                order.setCodeVoucherShip(voucherFreeShip.getCode());
+                voucherFreeShipRepository.save(voucherFreeShip);
             }
         }
         order = orderRepository.save(order);
