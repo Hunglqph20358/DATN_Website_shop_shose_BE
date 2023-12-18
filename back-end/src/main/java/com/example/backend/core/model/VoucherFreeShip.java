@@ -52,6 +52,8 @@ public class VoucherFreeShip implements Serializable {
     private BigDecimal reducedValue;
     @Column(name = "quantity")
     private int quantity;
+    @Column(name = "amount_used")
+    private Integer amountUsed;
     @Column(name = "option_customer")
     private Integer optionCustomer;
     @Column(name = "limit_customer")

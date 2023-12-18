@@ -17,6 +17,10 @@ public class ProductController {
     public ResponseEntity<?> getProductNoiBatByBrand(@RequestParam(name = "idBrand", required = false) Long thuongHieu){
         return ResponseEntity.ok(productService.getProductNoiBatByBrand(thuongHieu));
     }
+    @GetMapping("/get-product-tuong-tu")
+    public ResponseEntity<?> getProductTuongTu(@RequestParam(name = "idProduct") Long idProduct,@RequestParam(name = "idCategory") Long idCategory){
+        return ResponseEntity.ok(productService.getProductTuongTu(idProduct, idCategory));
+    }
     @GetMapping("/get-detail-product/{id}")
     public ResponseEntity<?> getDetailProduct(@PathVariable(name = "id")Long id){
         return ResponseEntity.ok(productService.getDetailProduct(id));
