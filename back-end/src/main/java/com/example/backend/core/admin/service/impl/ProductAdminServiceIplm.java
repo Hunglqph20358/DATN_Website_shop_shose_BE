@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -85,6 +86,8 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
     @Autowired
     private ImageAdminRepository imageAdminRepository;
+    @Autowired
+    private ImagesAdminMapper imagesAdminMapper;
 
     @Autowired
     private CategoryAdminRepository categoryAdminRepository;
@@ -96,14 +99,18 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findAll());
         for (int i = 0; i < list.size(); i++) {
-            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
+            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).orElse(null));
             list.get(i).setSoleAdminDTO(soleAdminDTO);
-            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
+            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).orElse(null));
             list.get(i).setMaterialAdminDTO(materialAdminDTO);
-            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
+            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).orElse(null));
             list.get(i).setBrandAdminDTO(brandAdminDTO);
-            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
+            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).orElse(null));
             list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+            List<Images> imagesList = imageAdminRepository.findByIdProduct(list.get(i).getId());
+            if(!imagesList.isEmpty()){
+                list.get(i).setImagesDTOList(imagesAdminMapper.toDto(imagesList));
+            }
 //          StaffDTO staffDTO = staffMapper.toDto(strp.findById(list.get(i).getStaffDTO().getId()).get());
 //            list.get(i).setStaffDTO(staffDTO);
         }
@@ -113,6 +120,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     @Override
     public ServiceResult<ProductAdminDTO> add(ProductAdminDTO productAdminDTO) {
         Product product = productAdminMapper.toEntity(productAdminDTO);
+        product.setCode("SP"+ Instant.now().getEpochSecond());
         Optional<Brand> brand = brrp.findById(product.getIdBrand());
         Optional<Material> material = mtrp.findById(product.getIdMaterial());
         Optional<Sole> sole = slrp.findById(product.getIdSole());
@@ -133,10 +141,16 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         product.setUpdateDate(Instant.now());
         product.setPrice(productAdminDTO.getPrice());
 //        product.setCreateName(staffDTO.getFullname());
-        this.prdrp.save(product);
+       product = this.prdrp.save(product);
+//        MultipartFile imageFile = productAdminDTO.getImageFile();
+//        Images images = new Images();
+//        images.setIdProduct(product.getId());
+//        images.setCreateDate(Instant.now());
+//        images.setImageName(imageFile.getOriginalFilename().trim());
+//        images = imageAdminRepository.save(images);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
-        result.setData(productAdminDTO);
+        result.setData(productAdminMapper.toDto(product));
         return result;
     }
 
@@ -236,6 +250,12 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             list.get(i).setProductDetailAdminDTO(productDetailAdminDTO);
         }
 
+        return list;
+    }
+
+    @Override
+    public List<ProductAdminDTO> findByName(String name) {
+        List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByName(name));
         return list;
     }
 

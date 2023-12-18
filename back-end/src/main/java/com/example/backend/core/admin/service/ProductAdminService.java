@@ -18,6 +18,7 @@ public interface ProductAdminService {
     ServiceResult<ProductAdminDTO> getById(Long id);
     List<ProductAdminDTO> getProduct(String code, String name);
     List<ProductAdminDTO> findByNameLikeOrCodeLike(String param);
+    List<ProductAdminDTO> findByName(String name);
 
     byte[] exportExcelProduct() throws IOException;
 
