@@ -80,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
             order.setReceiverPhone(orderDTO.getReceiverPhone());
             order.setAddressReceived(orderDTO.getAddressReceived());
             order.setDescription(orderDTO.getDescription());
+            order.setEmail(orderDTO.getEmail());
             order.setType(0);
             if (orderDTO.getPaymentType() == 1) {
                 order.setPaymentType(orderDTO.getPaymentType());
@@ -179,6 +180,7 @@ public class OrderServiceImpl implements OrderService {
 //        order.setTotalPayment(orderDTO.getTotalPayment());
         order.setReceiverPhone(orderDTO.getReceiverPhone());
         order.setAddressReceived(orderDTO.getAddressReceived());
+        order.setEmail(orderDTO.getEmail());
         if (orderDTO.getPaymentType() == 1) {
             order.setPaymentType(orderDTO.getPaymentType());
             order.setTotalPayment(orderDTO.getTotalPayment());

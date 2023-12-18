@@ -694,14 +694,17 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
 
     public List<ProductAdminDTO> getAllProduct() {
         try {
-            String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold , p.price   \n" +
-                    "FROM product p\n" +
-                    "JOIN product_detail pd ON p.id = pd.id_product\n" +
-                    "LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
-                    "LEFT JOIN brand b ON p.id_brand = b.id\n" +
-                    "LEFT JOIN category c ON p.id_category = c.id\n" +
-                    "GROUP BY p.id, p.code, p.name, brand_name, category_name\n" +
-                    "ORDER BY total_sold;";
+            String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold , p.price\n" +
+                    "                    FROM product p\n" +
+                    "                    LEFT JOIN discount_detail dd ON p.id = dd.id_product\n" +
+                    "\t\t\t\t\tLEFT JOIN discount d ON d.id = dd.id_discount AND d.idel = 0\n" +
+                    "                    JOIN product_detail pd ON p.id = pd.id_product\n" +
+                    "                    LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
+                    "\t\t\t\t\tLEFT JOIN brand b ON p.id_brand = b.id\n" +
+                    "                    LEFT JOIN category c ON p.id_category = c.id\n" +
+                    "                    WHERE dd.id IS NULL\n" +
+                    "                    GROUP BY p.id, p.code, p.name, brand_name, category_name\n" +
+                    "                    ORDER BY total_sold;";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
