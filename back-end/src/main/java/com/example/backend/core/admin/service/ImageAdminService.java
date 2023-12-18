@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ImageAdminService {
 //    List<Images> list();
 //    Optional<Images> getOne(Long id);
-//    void save(Images images);
+    void save(Images images);
 //    void Delete(Long id);
 //    boolean exists(Long id);
 //    void saveImage(byte[] imageData,Long idproduct);
