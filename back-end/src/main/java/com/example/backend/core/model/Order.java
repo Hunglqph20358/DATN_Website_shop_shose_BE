@@ -64,4 +64,6 @@ public class Order implements Serializable {
     private Integer statusPayment;
     @Column(name = "type")
     private Integer type;
+    @Column(name = "email")
+    private String email;
 }

@@ -1,5 +1,11 @@
 package com.example.backend.core.salesCounter.service.impl;
 
+import com.example.backend.core.admin.dto.CustomerAdminDTO;
+import com.example.backend.core.admin.dto.OrderAdminDTO;
+import com.example.backend.core.admin.dto.StaffAdminDTO;
+import com.example.backend.core.admin.mapper.CustomerAdminMapper;
+import com.example.backend.core.admin.mapper.StaffMapper;
+import com.example.backend.core.admin.repository.StaffAdminRepository;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Order;
@@ -13,7 +19,9 @@ import com.example.backend.core.salesCounter.mapper.StaffSCMapper;
 import com.example.backend.core.salesCounter.repository.CustomerSCRepository;
 import com.example.backend.core.salesCounter.repository.OrderSalesCountRepository;
 import com.example.backend.core.salesCounter.repository.OrderSalesCounterDetailRepository;
+import com.example.backend.core.salesCounter.repository.OrderSalesCustomRepository;
 import com.example.backend.core.salesCounter.service.OrderSalesCounterService;
+import com.example.backend.core.view.mapper.CustomerMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
@@ -34,8 +43,13 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     @Autowired
     private CustomerSCMapper customerSCMapper;
     @Autowired
-    private StaffSCMapper staffSCMapper;
-
+    private CustomerAdminMapper customerMapper;
+    @Autowired
+    private StaffMapper staffSCMapper;
+    @Autowired
+    private OrderSalesCustomRepository orderSalesCustomRepository;
+    @Autowired
+    private StaffAdminRepository staffAdminRepository;
 
     @Override
     public ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO) {
@@ -51,6 +65,7 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
             order.setTotalPayment(orderSalesDTO.getTotalPayment());
             order.setStatus(AppConstant.HOAN_THANH);
             order.setType(1);
+            order.setEmail(orderSalesDTO.getEmail());
             order = orderSalesCountRepository.save(order);
             orderSalesDTO = orderSalesCounterMapper.toDto(order);
             result.setData(orderSalesDTO);
@@ -71,14 +86,8 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
                 order.setTotalPayment(orderSalesDTO.getTotalPayment());
                 order.setStatus(AppConstant.HOAN_THANH);
                 order.setType(1);
+                order.setEmail(orderSalesDTO.getEmail());
                 order = orderSalesCountRepository.save(order);
-//            if(StringUtils.isNotBlank(salesDTO.getCodeVoucher())){
-//                Voucher voucher = voucherRepository.findByCode(orderDTO.getCodeVoucher());
-//                if(null != voucher){
-//                    voucher.setQuantity(voucher.getQuantity() - 1);
-//                    voucherRepository.save(voucher);
-//                }
-//            }
                 orderSalesDTO = orderSalesCounterMapper.toDto(order);
                 result.setData(orderSalesDTO);
                 result.setStatus(HttpStatus.OK);
@@ -97,5 +106,24 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     @Override
     public List<OrderSalesDTO> getAllOrder() {
         return orderSalesCounterMapper.toDto(orderSalesCountRepository.findAll());
+    }
+
+    @Override
+    public List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO) {
+        List<OrderAdminDTO> lst = orderSalesCustomRepository.getAllOrderAdmin(orderAdminDTO);
+        return lst.stream().map(c -> {
+            if (c.getIdCustomer() != null) {
+                CustomerAdminDTO customerAdminDTO = customerMapper.toDto(
+                        customerSCRepository.findById(c.getIdCustomer())
+                                .orElse(null)
+                );
+                c.setCustomerAdminDTO(customerAdminDTO);
+            }
+            if (c.getIdStaff() != null) {
+                StaffAdminDTO staffAdminDTO = staffSCMapper.toDto(staffAdminRepository.findById(c.getIdStaff()).orElse(null));
+                c.setStaffAdminDTO(staffAdminDTO);
+            }
+            return c;
+        }).collect(Collectors.toList());
     }
 }

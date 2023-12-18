@@ -1,5 +1,6 @@
 package com.example.backend.core.salesCounter.controller;
 
+import com.example.backend.core.admin.dto.OrderAdminDTO;
 import com.example.backend.core.salesCounter.dto.OrderSalesDTO;
 import com.example.backend.core.salesCounter.service.OrderSalesCounterDetailService;
 import com.example.backend.core.salesCounter.service.OrderSalesCounterService;
@@ -20,5 +21,10 @@ public class OrderSCController {
     @GetMapping("/list-bill-all")
     public ResponseEntity<?> getAllBill(){
         return ResponseEntity.ok(service.getAllOrder());
+    }
+
+    @PostMapping("/get-all-order")
+    public ResponseEntity<?> getAllOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(service.getAllOrderAdmin(orderAdminDTO));
     }
 }
