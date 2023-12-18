@@ -25,4 +25,5 @@ public class DiscountDTO implements Serializable {
     private String description;
     private Integer status;
     private Integer idel;
+    private Integer delete;
 }

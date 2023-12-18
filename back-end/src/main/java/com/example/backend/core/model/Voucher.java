@@ -63,5 +63,6 @@ public class Voucher {
     private Integer limitCustomer;
     @Column(name = "allow")
     private Integer allow;
-
+    @Column(name = "dele")
+    private Integer delete;
 }

@@ -35,4 +35,5 @@ public class VoucherDTO {
     private Integer limitCustomer;
     private Integer allow;
     private Long idCustomerLogin;
+    private Integer delete;
 }

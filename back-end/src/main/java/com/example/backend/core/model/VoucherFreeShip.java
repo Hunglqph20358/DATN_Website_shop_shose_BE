@@ -58,4 +58,6 @@ public class VoucherFreeShip implements Serializable {
     private Integer optionCustomer;
     @Column(name = "limit_customer")
     private Integer limitCustomer;
+    @Column(name = "dele")
+    private Integer delete;
 }
