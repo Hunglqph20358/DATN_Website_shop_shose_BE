@@ -1,5 +1,8 @@
 package com.example.backend.core.admin.dto;
+
+import com.example.backend.core.commons.ExportDTO;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.backend.core.commons.ExportDTO;
 
@@ -36,6 +39,7 @@ public class ProductAdminDTO extends ExportDTO {
     private MaterialAdminDTO materialAdminDTO;
     private SoleAdminDTO soleAdminDTO;
     private ProductDetailAdminDTO productDetailAdminDTO;
+    private ImagesAdminDTO imagesAdminDTO;
     private String brandName;
     private String categoryName;
     private String materialName;

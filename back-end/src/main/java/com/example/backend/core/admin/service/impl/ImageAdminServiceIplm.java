@@ -51,6 +51,11 @@ public class ImageAdminServiceIplm implements ImageAdminService {
 //    }
 
     @Override
+    public void save(Images images) {
+        imrp.save(images);
+    }
+
+    @Override
     public String UploadFile(MultipartFile multipartFile) throws IOException {
         return null;
     }

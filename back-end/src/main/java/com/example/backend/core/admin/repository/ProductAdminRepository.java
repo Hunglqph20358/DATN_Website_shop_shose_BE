@@ -4,6 +4,7 @@ import com.example.backend.core.admin.dto.ProductAdminDTO;
 import com.example.backend.core.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public interface ProductAdminRepository extends JpaRepository<Product,Long> {
 //    List<Product> getall();
 
     List<Product> findByNameLikeOrCodeLike(String param, String params);
-
+    @Query("SELECT u FROM Product u WHERE u.name LIKE %:name%")
+    List<Product> findByName(@Param("name") String keyword);
     Product findByCode(String code);
 }

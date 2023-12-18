@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 @Transactional
 public interface ImageAdminRepository extends JpaRepository<Images,Long> {
-    List<Images> findByOrderById();
-
+//    List<Images> findByOrderById();
+    List<Images> findByIdProduct(Long idProduct);
     @Modifying
     void deleteByIdProduct(Long idProduct);
 }
