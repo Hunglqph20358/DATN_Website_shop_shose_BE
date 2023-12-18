@@ -137,6 +137,8 @@ public class AppConstant {
                 "/view/api/send-mail-otp",
                 "/view/api/verify-otp",
                 "/view/api/reset-pass",
+                "/view/api/get-brand-top",
+                "/view/api/get-product-tuong-tu",
                 "/sales-counter/api/list-bill-all",
         };
 }

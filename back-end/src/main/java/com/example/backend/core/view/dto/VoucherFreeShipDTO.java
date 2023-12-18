@@ -23,6 +23,7 @@ public class VoucherFreeShipDTO {
     private String createName;
     private BigDecimal reducedValue;
     private Integer quantity;
+    private Integer amountUsed;
     private String description;
     private Integer status;
     private Integer isdel;

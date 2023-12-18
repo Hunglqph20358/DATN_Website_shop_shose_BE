@@ -37,8 +37,8 @@ public class Discount {
     private Integer status;
     @Column(name = "idel")
     private Integer idel;
-    @Column(name = "quantity")
-    private Integer quantity;
-    @Column(name = "apply", columnDefinition = "int default 0")//1 là tại quầy 0 là web
-    private Integer apply;
+    @Column(name = "dele")
+    private Integer dele;
+
+
 }

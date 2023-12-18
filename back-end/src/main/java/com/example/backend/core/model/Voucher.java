@@ -6,77 +6,62 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Objects;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "voucher")
-public class Voucher implements Serializable {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private long id;
-
-  @Column(name = "code")
-  private String code;
-
-  @Column(name = "name")
-  private String name;
-
-  @Column(name = "id_customer")
-  private Long idCustomer;
-
-  @Column(name = "create_date")
-  private Date createDate;
-
-  @Column(name = "start_date")
-  private Date startDate;
-
-  @Column(name = "end_date")
-  private Date endDate;
-
-  @Column(name = "conditions")
-  private BigDecimal conditions;
-
-  @Column(name = "create_name")
-  private String createName;
-
-  @Column(name = "voucher_type")
-  private Integer voucherType;
-
-  @Column(name = "reduced_value")
-  private BigDecimal reducedValue;
-
-  @Column(name = "description")
-  private String description;
-
-  @Column(name = "status")
-  private Integer status;
-
-  @Column(name = "idel")
-  private Integer idel;
-
-  @Column(name = "quantity")
-  private Integer quantity;
-
-  @Column(name = "max_reduced")
-  private BigDecimal maxReduced;
-
-  @Column(name = "limit_customer")
-  private Integer limitCustomer;
-
-  @Column(name = "allow")
-  private Integer allow;
-
-  @Column(name = "option_customer", columnDefinition = "int default 0")
-  private Integer optionCustomer;
-  @Column(name = "apply", columnDefinition = "int default 0")//1 là tại quầy 0 là web
-  private Integer apply;
+public class Voucher {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "code")
+    private String code;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "id_customer")
+    private String idCustomer;
+    @Column(name = "create_date")
+    private Date createDate;
+    @Column(name = "start_date")
+    private Date startDate;
+    @Column(name = "end_date")
+    private Date endDate;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "conditions")
+    private BigDecimal conditionApply;
+    @Column(name = "status")
+    private int status;
+    @Column(name = "idel")
+    private int idel;
+    @Column(name = "create_name")
+    private String createName;
+    @Column(name = "voucher_type")
+    private int voucherType;
+    @Column(name = "reduced_value")
+    private BigDecimal reducedValue;
+    @Column(name = "quantity")
+    private int quantity;
+    @Column(name = "amount_used")
+    private Integer amountUsed;
+    @Column(name = "apply")
+    private Integer apply;
+    @Column(name = "option_customer")
+    private Integer optionCustomer;
+    @Column(name = "max_reduced")
+    private BigDecimal maxReduced;
+    @Column(name = "limit_customer")
+    private Integer limitCustomer;
+    @Column(name = "allow")
+    private Integer allow;
 
 }

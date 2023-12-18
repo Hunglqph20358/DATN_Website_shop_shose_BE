@@ -114,7 +114,9 @@ public class EmailServiceImpl implements EmailService {
         Customer customer = customerRepository.findById(orderDTO.getIdCustomer()).get();
         String emailTo = customer.getEmail();
         String subject =  " Thông tin đơn hàng";
-        List<OrderDetailDTO> list = orderDetailService.getAllByOrder(orderDTO.getId());
+        Map<String, Object> result = orderDetailService.getAllByOrder(orderDTO.getId());
+
+        List<OrderDetailDTO> list = (List<OrderDetailDTO>) result.get("orderDetail");
         thymeleafContext.setVariable("order", orderDTO);
         thymeleafContext.setVariable("orderDetail", list);
         String htmlBody = templateEngine.process("sendEmailOrder", thymeleafContext);
