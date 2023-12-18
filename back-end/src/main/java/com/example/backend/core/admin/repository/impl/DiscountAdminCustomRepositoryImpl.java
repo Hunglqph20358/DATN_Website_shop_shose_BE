@@ -1,6 +1,8 @@
 package com.example.backend.core.admin.repository.impl;
 import com.example.backend.core.admin.dto.*;
 import com.example.backend.core.admin.repository.DiscountAdminCustomRepository;
+import com.example.backend.core.admin.repository.DiscountAdminRepository;
+import com.example.backend.core.admin.repository.DiscountDetailAdminRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
@@ -21,6 +23,8 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
 
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private DiscountDetailAdminRepository discountDetailRepository;
 
     @Override
     public void deleteAllDiscountDetailByDiscount(Long id) {
@@ -45,7 +49,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "    discount.end_date,\n" +
                     "    discount.description,\n" +
                     "    discount_detail.reduced_value ,\n" +
-                    "    if(discount_detail.discount_type = 0, 'Tiền' , 'Phần trăm') as type ,\n" +
+                    "    if(discount_detail.discount_type = 0, 'Theo %' , 'Theo tiền') as type ,\n" +
                     "    discount_detail.max_reduced ,\n" +
                     "    product.name as NameProduct\n" +
                     "FROM discount\n" +
@@ -70,12 +74,12 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
 
 
                 DiscountDetailAdminDTO discountDetailAdminDTO= new DiscountDetailAdminDTO();
-                discountDetailAdminDTO.setReducedValue(new BigDecimal(row[9].toString()));
-                discountDetailAdminDTO.setDiscountTypeStr((String) row[10]);
-                discountDetailAdminDTO.setMaxReduced(row[11] != null ? new BigDecimal(row[11].toString()) : null);                discountDetailAdminDTO.setDiscountAdminDTO(discount);
+                discountDetailAdminDTO.setReducedValue(new BigDecimal(row[8].toString()));
+                discountDetailAdminDTO.setDiscountTypeStr((String) row[9]);
+                discountDetailAdminDTO.setMaxReduced(row[10] != null ? new BigDecimal(row[10].toString()) : null);                discountDetailAdminDTO.setDiscountAdminDTO(discount);
 
                 ProductAdminDTO productAdminDTO= new ProductAdminDTO();
-                productAdminDTO.setName(row[12].toString());
+                productAdminDTO.setName(row[11].toString());
                 discountDetailAdminDTO.setProductDTO(productAdminDTO);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -147,6 +151,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                 discount.setDescription(row[5].toString());
                 discount.setIdel(Integer.valueOf(row[6].toString()));
                 discount.setUsed_count(row[7] != null ? new Integer(row[7].toString()) : null);
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
@@ -170,8 +175,10 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discount.setIdel(0);//Nếu hết hạn thì sẽ thành ko hiển thị
                 }
                 discounts.add(discount);
+
             }
             return discounts;
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -390,6 +397,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
 
         @Override
         public List<DiscountAdminDTO> getAllByCategory(String category) {
+            List<DiscountAdminDTO> discounts = new ArrayList<>();
             try {
                 StringBuilder sql = new StringBuilder("SELECT \n" +
                         "   d.id,\n" +
@@ -402,21 +410,23 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "COUNT(od.quantity) AS used_count\n" +
                         "FROM discount d\n" +
                         "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
-                        "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +
+                        "left JOIN order_detail AS od ON d.code = od.code_discount\n" +
                         "LEFT JOIN product AS p ON dd.id_product = p.id\n" +
-                        "LEFT JOIN category AS c ON p.id_category = c.id\n" +
-                        "WHERE LOWER(c.name) LIKE LOWER(:category) and dele=0 \n" +
-                        "GROUP BY d.id, d.code, d.name, d.start_date, d.end_date, d.description, d.idel\n" +
-                        ";");
+                        "LEFT JOIN category AS c ON p.id_category = c.id where dele=0  \n");
+
+                if (category != null && !category.isEmpty()) {
+                    sql.append(" and LOWER(c.name) LIKE LOWER(:category)");
+                }
+                sql.append("  GROUP BY d.id, d.code, d.name, d.start_date, d.end_date, d.description, d.idel" );
 
                 Query query = entityManager.createNativeQuery(sql.toString());
+
                 if (category != null && !category.isEmpty()) {
                     query.setParameter("category", "%" + category + "%");
                 }
 
 
                 List<Object[]> resultList = query.getResultList();
-                List<DiscountAdminDTO> discounts = new ArrayList<>();
 
                 for (Object[] row : resultList) {
                     DiscountAdminDTO discount = new DiscountAdminDTO();
@@ -455,12 +465,11 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     discounts.add(discount);
                 }
 
-                return discounts;
-
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
+            return discounts;
         }
 
         @Override
@@ -545,7 +554,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         "    d.end_date,\n" +
                         "    d.description,\n" +
                         "    d.idel, \n" +
-                        "    COUNT(od.quantity) AS used_count,\n" +
+                        "    COUNT(od.quantity) AS used_count\n" +
                         "FROM discount d\n" +
                         "LEFT JOIN discount_detail AS dd ON d.id = dd.id_discount\n" +
                         "LEFT JOIN order_detail AS od ON d.code = od.code_discount\n" +

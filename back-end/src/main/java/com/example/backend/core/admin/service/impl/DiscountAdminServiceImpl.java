@@ -1,7 +1,9 @@
 package com.example.backend.core.admin.service.impl;
 
+import com.example.backend.core.admin.dto.DiscountAdminDTO;
 import com.example.backend.core.admin.repository.DiscountAdminRepository;
 import com.example.backend.core.admin.service.DiscountAdminService;
+import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Discount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +25,4 @@ public class DiscountAdminServiceImpl implements DiscountAdminService {
                 .collect(Collectors.toList());
         return lstStr;
     }
-
 }

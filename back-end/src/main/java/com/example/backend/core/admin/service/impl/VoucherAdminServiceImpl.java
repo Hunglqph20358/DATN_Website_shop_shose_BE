@@ -17,6 +17,7 @@ import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.Voucher;
 import jakarta.mail.MessagingException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -87,27 +88,28 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
     public void sendMessageUsingThymeleafTemplate(VoucherAdminDTO voucherAdminDTO) throws MessagingException {
 
         String id = voucherAdminDTO.getIdCustomer();
-        String[] idArray = id.split(",");
+        if(StringUtils.isNotBlank(id)){
+            String[] idArray = id.split(",");
+            for (String idCustomer : idArray) {
+                Context thymeleafContext = new Context();
+                try {
+                    Long customerId = Long.parseLong(idCustomer.trim());
+                    Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
 
-        for (String idCustomer : idArray) {
-            Context thymeleafContext = new Context();
-            try {
-                Long customerId = Long.parseLong(idCustomer.trim());
-                Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
-
-                if (optionalCustomer.isPresent()) {
-                    Customer customer = optionalCustomer.get();
-                    thymeleafContext.setVariable("voucher", voucherAdminDTO);
-                    String subject = "Voucher xịn 2T Store tặng bạn";
-                    String htmlBody = templateEngine.process("sendEmailVoucher", thymeleafContext);
-                    sendHtmlEmail(customer.getEmail(), subject, htmlBody);
-                } else {
-                    // Handle the case where customer is not found by id
-                    System.out.println("Customer with id " + customerId + " not found.");
+                    if (optionalCustomer.isPresent()) {
+                        Customer customer = optionalCustomer.get();
+                        thymeleafContext.setVariable("voucher", voucherAdminDTO);
+                        String subject = "Voucher xịn 2T Store tặng bạn";
+                        String htmlBody = templateEngine.process("sendEmailVoucher", thymeleafContext);
+                        sendHtmlEmail(customer.getEmail(), subject, htmlBody);
+                    } else {
+                        // Handle the case where customer is not found by id
+                        System.out.println("Customer with id " + customerId + " not found.");
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case where id is not a valid number
+                    System.out.println("Invalid id format: " + idCustomer);
                 }
-            } catch (NumberFormatException e) {
-                // Handle the case where id is not a valid number
-                System.out.println("Invalid id format: " + idCustomer);
             }
         }
     }
@@ -173,11 +175,11 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setCreateName(voucherAdminDTO.getCreateName());
         voucher.setStartDate(voucherAdminDTO.getStartDate());
         voucher.setEndDate(voucherAdminDTO.getEndDate());
-        voucher.setAllow(voucher.getAllow());
-        if (voucher.getVoucherType() == 0) {
+        voucher.setAllow(voucherAdminDTO.getAllow());
+        if (voucherAdminDTO.getVoucherType() == 0) {
             voucher.setMaxReduced(voucher.getMaxReduced());
         }
-        if (voucher.getOptionCustomer() == 0) {
+        if (voucherAdminDTO.getOptionCustomer() == 0) {
             voucher.setIdCustomer(null);
         } else {
             StringBuilder customer = new StringBuilder();
@@ -201,8 +203,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                 // Xử lý trường hợp không có customer nào
                 voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
             }
-            voucherAdminRepository.save(voucher);
         }
+        voucherAdminRepository.save(voucher);
         serviceResult.setData(voucherAdminDTO);
         serviceResult.setMessage("Thêm thành công!");
         serviceResult.setStatus(HttpStatus.OK);
@@ -228,11 +230,11 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             voucher.setCreateName(voucherAdminDTO.getCreateName());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
-            voucher.setAllow(voucher.getAllow());
-            if (voucher.getVoucherType() == 0) {
-                voucher.setMaxReduced(voucher.getMaxReduced());
+            voucher.setAllow(voucherAdminDTO.getAllow());
+            if (voucherAdminDTO.getVoucherType() == 0) {
+                voucher.setMaxReduced(voucherAdminDTO.getMaxReduced());
             }
-            if (voucher.getOptionCustomer() == 0) {
+            if (voucherAdminDTO.getOptionCustomer() == 0) {
                 voucher.setIdCustomer(null);
             } else {
                 StringBuilder customer = new StringBuilder();
@@ -256,8 +258,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
                     // Xử lý trường hợp không có customer nào
                     voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
                 }
-                voucherAdminRepository.save(voucher);
             }
+            voucherAdminRepository.save(voucher);
             serviceResult.setData(voucherAdminDTO);
             serviceResult.setMessage("Cập nhật thành công!");
             serviceResult.setStatus(HttpStatus.OK);
@@ -297,32 +299,33 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         VoucherAdminDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
 
         String idCustomer = voucherAdminDTO.getIdCustomer();
-        String[] idArray = idCustomer.split("\\s*,\\s*");
 
         List<CustomerAdminDTO> toList = new ArrayList<>();
+        if(StringUtils.isNotBlank(idCustomer)){
+            String[] idArray = idCustomer.split(",");
+            for (String idCustomer1 : idArray) {
+                try {
+                    Long customerId = Long.parseLong(idCustomer1.trim());
+                    Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
 
-        for (String idCustomer1 : idArray) {
-            try {
-                Long customerId = Long.parseLong(idCustomer1.trim());
-                Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
+                    if (optionalCustomer.isPresent()) {
+                        Customer customer = optionalCustomer.get();
+                        CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(customer);
 
-                if (optionalCustomer.isPresent()) {
-                    Customer customer = optionalCustomer.get();
-                    CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(customer);
-
-                    // Kiểm tra và thêm vào danh sách nếu không phải là null
-                    if (customerAdminDTO != null) {
-                        toList.add(customerAdminDTO);
+                        // Kiểm tra và thêm vào danh sách nếu không phải là null
+                        if (customerAdminDTO != null) {
+                            toList.add(customerAdminDTO);
+                        }
+                    } else {
+                        System.out.println("Lỗi");
                     }
-                } else {
+                } catch (NumberFormatException e) {
                     System.out.println("Lỗi");
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Lỗi");
             }
         }
 
-        voucherAdminDTO.setCustomerAdminDTOList(toList);
+        voucherAdminDTO.setCustomerAdminDTOList(toList.isEmpty() ? null : toList);
 
         return voucherAdminDTO;
     }
@@ -355,7 +358,6 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
         }
-
         return serviceResult;
     }
     @Override
@@ -400,23 +402,11 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         sheetConfig.setHeaders(headerArr);
         int recordNo = 1;
         List<CellConfigDTO> cellConfigCustomList = new ArrayList<>();
-        if (!AppConstant.EXPORT_DATA.equals(exportType)) {
-            List<String> listDiscount = getAllVoucherExport();
-            cellConfigCustomList.add(
-                    new CellConfigDTO("voucher", AppConstant.ALIGN_LEFT, listDiscount.toArray(new String[0]), 1, 99, 3, 3)
-            );
-            if (AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
-                for (int i = 1; i < 4; i++) {
-                    VoucherAdminDTO data = new VoucherAdminDTO();
-                    data.setRecordNo(i);
-                    listDataSheet.add(data);
-                }
-            }
-        } else {
+
             for (VoucherAdminDTO item : listDataSheet) {
                 item.setRecordNo(recordNo++);
             }
-        }
+
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
         cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));

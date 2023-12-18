@@ -2,7 +2,9 @@ package com.example.backend.core.admin.repository.impl;
 
 import com.example.backend.core.admin.dto.CustomerAdminDTO;
 import com.example.backend.core.admin.dto.VoucherFreeShipDTO;
+import com.example.backend.core.admin.repository.CustomerAdminRepository;
 import com.example.backend.core.admin.repository.VoucherFSCustomerRepository;
+import com.example.backend.core.model.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,10 @@ import java.util.List;
 public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerRepository {
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private CustomerAdminRepository customerAdminRepository;
+
     @Override
     public List<VoucherFreeShipDTO> getAllVouchers() {
         try {
@@ -92,9 +98,9 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
     @Override
     public List<VoucherFreeShipDTO> getAllVoucherFSsExport() {
         try {
-            String sql = "SELECT v.id, v.code, v.name,v.start_date, v.end_date,v.conditions, v.reduced_value,v.quantity,v.limit_customer,v.status,c.fullname \n" +
+            String sql = "SELECT v.* \n" +
                     "FROM voucher_free_ship v\n" +
-                    "JOIN customer c ON FIND_IN_SET(c.id, v.id_customer) > 0 where v.dele=0;";
+                    " where v.dele=0;";
 
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
@@ -105,19 +111,18 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                 voucher.setId(Long.parseLong(row[0].toString()));
                 voucher.setCode(row[1].toString());
                 voucher.setName(row[2].toString());
-                voucher.setConditions(new BigDecimal(row[5].toString()));
-                voucher.setReducedValue(new BigDecimal(row[6].toString()));
-                voucher.setQuantity(Integer.valueOf(row[7].toString()));
-                voucher.setLimitCustomer(Integer.valueOf(row[8].toString()));
-                voucher.setStatus(row[9] != null ? Integer.valueOf((row[9].toString())) : null);
-                voucher.setNameCustomer(row[10].toString());
-
+                voucher.setIdCustomer((String) row[3]);
+                voucher.setConditions(new BigDecimal(row[7].toString()));
+                voucher.setReducedValue(new BigDecimal(row[9].toString()));
+                voucher.setQuantity(Integer.valueOf(row[14].toString()));
+                voucher.setLimitCustomer(row[15] != null ? Integer.valueOf((row[15].toString())) : null);
+                voucher.setStatus(row[11] != null ? Integer.valueOf((row[11].toString())) : null);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
-                    java.util.Date startDate = dateFormat.parse(row[3].toString());
-                    java.util.Date endDate = dateFormat.parse(row[4].toString());
+                    java.util.Date startDate = dateFormat.parse(row[5].toString());
+                    java.util.Date endDate = dateFormat.parse(row[6].toString());
 
                     voucher.setStartDate(startDate);
                     voucher.setEndDate(endDate);
@@ -132,7 +137,16 @@ public class VoucherFSCustomerRepositoryImpl implements VoucherFSCustomerReposit
                     e.printStackTrace();
                     continue;
                 }
-
+                if(StringUtils.isNotBlank(voucher.getIdCustomer()) || null != voucher.getIdCustomer()){
+                    String listCodeCustomer = "";
+                    for (String str: voucher.getIdCustomer().split(",")) {
+                        Customer customer = customerAdminRepository.findById(Long.parseLong(str)).orElse(null);
+                        if(customer != null){
+                            listCodeCustomer += customer.getCode() + ",";
+                        }
+                    }
+                    voucher.setListCodeCustomerExport(listCodeCustomer);
+                }
                 vouchers.add(voucher);
             }
             return vouchers;

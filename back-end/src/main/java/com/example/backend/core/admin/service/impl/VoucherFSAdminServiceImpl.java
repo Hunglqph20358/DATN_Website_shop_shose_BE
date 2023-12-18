@@ -19,6 +19,7 @@ import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.view.mapper.VoucherFSMapper;
 import jakarta.mail.MessagingException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -165,7 +166,7 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         voucher.setCreateName(voucherAdminDTO.getCreateName());
         voucher.setStartDate(voucherAdminDTO.getStartDate());
         voucher.setEndDate(voucherAdminDTO.getEndDate());
-        if (voucher.getOptionCustomer() == 0) {
+        if (voucherAdminDTO.getOptionCustomer() == 0) {
             voucher.setIdCustomer(null);
         } else {
             StringBuilder customer = new StringBuilder();
@@ -189,8 +190,8 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
                 // Xử lý trường hợp không có customer nào
                 voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
             }
-            voucherFreeShipAdminRepository.save(voucher);
         }
+        voucherFreeShipAdminRepository.save(voucher);
         serviceResult.setData(voucherAdminDTO);
         serviceResult.setMessage("Thêm thành công!");
         serviceResult.setStatus(HttpStatus.OK);
@@ -215,7 +216,7 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
             voucher.setCreateName(voucherAdminDTO.getCreateName());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
-            if (voucher.getOptionCustomer() == 0) {
+            if (voucherAdminDTO.getOptionCustomer() == 0) {
                 voucher.setIdCustomer(null);
             } else {
                 StringBuilder customer = new StringBuilder();
@@ -239,8 +240,8 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
                     // Xử lý trường hợp không có customer nào
                     voucher.setIdCustomer(null); // hoặc gán giá trị mong muốn khác
                 }
-                voucherFreeShipAdminRepository.save(voucher);
             }
+            voucherFreeShipAdminRepository.save(voucher);
             serviceResult.setData(voucherAdminDTO);
             serviceResult.setMessage("Cập nhật thành công!");
             serviceResult.setStatus(HttpStatus.OK);
@@ -281,32 +282,33 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         VoucherFreeShipDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
 
         String idCustomer = voucherAdminDTO.getIdCustomer();
-        String[] idArray = idCustomer.split("\\s*,\\s*");
 
         List<CustomerAdminDTO> toList = new ArrayList<>();
 
-        for (String idCustomer1 : idArray) {
-            try {
-                Long customerId = Long.parseLong(idCustomer1.trim());
-                Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
+        if(StringUtils.isNotBlank(idCustomer)){
+            String[] idArray = idCustomer.split(",");
+            for (String idCustomer1 : idArray) {
+                try {
+                    Long customerId = Long.parseLong(idCustomer1.trim());
+                    Optional<Customer> optionalCustomer = customerAdminRepository.findById(customerId);
 
-                if (optionalCustomer.isPresent()) {
-                    Customer customer = optionalCustomer.get();
-                    CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(customer);
+                    if (optionalCustomer.isPresent()) {
+                        Customer customer = optionalCustomer.get();
+                        CustomerAdminDTO customerAdminDTO = customerAdminMapper.toDto(customer);
 
-                    // Kiểm tra và thêm vào danh sách nếu không phải là null
-                    if (customerAdminDTO != null) {
-                        toList.add(customerAdminDTO);
+                        // Kiểm tra và thêm vào danh sách nếu không phải là null
+                        if (customerAdminDTO != null) {
+                            toList.add(customerAdminDTO);
+                        }
+                    } else {
+                        System.out.println("Lỗi");
                     }
-                } else {
+                } catch (NumberFormatException e) {
                     System.out.println("Lỗi");
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Lỗi");
             }
         }
-
-        voucherAdminDTO.setCustomerAdminDTOList(toList);
+        voucherAdminDTO.setCustomerAdminDTOList(toList.isEmpty() ? null : toList);
 
         return voucherAdminDTO;
     }
@@ -378,23 +380,9 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         sheetConfig.setHeaders(headerArr);
         int recordNo = 1;
         List<CellConfigDTO> cellConfigCustomList = new ArrayList<>();
-        if (!AppConstant.EXPORT_DATA.equals(exportType)) {
-            List<String> listDiscount = getAllVoucherExport();
-            cellConfigCustomList.add(
-                    new CellConfigDTO("voucher freeship", AppConstant.ALIGN_LEFT, listDiscount.toArray(new String[0]), 1, 99, 3, 3)
-            );
-            if (AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
-                for (int i = 1; i < 4; i++) {
-                    VoucherFreeShipDTO data = new VoucherFreeShipDTO();
-                    data.setRecordNo(i);
-                    listDataSheet.add(data);
-                }
-            }
-        } else {
             for (VoucherFreeShipDTO item : listDataSheet) {
                 item.setRecordNo(recordNo++);
             }
-        }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
         cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
@@ -408,7 +396,7 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         cellConfigList.add(new CellConfigDTO("limitCustomer", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
 //        cellConfigList.add(new CellConfigDTO("allow", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
         cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
-        cellConfigList.add(new CellConfigDTO("nameCustomer", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("listCodeCustomerExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
         }

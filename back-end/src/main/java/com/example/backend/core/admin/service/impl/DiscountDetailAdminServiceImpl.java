@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,17 +55,16 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
     @Override
     public List<DiscountAdminDTO> getAll() {
-        List<DiscountAdminDTO> list= discountAdminCustomRepository.getAll();
-        Iterator<DiscountAdminDTO> iterator = list.listIterator();
-        while (iterator.hasNext()) {
-            DiscountAdminDTO discountAdminDTO = iterator.next();
-            List<OrderDetail> orderList = orderDetailAdminRepository.findByCodeDiscount(discountAdminDTO.getCode());
-            if (orderList.size() > 0) {
+        List<DiscountAdminDTO> list = discountAdminCustomRepository.getAll();
+        for (int i =0; i< list.size(); i++ ) {
+            if (list.get(i).getUsed_count() > 0) {
+                DiscountAdminDTO discountAdminDTO = list.get(i);
                 discountAdminDTO.setIsUpdate(1);
             }
         }
         return list;
     }
+
 
     @Override
     public List<DiscountAdminDTO> getAllKichHoat() {
@@ -306,23 +306,9 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         sheetConfig.setHeaders(headerArr);
         int recordNo = 1;
         List<CellConfigDTO> cellConfigCustomList = new ArrayList<>();
-        if (!AppConstant.EXPORT_DATA.equals(exportType)) {
-            List<String> listDiscount = discountAdminService.getAllDiscountExport();
-            cellConfigCustomList.add(
-                    new CellConfigDTO("discount", AppConstant.ALIGN_LEFT, listDiscount.toArray(new String[0]), 1, 99, 3, 3)
-            );
-            if (AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
-                for (int i = 1; i < 4; i++) {
-                    DiscountDetailAdminDTO data = new DiscountDetailAdminDTO();
-                    data.setRecordNo(i);
-                    listDataSheet.add(data);
-                }
-            }
-        } else {
             for (DiscountDetailAdminDTO item : listDataSheet) {
                 item.setRecordNo(recordNo++);
             }
-        }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
         cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
@@ -335,7 +321,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         cellConfigList.add(new CellConfigDTO("discountAdminDTO.description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("reducedValue", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("discountTypeStr", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("maxReduced", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        cellConfigList.add(new CellConfigDTO("maxReduced", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         cellConfigList.add(new CellConfigDTO("productDTO.name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));

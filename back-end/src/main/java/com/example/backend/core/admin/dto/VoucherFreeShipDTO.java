@@ -42,5 +42,5 @@ public class VoucherFreeShipDTO extends ExportDTO {
     private String nameCustomer;
     private List<CustomerAdminDTO> customerAdminDTOList;
     private Integer isUpdate = 0;
-
+    private String listCodeCustomerExport;
 }
