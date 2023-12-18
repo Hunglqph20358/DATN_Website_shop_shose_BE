@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
@@ -63,5 +63,7 @@ public class Voucher {
     private Integer limitCustomer;
     @Column(name = "allow")
     private Integer allow;
+    @Column(name = "dele")
+    private Integer delete;
 
 }

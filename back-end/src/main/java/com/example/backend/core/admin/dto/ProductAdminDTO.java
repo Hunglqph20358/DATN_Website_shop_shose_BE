@@ -1,7 +1,7 @@
 package com.example.backend.core.admin.dto;
+import lombok.*;
 
 import com.example.backend.core.commons.ExportDTO;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -43,4 +43,20 @@ public class ProductAdminDTO extends ExportDTO {
 
     private String imageNameImport;
     private Integer totalBestSeller;
+
+    public ProductAdminDTO(Long id, String code, String name,BigDecimal price,Integer totalQuantity) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.price = price;
+        this.totalQuantity= totalQuantity;
+    }
+
+    public List<ProductDetailAdminDTO> getProductDetailDTOList() {
+        return productDetailDTOList;
+    }
+
+    public void setProductDetailDTOList(List<ProductDetailAdminDTO> productDetailDTOList) {
+        this.productDetailDTOList = productDetailDTOList;
+    }
 }
