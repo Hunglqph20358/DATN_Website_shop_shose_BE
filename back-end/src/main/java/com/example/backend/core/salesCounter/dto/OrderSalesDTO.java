@@ -28,11 +28,13 @@ public class OrderSalesDTO {
     private BigDecimal shipPrice;
     private BigDecimal totalPrice;
     private BigDecimal totalPayment;
+    private Integer type;
     private Integer paymentType;
     private String description;
     private Integer status;
     private Integer statusPayment;
-    private CustomerDTO customerDTO;
 
+    private CustomerSCDTO customerDTO;
+    private StaffSCDTO staffSCDTO;
     private String email;
 }

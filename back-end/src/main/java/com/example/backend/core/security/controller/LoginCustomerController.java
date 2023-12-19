@@ -66,6 +66,8 @@ public class LoginCustomerController {
                 .birthday(signUpFormRequest.getBirthday())
                 .createDate(new Date())
                 .username(signUpFormRequest.getUsername())
+                .status(0)
+                .idel(0)
                 .password(passwordEncoder.encode(signUpFormRequest.getPassword())).build();
         customerSPService.saveCustomer(customer);
         return new ResponseEntity<>(new MessageResponse("Create Success"), HttpStatus.CREATED);
