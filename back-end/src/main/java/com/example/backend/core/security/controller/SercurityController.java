@@ -71,6 +71,7 @@ public class SercurityController {
                     .createDate(Instant.now())
                     .description(signUpFormRequest.getDescription())
                     .idel(signUpFormRequest.getIdel())
+                    .isdn(String.valueOf(Instant.now().getEpochSecond()))
                     .username(signUpFormRequest.getUsername())
                     .password(passwordEncoder.encode(signUpFormRequest.getPassword())).build();
             String strRoles = signUpFormRequest.getRole();

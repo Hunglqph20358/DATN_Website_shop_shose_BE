@@ -25,4 +25,10 @@ public class StaffAdminInfoController {
             ){
         return ResponseEntity.ok(service.updateStaff(staffAdminDTO,staff));
     }
+    @GetMapping("/staff-search/{params}")
+    public ResponseEntity<?> finByCodeOrPhone(
+            @PathVariable("params") String params
+    ){
+        return ResponseEntity.ok(service.findByCodeOrPhone(params));
+    }
 }

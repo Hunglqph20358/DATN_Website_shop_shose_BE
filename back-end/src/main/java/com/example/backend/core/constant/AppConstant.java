@@ -125,6 +125,8 @@ public class AppConstant {
                 "/sales-customer/add-customer",
                 "/api/admin/staff-getall",
                 "/api/admin/staff-update/*",
+                "/api/admin/staff-search/*",
+                "/sales-counter/api/get-all-order",
 
         };
         public static final String[] API_STAFF = {
