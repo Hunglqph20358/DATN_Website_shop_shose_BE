@@ -169,6 +169,7 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setStatus(0);
         voucher.setIdel(0);
         voucher.setDelete(0);
+        voucher.setAmountUsed(0);
         voucher.setConditionApply(voucherAdminDTO.getConditionApply());
         voucher.setDescription(voucherAdminDTO.getDescription());
         voucher.setApply(voucherAdminDTO.getApply());

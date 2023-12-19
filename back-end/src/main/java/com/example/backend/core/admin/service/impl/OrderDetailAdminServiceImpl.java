@@ -6,6 +6,11 @@ import com.example.backend.core.admin.mapper.*;
 import com.example.backend.core.admin.repository.*;
 import com.example.backend.core.admin.service.OrderDetailAdminService;
 import com.example.backend.core.model.OrderHistory;
+import com.example.backend.core.view.dto.CustomerDTO;
+import com.example.backend.core.view.dto.OrderHistoryDTO;
+import com.example.backend.core.view.mapper.CustomerMapper;
+import com.example.backend.core.view.mapper.OrderHistoryMapper;
+import com.example.backend.core.view.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +62,16 @@ public class OrderDetailAdminServiceImpl implements OrderDetailAdminService {
     private StaffAdminMapper staffMapper;
     @Autowired
     private StaffAdminRepository staffAdminRepository;
+    @Autowired
+    private StaffAdminMapper staffAdminMapper;
 
+    @Autowired
+    private OrderHistoryMapper orderHistoryMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    private CustomerRepository customerRepository;
     public OrderDetailAdminServiceImpl(ProductAdminRepository productAdminRepository, ProductDetailAdminRepository productDetailAdminRepository) {
         this.productAdminRepository = productAdminRepository;
         this.productDetailAdminRepository = productDetailAdminRepository;
@@ -70,12 +84,27 @@ public class OrderDetailAdminServiceImpl implements OrderDetailAdminService {
             return null;
         }
         List<OrderHistoryAdminDTO> orderHistoryAdminDTOList = new ArrayList<>();
+        List<OrderHistoryDTO> orderHistoryViewList = new ArrayList<>();
         List<OrderHistory> orderHistoryList = orderHistoryAdminRepository.getAllOrderHistoryByOrder(idOrder);
         for (int i = 0; i < orderHistoryList.size(); i++) {
-            StaffAdminDTO staffAdminDTO = staffMapper.toDto(staffAdminRepository.findById(orderHistoryList.get(i).getIdStaff()).orElse(null));
-            OrderHistoryAdminDTO orderHistoryAdminDTO = orderHistoryAdminMapper.toDto(orderHistoryList.get(i));
-            orderHistoryAdminDTO.setStaffDTO(staffAdminDTO);
-            orderHistoryAdminDTOList.add(orderHistoryAdminDTO);
+            if(null != orderHistoryList.get(i).getIdStaff()){
+                if(staffAdminRepository.findById(orderHistoryList.get(i).getIdStaff()).isPresent()){
+                    StaffAdminDTO staffAdminDTO = staffAdminMapper.toDto(staffAdminRepository.findById(orderHistoryList.get(i).getIdStaff()).orElse(null));
+                    OrderHistoryAdminDTO orderHistoryAdminDTO = orderHistoryAdminMapper.toDto(orderHistoryList.get(i));
+                    orderHistoryAdminDTO.setStaffDTO(staffAdminDTO);
+                    orderHistoryAdminDTOList.add(orderHistoryAdminDTO);
+                }
+            }
+        }
+        for (int i = 0; i < orderHistoryList.size(); i++) {
+            if(null != orderHistoryList.get(i).getIdCustomer()){
+                if(customerRepository.findById(orderHistoryList.get(i).getIdCustomer()).isPresent()){
+                    CustomerDTO customerDTO = customerMapper.toDto(customerRepository.findById(orderHistoryList.get(i).getIdCustomer()).orElse(null));
+                    OrderHistoryDTO orderHistoryAdminDTO = orderHistoryMapper.toDto(orderHistoryList.get(i));
+                    orderHistoryAdminDTO.setCustomerDTO(customerDTO);
+                    orderHistoryViewList.add(orderHistoryAdminDTO);
+                }
+            }
         }
         List<OrderDetailAdminDTO> lst = orderDetailAdminMapper.toDto(orderDetailAdminRepository.findByIdOrder(idOrder));
         for (int i = 0; i < lst.size(); i++) {
@@ -92,7 +121,8 @@ public class OrderDetailAdminServiceImpl implements OrderDetailAdminService {
             lst.set(i, lst.get(i));
         }
         map.put("orderDetail", lst);
-        map.put("orderHistory", orderHistoryAdminDTOList);
+        map.put("orderHistoryAdmin", orderHistoryAdminDTOList);
+        map.put("orderHistoryView", orderHistoryViewList);
         return map;
     }
 }
