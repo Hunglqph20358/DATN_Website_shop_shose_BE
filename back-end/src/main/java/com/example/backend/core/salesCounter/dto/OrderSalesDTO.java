@@ -37,4 +37,8 @@ public class OrderSalesDTO {
     private CustomerSCDTO customerDTO;
     private StaffSCDTO staffSCDTO;
     private String email;
+
+    public OrderSalesDTO(CustomerSCDTO customerDTO) {
+        this.customerDTO = customerDTO;
+    }
 }
