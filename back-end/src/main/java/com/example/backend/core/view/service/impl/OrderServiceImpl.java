@@ -86,11 +86,11 @@ public class OrderServiceImpl implements OrderService {
                 order.setPaymentType(orderDTO.getPaymentType());
                 order.setTotalPayment(orderDTO.getTotalPayment());
                 order.setPaymentDate(Instant.now());
-                order.setStatusPayment(0);
+                order.setStatusPayment(AppConstant.DA_THANH_TOAN);
             } else {
                 order.setPaymentType(orderDTO.getPaymentType());
-                order.setTotalPayment(null);
-                order.setStatusPayment(1);
+                order.setTotalPayment(orderDTO.getTotalPayment());
+                order.setStatusPayment(AppConstant.CHUA_THANH_TOAN);
             }
             order.setStatus(AppConstant.CHO_XAC_NHAN);
             if (StringUtils.isNotBlank(orderDTO.getCodeVoucher())) {
@@ -188,7 +188,7 @@ public class OrderServiceImpl implements OrderService {
             order.setPaymentDate(Instant.now());
         } else {
             order.setPaymentType(orderDTO.getPaymentType());
-            order.setTotalPayment(null);
+            order.setTotalPayment(orderDTO.getTotalPayment());
             order.setStatusPayment(AppConstant.CHUA_THANH_TOAN);
         }
         order.setStatus(AppConstant.CHO_XAC_NHAN);

@@ -68,6 +68,7 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
             order.setCode("HD" + Instant.now().getEpochSecond());
             order.setIdStaff(orderSalesDTO.getIdStaff());
             order.setCreateDate(Instant.now());
+            order.setPaymentDate(Instant.now());
             order.setPaymentType(AppConstant.DA_THANH_TOAN);
             order.setStatusPayment(orderSalesDTO.getStatusPayment());
             order.setTotalPrice(orderSalesDTO.getTotalPrice());
@@ -80,12 +81,12 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
             result.setData(orderSalesDTO);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");
-        }
-        else {
+        } else {
             CustomerSCDTO customerSCDTO = customerSCMapper.toDto(customerSCRepository.findByPhone(orderSalesDTO.getCustomerDTO().getPhone()));
             if(customerSCDTO != null){
                 order.setCode("HD" + Instant.now().getEpochSecond());
                 order.setCreateDate(Instant.now());
+                order.setPaymentDate(Instant.now());
                 order.setReceiver(orderSalesDTO.getReceiver());
                 order.setIdCustomer(orderSalesDTO.getIdCustomer());
                 order.setIdStaff(orderSalesDTO.getIdStaff());

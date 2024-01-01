@@ -88,8 +88,8 @@ public class ProductServiceImpl implements ProductService {
         List<Images> imageList = imagesRepository.findByIdProduct(product.get().getId());
         List<ProductDetail> listProductDetail = productDetailRepository.findByIdProduct(idProduct);
         MaterialDTO materialDTO = materialMapper.toDto(material.orElse(null));
-        SoleDTO soleDTO = soleMapper.toDto(sole.get());
-        CategoryDTO categoryDTO = categoryMapper.toDto(category.get());
+        SoleDTO soleDTO = soleMapper.toDto(sole.orElse(null));
+        CategoryDTO categoryDTO = categoryMapper.toDto(category.orElse(null));
         BrandDTO brandDTO = brandMapper.toDto(brand.orElse(null));
         for (ProductDetail pd : listProductDetail) {
             totalQuantity += pd.getQuantity();
