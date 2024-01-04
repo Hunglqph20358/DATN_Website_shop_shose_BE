@@ -124,7 +124,7 @@ public class EmailServiceImpl implements EmailService {
             return result;
         }
         String emailTo = orderDTO.getEmail();
-        String subject =  " Thông tin đơn hàng";
+        String subject =  " Thông tin đơn hàng ";
         Map<String, Object> map = orderDetailService.getAllByOrder(orderDTO.getId());
 
         List<OrderDetailDTO> list = (List<OrderDetailDTO>) map.get("orderDetail");

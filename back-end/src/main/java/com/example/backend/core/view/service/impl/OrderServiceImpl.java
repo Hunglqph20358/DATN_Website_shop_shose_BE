@@ -6,7 +6,9 @@ import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Address;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderDetail;
 import com.example.backend.core.model.OrderHistory;
+import com.example.backend.core.model.ProductDetail;
 import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.security.dto.UsersDTO;
@@ -19,6 +21,7 @@ import com.example.backend.core.view.mapper.OrderMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
 import com.example.backend.core.view.repository.CustomerRepository;
 import com.example.backend.core.view.repository.OrderCustomRepository;
+import com.example.backend.core.view.repository.OrderDetailRepository;
 import com.example.backend.core.view.repository.OrderHistoryRepository;
 import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
@@ -63,6 +66,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderHistoryRepository orderHistoryRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
+
 
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -143,6 +152,12 @@ public class OrderServiceImpl implements OrderService {
         if (order != null) {
             order.setStatus(AppConstant.HUY_DON_HANG);
             order = orderRepository.save(order);
+            List<OrderDetail> orderDetailList = orderDetailRepository.findByIdOrder(order.getId());
+            for (int i = 0; i < orderDetailList.size(); i++) {
+                ProductDetail productDetail = productDetailRepository.findById(orderDetailList.get(i).getIdProductDetail()).orElse(null);
+                productDetail.setQuantity(productDetail.getQuantity() + orderDetailList.get(i).getQuantity());
+                productDetailRepository.save(productDetail);
+            }
             OrderHistory orderHistory = new OrderHistory();
             orderHistory.setStatus(AppConstant.HUY_HISTORY);
             orderHistory.setCreateDate(Instant.now());

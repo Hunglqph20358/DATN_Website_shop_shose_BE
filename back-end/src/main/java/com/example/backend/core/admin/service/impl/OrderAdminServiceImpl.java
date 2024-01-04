@@ -11,7 +11,9 @@ import com.example.backend.core.admin.service.OrderAdminService;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Order;
+import com.example.backend.core.model.OrderDetail;
 import com.example.backend.core.model.OrderHistory;
+import com.example.backend.core.model.ProductDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,12 @@ public class OrderAdminServiceImpl implements OrderAdminService {
 
     @Autowired
     private StaffAdminMapper staffMapper;
+
+    @Autowired
+    private ProductDetailAdminRepository productDetailAdminRepository;
+    @Autowired
+    private OrderDetailAdminRepository orderDetailAdminRepository;
+
 
     @Override
     public List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO) {
@@ -119,6 +127,12 @@ public class OrderAdminServiceImpl implements OrderAdminService {
         order.setIdStaff(orderAdminDTO.getIdStaff());
         order = orderAdminRepository.save(order);
         if(order != null){
+            List<OrderDetail> orderDetailList = orderDetailAdminRepository.findByIdOrder(order.getId());
+            for (int i = 0; i < orderDetailList.size(); i++) {
+                ProductDetail productDetail = productDetailAdminRepository.findById(orderDetailList.get(i).getIdProductDetail()).orElse(null);
+                productDetail.setQuantity(productDetail.getQuantity() + orderDetailList.get(i).getQuantity());
+                productDetailAdminRepository.save(productDetail);
+            }
             OrderHistory orderHistory = new OrderHistory();
             orderHistory.setStatus(AppConstant.HUY_HISTORY);
             orderHistory.setCreateDate(Instant.now());
