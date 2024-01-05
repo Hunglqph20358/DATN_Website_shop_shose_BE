@@ -214,6 +214,9 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
             voucher.setName(voucherAdminDTO.getName());
             voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
             voucher.setQuantity(voucherAdminDTO.getQuantity());
+            voucher.setName(voucherAdminDTO.getName());
+            voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
+            voucher.setReducedValue(voucherAdminDTO.getReducedValue());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
             if (voucherAdminDTO.getOptionCustomer() == 0) {
