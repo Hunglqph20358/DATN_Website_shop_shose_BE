@@ -167,7 +167,9 @@ public class AppConstant {
                 "/view/api/verify-otp",
                 "/view/api/reset-pass",
                 "/view/api/get-brand-top",
+                "/view/api/tra-cuu-order",
                 "/view/api/get-product-tuong-tu",
                 "/sales-counter/api/list-bill-all",
+
         };
 }

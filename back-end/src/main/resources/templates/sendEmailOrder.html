@@ -101,9 +101,9 @@
         </tbody>
       </table>
 
+<!--      <p>Phí ship: [[${#numbers.formatDecimal(order.shipPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>-->
       <p>Tổng số tiền: [[${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
-      <p>Tổng số tiền: [[${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
-      <p>Tổng số tiền phải thanh toán: [[${#numbers.formatDecimal(order.totalPrice + order.shipPrice, 0, 'COMMA', 2, 'POINT')}]] đ</p>
+      <p>Tổng số tiền phải thanh toán: [[${#numbers.formatDecimal(order.totalPayment, 0, 'COMMA', 2, 'POINT')}]] đ</p>
       <p>Phương thức thanh toán: [[${order.paymentType == 0 ? 'Thanh toán COD' : 'Thanh toán VNPay'}]]</p>
       <p>Trạng thái đơn hàng: [[${order.statusSendEmail}]]</p>
       <!-- Thêm thông tin khác nếu cần -->

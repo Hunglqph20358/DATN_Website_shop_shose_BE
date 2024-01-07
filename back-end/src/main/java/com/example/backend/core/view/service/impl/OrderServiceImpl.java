@@ -17,6 +17,7 @@ import com.example.backend.core.view.dto.CustomerDTO;
 import com.example.backend.core.view.dto.OrderDTO;
 import com.example.backend.core.view.dto.OrderDetailDTO;
 import com.example.backend.core.view.mapper.CustomerMapper;
+import com.example.backend.core.view.mapper.OrderDetailMapper;
 import com.example.backend.core.view.mapper.OrderMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
 import com.example.backend.core.view.repository.CustomerRepository;
@@ -72,6 +73,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
 
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -234,6 +237,28 @@ public class OrderServiceImpl implements OrderService {
         result.setData(dto);
         result.setStatus(HttpStatus.OK);
         result.setMessage("Success");
+        return result;
+    }
+
+    @Override
+    public ServiceResult<OrderDTO> traCuuDonHang(OrderDTO orderDTO) {
+        ServiceResult<OrderDTO> result = new ServiceResult<>();
+        if(StringUtils.isBlank(orderDTO.getCode())){
+            result.setData(null);
+            result.setMessage("Mã đơn hàng không tồn tại");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            return result;
+        }
+        OrderDTO dto = new OrderDTO();
+        Order order = orderRepository.findByCode(orderDTO.getCode());
+        if(null != order){
+            dto = orderMapper.toDto(order);
+            List<OrderDetailDTO> orderDetailDTOList = orderDetailMapper.toDto(orderDetailRepository.findByIdOrder(dto.getId()));
+            dto.setOrderDetailDTOList(orderDetailDTOList);
+            result.setData(dto);
+            result.setMessage("Success");
+            result.setStatus(HttpStatus.OK);
+        }
         return result;
     }
 }

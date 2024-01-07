@@ -32,4 +32,8 @@ public class OrderController {
     public ResponseEntity<?> getAllOrder(@RequestBody OrderDTO orderDTO){
         return ResponseEntity.ok(orderService.getAll(orderDTO));
     }
+    @PostMapping("/tra-cuu-order")
+    public ResponseEntity<?> traCuuDonHang(@RequestBody OrderDTO orderDTO){
+        return ResponseEntity.ok(orderService.traCuuDonHang(orderDTO));
+    }
 }

@@ -69,7 +69,7 @@ public class StatisticalAdminCustomRepositoryImpl implements StatisticalAdminCus
         int currentYear = currentDate.getYear();
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("SELECT COALESCE(COUNT(o.id), 0) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment, sum(od.quantity) as totalQuantityProduct\n" +
+            sql.append("SELECT COALESCE(COUNT(o.id), 0) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment, ifnull(sum(od.quantity),0) as totalQuantityProduct\n" +
                     "FROM `order` o left join order_detail od on o.id = od.id_order\n" +
                     "WHERE o.status = 3 AND YEAR(o.payment_date) = YEAR(NOW()) and month(o.payment_date) = :month");
             StringBuilder sql2 = new StringBuilder();

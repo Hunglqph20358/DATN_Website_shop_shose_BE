@@ -6,6 +6,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,6 +42,7 @@ public class OrderDTO {
     private String dateFrom;
     private String dateTo;
     private String note;
+    private List<OrderDetailDTO> orderDetailDTOList;
 
     public String getStatusSendEmail(){
         if(status == 0){
