@@ -64,7 +64,7 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     public ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO) {
         ServiceResult<OrderSalesDTO> result = new ServiceResult<>();
         Order order = new Order();
-        if (orderSalesDTO.getIdCustomer() == null){
+        if (orderSalesDTO.getIdCustomer() == 0){
             order.setCode("HD" + Instant.now().getEpochSecond());
             order.setIdStaff(orderSalesDTO.getIdStaff());
             order.setCreateDate(Instant.now());
@@ -81,9 +81,8 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
             result.setData(orderSalesDTO);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");
-        } else {
-            CustomerSCDTO customerSCDTO = customerSCMapper.toDto(customerSCRepository.findByPhone(orderSalesDTO.getCustomerDTO().getPhone()));
-            if(customerSCDTO != null){
+        }
+        else {
                 order.setCode("HD" + Instant.now().getEpochSecond());
                 order.setCreateDate(Instant.now());
                 order.setPaymentDate(Instant.now());
@@ -102,7 +101,6 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
                 result.setData(orderSalesDTO);
                 result.setStatus(HttpStatus.OK);
                 result.setMessage("Success");
-            }
         }
 
         return result;

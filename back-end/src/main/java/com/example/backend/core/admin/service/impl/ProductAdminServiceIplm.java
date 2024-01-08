@@ -238,15 +238,15 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     public List<ProductAdminDTO> findByNameLikeOrCodeLike(String param) {
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByNameLikeOrCodeLike("%" + param + "%", "%" + param + "%"));
         for (int i = 0; i < list.size(); i++) {
-//            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).get());
-//            list.get(i).setSoleAdminDTO(soleAdminDTO);
-//            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).get());
-//            list.get(i).setMaterialAdminDTO(materialAdminDTO);
-//            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).get());
-//            list.get(i).setBrandAdminDTO(brandAdminDTO);
-//            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).get());
-//            list.get(i).setCategoryAdminDTO(categoryAdminDTO);
-            ProductDetailAdminDTO productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findById(list.get(i).getId()).get());
+            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).orElse(null));
+            list.get(i).setSoleAdminDTO(soleAdminDTO);
+            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).orElse(null));
+            list.get(i).setMaterialAdminDTO(materialAdminDTO);
+            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(list.get(i).getIdBrand()).orElse(null));
+            list.get(i).setBrandAdminDTO(brandAdminDTO);
+            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).orElse(null));
+            list.get(i).setCategoryAdminDTO(categoryAdminDTO);
+            ProductDetailAdminDTO productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findById(list.get(i).getId()).orElse(null));
             list.get(i).setProductDetailAdminDTO(productDetailAdminDTO);
         }
 
