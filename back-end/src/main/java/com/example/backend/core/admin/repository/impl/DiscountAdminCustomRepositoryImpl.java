@@ -702,7 +702,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "                    LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
                     "\t\t\t\t\tLEFT JOIN brand b ON p.id_brand = b.id\n" +
                     "                    LEFT JOIN category c ON p.id_category = c.id\n" +
-//                    "                    WHERE dd.id IS NULL\n" +
+                    "                    WHERE dd.id IS NULL\n" +
                     "                    GROUP BY p.id, p.code, p.name, brand_name, category_name\n" +
                     "                    ORDER BY total_sold;";
             Query query = entityManager.createNativeQuery(sql);

@@ -7,6 +7,7 @@ import com.example.backend.core.admin.repository.*;
 import com.example.backend.core.admin.service.DiscountAdminService;
 import com.example.backend.core.admin.service.DiscountDetailAdminService;
 import com.example.backend.core.commons.CellConfigDTO;
+import com.example.backend.core.commons.DateUtil;
 import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.commons.SheetConfigDTO;
@@ -25,6 +26,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,8 +154,9 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         discountAdminEntity.setStatus(0);
         discountAdminEntity.setIdel(0);
         discountAdminEntity.setDelete(0);
-        discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
-        discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
+
+        discountAdminEntity.setStartDate(DateUtil.formatDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate()));
+        discountAdminEntity.setEndDate(DateUtil.formatDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate()));
 
         discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
         for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
@@ -180,8 +184,8 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
         if (discountAdminOptional.isPresent()) {
             Discount discountAdminEntity = discountAdminOptional.get();
-            discountAdminEntity.setStartDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate());
-            discountAdminEntity.setEndDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate());
+            discountAdminEntity.setStartDate(DateUtil.formatDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate()));
+            discountAdminEntity.setEndDate(DateUtil.formatDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate()));
             discountAdminEntity.setDescription(discountDetailAdminDTO.getDiscountAdminDTO().getDescription());
 
             discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
