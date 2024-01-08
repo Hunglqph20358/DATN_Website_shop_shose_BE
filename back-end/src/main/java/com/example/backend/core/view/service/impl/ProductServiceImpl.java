@@ -88,8 +88,8 @@ public class ProductServiceImpl implements ProductService {
         List<Images> imageList = imagesRepository.findByIdProduct(product.get().getId());
         List<ProductDetail> listProductDetail = productDetailRepository.findByIdProduct(idProduct);
         MaterialDTO materialDTO = materialMapper.toDto(material.orElse(null));
-        SoleDTO soleDTO = soleMapper.toDto(sole.get());
-        CategoryDTO categoryDTO = categoryMapper.toDto(category.get());
+        SoleDTO soleDTO = soleMapper.toDto(sole.orElse(null));
+        CategoryDTO categoryDTO = categoryMapper.toDto(category.orElse(null));
         BrandDTO brandDTO = brandMapper.toDto(brand.orElse(null));
         for (ProductDetail pd : listProductDetail) {
             totalQuantity += pd.getQuantity();
@@ -107,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
             if (null != discountDetail) {
                 if (discountDetail.getDiscountType() == 0) {
                     productDTO.setReducePrice(discountDetail.getReducedValue());
-                    productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                    productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice(),2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
                 }
                 if (discountDetail.getDiscountType() == 1) {
                     BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());

@@ -19,5 +19,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByIdCustomerAndStatusOrderByCreateDateDesc(Long idCustomer, Integer status);
 
-
+    Order findByCode(String code);
 }

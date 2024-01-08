@@ -93,6 +93,7 @@ public class AppConstant {
                 "/api/admin/product/*",
                 "/api/admin/product/*/*",
                 "/api/admin/PrdDetail/*",
+                "/api/admin/PrdDetail/hien-thi",
                 "/api/admin/PrdDetail/*/*",
                 "/api/admin/material/*",
                 "/api/admin/material/*/*",
@@ -155,6 +156,7 @@ public class AppConstant {
                 "/view/api/get-order-detail/by-order/*",
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
+                "/view/api/send-email-from-customer",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
                 "view/api/get-all-voucher-ship",
@@ -165,7 +167,9 @@ public class AppConstant {
                 "/view/api/verify-otp",
                 "/view/api/reset-pass",
                 "/view/api/get-brand-top",
+                "/view/api/tra-cuu-order",
                 "/view/api/get-product-tuong-tu",
                 "/sales-counter/api/list-bill-all",
+
         };
 }

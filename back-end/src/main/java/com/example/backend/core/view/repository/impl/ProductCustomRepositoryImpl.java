@@ -46,7 +46,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                     ") images ON images.id_product = p.id ");
             sql.append("  left join brand b on b.id = p.id_brand ");
             sql.append(" {1} ");
-            sql.append("GROUP BY p.id, p.code, p.name, p.price  " +
+            sql.append("GROUP BY p.id, p.code, p.name, p.price, images.image_names  " +
                     "  ORDER BY total_sold DESC limit 8");
             String sqlStr = sql.toString();
             if (null != thuongHieu && thuongHieu > 0) {
@@ -85,7 +85,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                     if (null != discountDetai) {
                         if (discountDetai.getDiscountType() == 0) {
                             productDTO.setReducePrice(discountDetai.getReducedValue());
-                            productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                            productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice(),2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
                         }
                         if (discountDetai.getDiscountType() == 1) {
                             BigDecimal price = discountDetai.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());
@@ -123,7 +123,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
             if(idProduct != null && idCategory != null){
                 sql.append(" where p.id != :idProduct and c.id = :idCategory ");
             }
-            sql.append("GROUP BY p.id, p.code, p.name, p.price  LIMIT 4;");
+            sql.append("GROUP BY p.id, p.code, p.name, p.price, image_names   LIMIT 4;");
             Query query = entityManager.createNativeQuery(sql.toString());
             if(idProduct != null && idCategory != null){
                 query.setParameter("idProduct", idProduct);

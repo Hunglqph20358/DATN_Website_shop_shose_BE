@@ -18,6 +18,7 @@ public class StatisticalAdminDTO implements Serializable {
     private String dateStr;
     private BigDecimal revenue;
     private Long quantityOrder;
+    private Long quantityProduct;
     private String dateFrom;
     private String dateTo;
 }

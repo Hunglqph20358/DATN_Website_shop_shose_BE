@@ -19,4 +19,5 @@ public interface OrderService {
 
     ServiceResult<OrderDTO> createOrderNotLogin(OrderDTO orderDTO);
 
+    ServiceResult<OrderDTO> traCuuDonHang(OrderDTO orderDTO);
 }

@@ -74,7 +74,7 @@ public class ProductAdminCustomRepositoryImpl implements ProductAdminCustomRepos
                     "    GROUP BY id_product\n" +
                     ") images ON images.id_product = p.id\n" +
                     "left join `order` o on o.id = od.id_order\n" +
-                    "where month(o.payment_date) = month(now())\n" +
+                    "where month(o.payment_date) = month(now()) and o.status = 3\n" +
                     "GROUP BY p.id, p.code, p.name, p.price, images.image_names, b.name\n" +
                     "ORDER BY total_sold DESC\n" +
                     "LIMIT 5;");
