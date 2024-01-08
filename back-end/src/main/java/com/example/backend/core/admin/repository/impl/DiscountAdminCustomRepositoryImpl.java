@@ -49,7 +49,7 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "    discount.end_date,\n" +
                     "    discount.description,\n" +
                     "    discount_detail.reduced_value ,\n" +
-                    "    if(discount_detail.discount_type = 0, 'Theo %' , 'Theo tiền') as type ,\n" +
+                    "    if(discount_detail.discount_type = 1, 'Theo %' , 'Theo tiền') as type ,\n" +
                     "    discount_detail.max_reduced ,\n" +
                     "    product.name as NameProduct\n" +
                     "FROM discount\n" +
@@ -698,14 +698,13 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     "                    FROM product p\n" +
                     "                    LEFT JOIN discount_detail dd ON p.id = dd.id_product\n" +
                     "\t\t\t\t\tLEFT JOIN discount d ON d.id = dd.id_discount AND d.idel = 0\n" +
-                    "                    JOIN product_detail pd ON p.id = pd.id_product\n" +
+                    "                  LEFT  JOIN product_detail pd ON p.id = pd.id_product\n" +
                     "                    LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
                     "\t\t\t\t\tLEFT JOIN brand b ON p.id_brand = b.id\n" +
                     "                    LEFT JOIN category c ON p.id_category = c.id\n" +
-                    "                    WHERE dd.id IS NULL or dd.id is not null  and d.start_date < NOW() AND d.end_date > NOW()\n" +
+//                    "                    WHERE dd.id IS NULL\n" +
                     "                    GROUP BY p.id, p.code, p.name, brand_name, category_name\n" +
                     "                    ORDER BY total_sold;";
-
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
             List<ProductAdminDTO> productDTOList = new ArrayList<>();
