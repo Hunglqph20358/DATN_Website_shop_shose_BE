@@ -13,19 +13,32 @@ import com.example.backend.core.model.Voucher;
 import com.example.backend.core.model.VoucherFreeShip;
 import com.example.backend.core.security.dto.UsersDTO;
 import com.example.backend.core.view.dto.AddressDTO;
+import com.example.backend.core.view.dto.ColorDTO;
 import com.example.backend.core.view.dto.CustomerDTO;
+import com.example.backend.core.view.dto.ImagesDTO;
 import com.example.backend.core.view.dto.OrderDTO;
 import com.example.backend.core.view.dto.OrderDetailDTO;
+import com.example.backend.core.view.dto.ProductDTO;
+import com.example.backend.core.view.dto.ProductDetailDTO;
+import com.example.backend.core.view.dto.SizeDTO;
+import com.example.backend.core.view.mapper.ColorMapper;
 import com.example.backend.core.view.mapper.CustomerMapper;
+import com.example.backend.core.view.mapper.ImagesMapper;
 import com.example.backend.core.view.mapper.OrderDetailMapper;
 import com.example.backend.core.view.mapper.OrderMapper;
 import com.example.backend.core.view.mapper.ProductDetailMapper;
+import com.example.backend.core.view.mapper.ProductMapper;
+import com.example.backend.core.view.mapper.SizeMapper;
+import com.example.backend.core.view.repository.ColorRepository;
 import com.example.backend.core.view.repository.CustomerRepository;
+import com.example.backend.core.view.repository.ImagesRepository;
 import com.example.backend.core.view.repository.OrderCustomRepository;
 import com.example.backend.core.view.repository.OrderDetailRepository;
 import com.example.backend.core.view.repository.OrderHistoryRepository;
 import com.example.backend.core.view.repository.OrderRepository;
 import com.example.backend.core.view.repository.ProductDetailRepository;
+import com.example.backend.core.view.repository.ProductRepository;
+import com.example.backend.core.view.repository.SizeRepository;
 import com.example.backend.core.view.repository.VoucherFreeShipRepository;
 import com.example.backend.core.view.repository.VoucherRepository;
 import com.example.backend.core.view.service.OrderService;
@@ -75,6 +88,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderDetailMapper orderDetailMapper;
+
+    @Autowired
+    private ProductDetailMapper productDetailMapper;
+
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
+    private ImagesRepository imagesRepository;
+    @Autowired
+    private ImagesMapper imagesMapper;
+
+    @Autowired
+    private ColorRepository colorRepository;
+    @Autowired
+    private ColorMapper colorMapper;
+
+    @Autowired
+    private SizeRepository sizeRepository;
+    @Autowired
+    private SizeMapper sizeMapper;
+
 
     @Override
     public ServiceResult<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -254,6 +291,19 @@ public class OrderServiceImpl implements OrderService {
         if(null != order){
             dto = orderMapper.toDto(order);
             List<OrderDetailDTO> orderDetailDTOList = orderDetailMapper.toDto(orderDetailRepository.findByIdOrder(dto.getId()));
+            for (int i = 0; i < orderDetailDTOList.size() ; i++) {
+                ProductDetailDTO productDetailDTO = productDetailMapper.toDto(productDetailRepository.findById(orderDetailDTOList.get(i).getIdProductDetail()).get());
+                ProductDTO productDTO = productMapper.toDto(productRepository.findById(productDetailDTO.getIdProduct()).get());
+                List<ImagesDTO> imagesDTOList = imagesMapper.toDto(imagesRepository.findByIdProduct(productDTO.getId()));
+                ColorDTO colorDTO = colorMapper.toDto(colorRepository.findById(productDetailDTO.getIdColor()).get());
+                productDetailDTO.setColorDTO(colorDTO);
+                SizeDTO sizeDTO = sizeMapper.toDto(sizeRepository.findById(productDetailDTO.getIdSize()).get());
+                productDetailDTO.setSizeDTO(sizeDTO);
+                productDTO.setImagesDTOList(imagesDTOList);
+                productDetailDTO.setProductDTO(productDTO);
+                orderDetailDTOList.get(i).setProductDetailDTO(productDetailDTO);
+                orderDetailDTOList.set(i,orderDetailDTOList.get(i));
+            }
             dto.setOrderDetailDTOList(orderDetailDTOList);
             result.setData(dto);
             result.setMessage("Success");
