@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
             result.setData(null);
             return result;
         }
-        ProductDTO productDTO = productMapper.toDto(product.get());
+        ProductDTO productDTO = productMapper.toDto(product.orElse(null));
         Optional<Brand> brand = brandRepository.findById(product.get().getIdBrand());
         Optional<Material> material = materialRepository.findById(product.get().getIdMaterial());
         Optional<Sole> sole = soleRepository.findById(product.get().getIdSole());
