@@ -21,8 +21,6 @@ public class ProductDetailAdminDTO {
     private Integer quantity;
     private BigDecimal listedPrice;
     private BigDecimal price;
-    private Instant createDate;
-    private Instant updateDate;
     private Integer shoeCollar;
     private ProductAdminDTO productDTO;
     private ColorAdminDTO colorDTO;

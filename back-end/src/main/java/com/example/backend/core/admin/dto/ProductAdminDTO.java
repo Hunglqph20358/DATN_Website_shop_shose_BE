@@ -29,8 +29,10 @@ public class ProductAdminDTO extends ExportDTO {
     private Long idSole;
     private String description;
     private Integer status;
+    private List<ProductDetailAdminDTO> productDetailAdminDTOList;
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
+    private ProductDetailAdminDTO productDetailAdminDTO;
     private StaffAdminDTO staffAdminDTO;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
@@ -38,11 +40,14 @@ public class ProductAdminDTO extends ExportDTO {
     private CategoryAdminDTO categoryAdminDTO;
     private MaterialAdminDTO materialAdminDTO;
     private SoleAdminDTO soleAdminDTO;
-    private ProductDetailAdminDTO productDetailAdminDTO;
     private ImagesAdminDTO imagesAdminDTO;
     private String brandName;
     private String categoryName;
     private String materialName;
+//    private String sizeExport;
+//    private String Export;
+    private ColorAdminDTO colorDTO;
+    private SizeAdminDTO sizeDTO;
     private String soleHeight;
 
     private String imageNameImport;

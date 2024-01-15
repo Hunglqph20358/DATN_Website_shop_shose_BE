@@ -94,6 +94,7 @@ public class AppConstant {
                 "/api/admin/product/*/*",
                 "/api/admin/PrdDetail/*",
                 "/api/admin/PrdDetail/*/*",
+                "/api/admin/PrdDetail/*/*/*",
                 "/api/admin/material/*",
                 "/api/admin/material/*/*",
                 "/api/admin/color/*",
