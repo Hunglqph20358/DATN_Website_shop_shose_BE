@@ -238,6 +238,10 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     public List<ProductAdminDTO> findByNameLikeOrCodeLike(String param) {
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByNameLikeOrCodeLike("%" + param + "%", "%" + param + "%"));
         for (int i = 0; i < list.size(); i++) {
+            List<Images> imagesList = imageAdminRepository.findByIdProduct(list.get(i).getId());
+            if(!imagesList.isEmpty()){
+                list.get(i).setImagesDTOList(imagesAdminMapper.toDto(imagesList));
+            }
             SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).orElse(null));
             list.get(i).setSoleAdminDTO(soleAdminDTO);
             MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(list.get(i).getIdMaterial()).orElse(null));
@@ -246,10 +250,10 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             list.get(i).setBrandAdminDTO(brandAdminDTO);
             CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).orElse(null));
             list.get(i).setCategoryAdminDTO(categoryAdminDTO);
-            ProductDetailAdminDTO productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findById(list.get(i).getId()).orElse(null));
-            list.get(i).setProductDetailAdminDTO(productDetailAdminDTO);
+            System.out.println(list.get(i).getId());
+            List<ProductDetailAdminDTO> productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findByIdProduct(list.get(i).getId()));
+            list.get(i).setProductDetailDTOList(productDetailAdminDTO);
         }
-
         return list;
     }
 

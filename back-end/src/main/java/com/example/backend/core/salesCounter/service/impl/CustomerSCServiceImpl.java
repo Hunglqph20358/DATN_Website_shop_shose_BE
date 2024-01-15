@@ -27,6 +27,12 @@ public class CustomerSCServiceImpl implements CustomerSCService {
     @Override
     public ServiceResult<CustomerDTO> addCustomer(CustomerDTO customerDTO) {
         ServiceResult<CustomerDTO> result = new ServiceResult<>();
+        if (repository.existsByPhone(customerDTO.getPhone())){
+            result.setMessage("The phone is existed");
+            result.setData(customerDTO);
+            result.setStatus(HttpStatus.OK);
+            return result;
+        }
         Customer customer = mapper.toEntity(customerDTO);
         customer.setCode("KH" + Instant.now().getEpochSecond());
         customer.setEmail("emailCustomer" + Instant.now().getEpochSecond() + "@gmail.com" );
@@ -39,4 +45,5 @@ public class CustomerSCServiceImpl implements CustomerSCService {
         result.setStatus(HttpStatus.OK);
         return result;
     }
+
 }
