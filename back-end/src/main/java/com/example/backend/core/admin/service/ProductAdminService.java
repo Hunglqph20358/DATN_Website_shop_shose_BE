@@ -1,9 +1,12 @@
 package com.example.backend.core.admin.service;
 
+import com.example.backend.core.admin.dto.ImagesAdminDTO;
 import com.example.backend.core.admin.dto.MaterialAdminDTO;
 import com.example.backend.core.admin.dto.ProductAdminDTO;
+import com.example.backend.core.admin.dto.ProductDetailAdminDTO;
 import com.example.backend.core.commons.ResponseImportDTO;
 import com.example.backend.core.commons.ServiceResult;
+import com.example.backend.core.model.Product;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,10 +19,12 @@ public interface ProductAdminService {
     ServiceResult<ProductAdminDTO> update(ProductAdminDTO productAdminDTO,Long id);
     ServiceResult<ProductAdminDTO> delete(Long id);
     ServiceResult<ProductAdminDTO> getById(Long id);
-    List<ProductAdminDTO> getProduct(String code, String name);
     List<ProductAdminDTO> findByNameLikeOrCodeLike(String param);
-    List<ProductAdminDTO> findByName(String name);
-
+    List<ProductAdminDTO> getAllProductsWithDetailsAndImages();
+    List<Product> searchProducts(String keyword);
+//    List<ProductDetailAdminDTO> getProductDetailAdminDTOs(Long productId);
+//    List<ImagesAdminDTO> getImagesAdminDTOs(Long productId);
+    ServiceResult<List<ProductAdminDTO>> getDetailProduct(Long idProduct);
     byte[] exportExcelProduct() throws IOException;
 
     byte[] exportExcelTemplateProduct() throws IOException;
