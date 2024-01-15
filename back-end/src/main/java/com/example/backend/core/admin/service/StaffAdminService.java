@@ -12,4 +12,5 @@ public interface StaffAdminService {
     List<StaffAdminDTO> getAllStaff();
     ServiceResult<StaffAdminDTO> findById(Long id);
     ServiceResult<StaffAdminDTO> updateStaff(StaffAdminDTO staffAdminDTO, Staff staff);
+    List<StaffAdminDTO> findByCodeOrPhone(String param);
 }

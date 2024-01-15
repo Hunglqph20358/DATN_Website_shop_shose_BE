@@ -31,6 +31,8 @@ public class CustomerSCServiceImpl implements CustomerSCService {
         customer.setCode("KH" + Instant.now().getEpochSecond());
         customer.setEmail("emailCustomer" + Instant.now().getEpochSecond() + "@gmail.com" );
         customer.setPassword(encoder.encode("123456"));
+        customer.setStatus(0);
+        customer.setIdel(0);
         repository.save(customer);
         result.setMessage("done");
         result.setData(customerDTO);

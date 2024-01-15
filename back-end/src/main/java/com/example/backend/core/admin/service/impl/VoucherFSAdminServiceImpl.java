@@ -156,11 +156,12 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
         VoucherFreeShip voucher = voucherAdminMapper.toEntity(voucherAdminDTO);
         List<VoucherFreeShip> voucherList = new ArrayList<>();
-        voucher.setCode("VC" + Instant.now().getEpochSecond());
+        voucher.setCode("VCS" + Instant.now().getEpochSecond());
         voucher.setCreateDate(java.util.Date.from(Instant.now()));
         voucher.setStatus(0);
         voucher.setIdel(0);
         voucher.setDelete(0);
+        voucher.setAmountUsed(0);
         voucher.setConditionApply(voucherAdminDTO.getConditionApply());
         voucher.setDescription(voucherAdminDTO.getDescription());
         voucher.setCreateName(voucherAdminDTO.getCreateName());
@@ -214,6 +215,9 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
             voucher.setName(voucherAdminDTO.getName());
             voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
             voucher.setQuantity(voucherAdminDTO.getQuantity());
+            voucher.setName(voucherAdminDTO.getName());
+            voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
+            voucher.setReducedValue(voucherAdminDTO.getReducedValue());
             voucher.setStartDate(voucherAdminDTO.getStartDate());
             voucher.setEndDate(voucherAdminDTO.getEndDate());
             if (voucherAdminDTO.getOptionCustomer() == 0) {

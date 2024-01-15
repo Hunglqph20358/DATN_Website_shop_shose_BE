@@ -93,6 +93,7 @@ public class AppConstant {
                 "/api/admin/product/*",
                 "/api/admin/product/*/*",
                 "/api/admin/PrdDetail/*",
+                "/api/admin/PrdDetail/hien-thi",
                 "/api/admin/PrdDetail/*/*",
                 "/api/admin/PrdDetail/*/*/*",
                 "/api/admin/material/*",
@@ -125,6 +126,8 @@ public class AppConstant {
                 "/sales-customer/add-customer",
                 "/api/admin/staff-getall",
                 "/api/admin/staff-update/*",
+                "/api/admin/staff-search/*",
+                "/sales-counter/api/get-all-order",
 
         };
         public static final String[] API_STAFF = {
@@ -154,6 +157,7 @@ public class AppConstant {
                 "/view/api/get-order-detail/by-order/*",
                 "/view/api/create-order/not-login",
                 "/view/api/send-email-completeOrder",
+                "/view/api/send-email-from-customer",
                 "/view/api/send-email-completeOrder/not-login",
                 "/view/api/cancel-order-view",
                 "view/api/get-all-voucher-ship",
@@ -164,7 +168,9 @@ public class AppConstant {
                 "/view/api/verify-otp",
                 "/view/api/reset-pass",
                 "/view/api/get-brand-top",
+                "/view/api/tra-cuu-order",
                 "/view/api/get-product-tuong-tu",
                 "/sales-counter/api/list-bill-all",
+
         };
 }

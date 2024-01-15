@@ -73,8 +73,11 @@ public class StaffAdminServiceImpl implements StaffAdminService {
             staff.setEmail(staffAdminDTO.getEmail());
             staff.setBirthday(staffAdminDTO.getBirthday());
             staff.setGender(staffAdminDTO.getGender());
-            staff.setPassword(encoder.encode(staffAdminDTO.getPasswword()));
+            if (staffAdminDTO.getPasswword() != null){
+                staff.setPassword(encoder.encode(staffAdminDTO.getPasswword()));
+            }
             staff.setIdel(staffAdminDTO.getIdel());
+            staff.setRole(staffAdminDTO.getRole());
             this.repository.save(staff);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");
@@ -85,5 +88,16 @@ public class StaffAdminServiceImpl implements StaffAdminService {
             result.setData(null);
         }
         return result;
+    }
+
+    @Override
+    public List<StaffAdminDTO> findByCodeOrPhone(String param) {
+        if (!param.equals("")){
+            List<StaffAdminDTO> list = staffMapper.toDto(repository.findByCodeLikeOrPhoneLike("%" + param + "%", "%" + param + "%"));
+            return list;
+        }else {
+            return this.getAllStaff();
+        }
+
     }
 }

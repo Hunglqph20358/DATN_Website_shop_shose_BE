@@ -6,6 +6,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,4 +42,19 @@ public class OrderDTO {
     private String dateFrom;
     private String dateTo;
     private String note;
+    private List<OrderDetailDTO> orderDetailDTOList;
+
+    public String getStatusSendEmail(){
+        if(status == 0){
+            return "Chờ xác nhận";
+        }else if(status == 1){
+            return "Chờ xử lý";
+        }else if(status == 2){
+            return "Đang giao hàng";
+        }else if(status == 3){
+            return "Hoàn thành";
+        }else{
+            return "Đã hủy";
+        }
+    }
 }

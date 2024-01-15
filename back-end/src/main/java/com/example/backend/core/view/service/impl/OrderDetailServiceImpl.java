@@ -1,6 +1,10 @@
 package com.example.backend.core.view.service.impl;
 
 
+import com.example.backend.core.admin.dto.OrderHistoryAdminDTO;
+import com.example.backend.core.admin.dto.StaffAdminDTO;
+import com.example.backend.core.admin.mapper.StaffAdminMapper;
+import com.example.backend.core.admin.repository.StaffAdminRepository;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Discount;
 import com.example.backend.core.model.DiscountDetail;
@@ -68,16 +72,49 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
     private DiscountRepository discountRepository;
 
+    @Autowired
+    private StaffAdminMapper staffAdminMapper;
+
+    @Autowired
+    private StaffAdminRepository staffAdminRepository;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
     @Override
     public Map<String, Object> getAllByOrder(Long idOrder) {
         Map<String, Object> map = new HashMap<>();
         if (idOrder == null) {
             return null;
         }
-        List<OrderHistoryDTO> orderHistoryDTOList = new ArrayList<>();
+        List<OrderHistoryDTO> orderHistoryAdminDTOList = new ArrayList<>();
+        List<OrderHistoryDTO> orderHistoryViewList = new ArrayList<>();
         List<OrderHistory> orderHistoryList = orderHistoryRepository.getAllOrderHistoryByOrder(idOrder);
+        for (int i = 0; i < orderHistoryList.size(); i++) {
+            if(null != orderHistoryList.get(i).getIdStaff()){
+                if(staffAdminRepository.findById(orderHistoryList.get(i).getIdStaff()).isPresent()){
+                    StaffAdminDTO staffAdminDTO = staffAdminMapper.toDto(staffAdminRepository.findById(orderHistoryList.get(i).getIdStaff()).orElse(null));
+                    OrderHistoryDTO orderHistoryAdminDTO = orderHistoryMapper.toDto(orderHistoryList.get(i));
+                    orderHistoryAdminDTO.setStaffAdminDTO(staffAdminDTO);
+                    orderHistoryAdminDTOList.add(orderHistoryAdminDTO);
+                }
+            }
+
+        }
+        for (int i = 0; i < orderHistoryList.size(); i++) {
+            if(null != orderHistoryList.get(i).getIdCustomer()){
+                if(customerRepository.findById(orderHistoryList.get(i).getIdCustomer()).isPresent()){
+                    CustomerDTO customerDTO = customerMapper.toDto(customerRepository.findById(orderHistoryList.get(i).getIdCustomer()).orElse(null));
+                    OrderHistoryDTO orderHistoryAdminDTO = orderHistoryMapper.toDto(orderHistoryList.get(i));
+                    orderHistoryAdminDTO.setCustomerDTO(customerDTO);
+                    orderHistoryViewList.add(orderHistoryAdminDTO);
+                }
+            }
+        }
         List<OrderDetailDTO> lst = orderDetailMapper.toDto(orderDetailRepository.findByIdOrder(idOrder));
-        orderHistoryDTOList = orderHistoryMapper.toDto(orderHistoryList);
         for (int i = 0; i < lst.size(); i++) {
             ProductDetailDTO productDetailDTO = productDetailMapper.toDto(productDetailRepository.findById(lst.get(i).getIdProductDetail()).get());
             ProductDTO productDTO = productMapper.toDto(productRepository.findById(productDetailDTO.getIdProduct()).get());
@@ -92,7 +129,8 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             lst.set(i, lst.get(i));
         }
         map.put("orderDetail", lst);
-        map.put("orderHistory", orderHistoryDTOList);
+        map.put("orderHistoryAdmin", orderHistoryAdminDTOList);
+        map.put("orderHistoryView", orderHistoryViewList);
         return map;
     }
 
