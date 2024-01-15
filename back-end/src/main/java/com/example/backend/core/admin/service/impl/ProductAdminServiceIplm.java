@@ -16,6 +16,8 @@ import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.commons.SheetConfigDTO;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.*;
+import com.example.backend.core.salesCounter.mapper.ProductSCMapper;
+import com.example.backend.core.salesCounter.repository.DiscountSCRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
@@ -31,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -91,6 +94,12 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
     @Autowired
     private CategoryAdminRepository categoryAdminRepository;
+
+    @Autowired
+    private DiscountSCRepository discountSCRepository;
+
+    @Autowired
+    private DiscountDetailAdminRepository discountDetailAdminRepository;
 
     private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
 
@@ -253,6 +262,26 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             System.out.println(list.get(i).getId());
             List<ProductDetailAdminDTO> productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findByIdProduct(list.get(i).getId()));
             list.get(i).setProductDetailDTOList(productDetailAdminDTO);
+            List<Discount> discountList = discountSCRepository.getDiscountConApDung();
+            for (int j = 0; j < discountList.size(); j++) {
+                DiscountDetail discountDetail = discountDetailAdminRepository.findByIdDiscountAndIdProduct(discountList.get(j).getId(), list.get(i).getId());
+                if (null != discountDetail) {
+                    if (discountDetail.getDiscountType() == 0) {
+                        list.get(i).setReducePrice(discountDetail.getReducedValue());
+                        list.get(i).setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(list.get(i).getPrice(),2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
+                    }
+                    if (discountDetail.getDiscountType() == 1) {
+                        BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(list.get(i).getPrice());
+                        if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
+                            list.get(i).setReducePrice(discountDetail.getMaxReduced());
+                        }else {
+                            list.get(i).setReducePrice(discountDetail.getReducedValue());
+                        }
+                        list.get(i).setPercentageReduce(discountDetail.getReducedValue().intValue());
+                    }
+                }
+
+            }
         }
         return list;
     }

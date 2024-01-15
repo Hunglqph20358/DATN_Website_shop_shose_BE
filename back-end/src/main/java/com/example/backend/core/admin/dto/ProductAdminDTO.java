@@ -33,6 +33,9 @@ public class ProductAdminDTO extends ExportDTO {
     private Integer idel;
     private StaffAdminDTO staffAdminDTO;
     private Integer totalQuantity;
+    private BigDecimal reducePrice;
+    private Integer percentageReduce;
+    private String codeDiscount;
     private List<ProductDetailAdminDTO> productDetailDTOList;
     private BrandAdminDTO brandAdminDTO;
     private CategoryAdminDTO categoryAdminDTO;
