@@ -28,13 +28,44 @@ public class ProductAdminCustomRepositoryImpl implements ProductAdminCustomRepos
     public List<ProductAdminDTO> getAllProductExport() {
         List<ProductAdminDTO> lstProduct = new ArrayList<>();
         try {
-            StringBuilder sql = new StringBuilder("select p.code as code , p.name as name , p.create_date as createDate, b.name as brandName , c.name as categoryName, \n" +
-                    "m.name as materialName , concat(s.sole_height, ' cm') as soleHeight , p.price as price , p.description as description, p.status\n" +
-                    "from product p \n" +
-                    "left join brand b on p.id_brand = b.id \n" +
-                    "left join category c on p.id_category = c.id\n" +
-                    "left join material m on p.id_material = m.id\n" +
-                    "left join sole s on p.id_sole = s.id");
+            StringBuilder sql = new StringBuilder("SELECT \n" +
+                    "    p.code AS code,\n" +
+                    "    p.name AS name,\n" +
+                    "    p.create_date AS createDate,\n" +
+                    "    b.name AS brandName,\n" +
+                    "    c.name AS categoryName,\n" +
+                    "    m.name AS materialName,\n" +
+                    "    p.price AS price,\n" +
+                    "    p.description AS description,\n" +
+                    "    p.status,\n" +
+                    "    ifnull(SUM(detailInfo.quantity), 0) AS totalQuantity,\n" +
+                    "    GROUP_CONCAT(DISTINCT detailInfo.sizeName ORDER BY detailInfo.sizeName SEPARATOR ', ') AS sizes,\n" +
+                    "    GROUP_CONCAT(DISTINCT detailInfo.colorName ORDER BY detailInfo.colorName SEPARATOR ', ') AS colors\n" +
+                    "FROM product p\n" +
+                    "LEFT JOIN (\n" +
+                    "    SELECT \n" +
+                    "        pd.id_product,\n" +
+                    "        sizeCheck.sizeName,\n" +
+                    "        colorCheck.colorName,\n" +
+                    "        SUM(pd.quantity) AS quantity\n" +
+                    "    FROM product_detail pd\n" +
+                    "    LEFT JOIN (\n" +
+                    "        SELECT s.id AS id, GROUP_CONCAT(s.size_number) AS sizeName\n" +
+                    "        FROM size s\n" +
+                    "        GROUP BY s.id\n" +
+                    "    ) AS sizeCheck ON sizeCheck.id = pd.id_size\n" +
+                    "    LEFT JOIN (\n" +
+                    "        SELECT c.id AS id, GROUP_CONCAT(c.name) AS colorName\n" +
+                    "        FROM color c\n" +
+                    "        GROUP BY c.id\n" +
+                    "    ) AS colorCheck ON colorCheck.id = pd.id_color\n" +
+                    "    GROUP BY pd.id_product, sizeCheck.sizeName, colorCheck.colorName\n" +
+                    ") AS detailInfo ON p.id = detailInfo.id_product\n" +
+                    "LEFT JOIN brand b ON p.id_brand = b.id\n" +
+                    "LEFT JOIN category c ON p.id_category = c.id\n" +
+                    "LEFT JOIN material m ON p.id_material = m.id\n" +
+                    "GROUP BY p.id, code, name, createDate, brandName, categoryName, materialName, price, description, status\n" +
+                    "LIMIT 0, 1000;\n");
             Query query = entityManager.createNativeQuery(sql.toString());
             List<Object[]> lstObj = query.getResultList();
             for (Object[] obj : lstObj) {
@@ -45,10 +76,13 @@ public class ProductAdminCustomRepositoryImpl implements ProductAdminCustomRepos
                 productAdminDTO.setBrandName((String) obj[3]);
                 productAdminDTO.setCategoryName((String) obj[4]);
                 productAdminDTO.setMaterialName((String) obj[5]);
-                productAdminDTO.setSoleHeight((String) obj[6]);
-                productAdminDTO.setPrice(new BigDecimal(obj[7].toString()));
-                productAdminDTO.setDescription((String) obj[8]);
-                productAdminDTO.setStatus((Integer) obj[9]);
+//                productAdminDTO.setSoleHeight((String) obj[6]);
+                productAdminDTO.setPriceExport(new BigDecimal(obj[6].toString()).toString());
+                productAdminDTO.setDescription((String) obj[7]);
+                productAdminDTO.setStatus((Integer) obj[8]);
+                productAdminDTO.setTotalQuantity(((BigDecimal) obj[9]).intValue());
+                productAdminDTO.setSizeExport((String) obj[10]);
+                productAdminDTO.setColorExport((String) obj[11]);
                 lstProduct.add(productAdminDTO);
             }
         } catch (Exception e) {
