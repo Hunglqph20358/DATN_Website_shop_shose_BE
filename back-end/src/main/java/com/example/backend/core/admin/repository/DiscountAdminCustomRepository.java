@@ -19,5 +19,6 @@ public interface DiscountAdminCustomRepository {
     List<DiscountAdminDTO> getAllByProductNameOrCode(String productNameOrCode);
     List<DiscountAdminDTO> getAllByBrand(String brand);
     List<ProductAdminDTO> getAllProduct();
+    List<ProductAdminDTO> getAllProductKickHoat();
     List<DiscountDetailAdminDTO> discountExport();
 }

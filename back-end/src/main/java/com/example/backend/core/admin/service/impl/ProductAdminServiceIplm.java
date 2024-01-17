@@ -96,6 +96,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     private SizeAdminReposiotry sizeAdminReposiotry;
     @Autowired
     private ImageAdminRepository imageAdminRepository;
+
     @Autowired
     private ImagesAdminMapper imagesAdminMapper;
 
@@ -103,7 +104,6 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     private CategoryAdminRepository categoryAdminRepository;
 
     private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
-
     @Override
     public List<ProductAdminDTO> getAll() {
 
