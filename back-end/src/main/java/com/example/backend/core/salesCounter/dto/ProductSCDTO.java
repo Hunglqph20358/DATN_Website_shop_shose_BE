@@ -30,6 +30,9 @@ public class ProductSCDTO {
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
     private StaffAdminDTO staffAdminDTO;
+    private BigDecimal reducePrice;
+    private Integer percentageReduce;
+    private String codeDiscount;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
     private BrandAdminDTO brandAdminDTO;

@@ -12,4 +12,5 @@ public interface DiscountDetailAdminRepository extends JpaRepository<DiscountDet
 
     @Query(value = "select d from DiscountDetail d where d.idDiscount = ?1")
     List<DiscountDetail> findAllByDiscount(Long id);
+    DiscountDetail findByIdDiscountAndIdProduct(Long idDiscount, Long idProduct);
 }
