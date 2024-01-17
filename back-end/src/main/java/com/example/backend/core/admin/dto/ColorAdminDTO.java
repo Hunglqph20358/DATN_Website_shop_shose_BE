@@ -11,6 +11,7 @@ import java.time.Instant;
 public class ColorAdminDTO {
 
     private Long id;
+    private String code;
     private String name;
     private Instant createDate;
 
