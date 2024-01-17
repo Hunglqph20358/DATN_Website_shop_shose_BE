@@ -113,6 +113,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     private DiscountDetailAdminRepository discountDetailAdminRepository;
 
     private ServiceResult<ProductAdminDTO> result = new ServiceResult<>();
+
     @Override
     public List<ProductAdminDTO> getAll() {
 
@@ -128,10 +129,10 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             list.get(i).setCategoryAdminDTO(categoryAdminDTO);
             List<Images> imagesList = imageAdminRepository.findByIdProduct(list.get(i).getId());
             List<ProductDetail> productDetails = productDetailAdminRepository.findByIdProduct(list.get(i).getId());
-            if(!imagesList.isEmpty()){
+            if (!imagesList.isEmpty()) {
                 list.get(i).setImagesDTOList(imagesAdminMapper.toDto(imagesList));
             }
-            if(!productDetails.isEmpty()){
+            if (!productDetails.isEmpty()) {
                 list.get(i).setProductDetailAdminDTOList(productDetailMapper.toDto(productDetails));
             }
         }
@@ -141,7 +142,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     @Override
     public ServiceResult<ProductAdminDTO> add(ProductAdminDTO productAdminDTO) {
         Product product = productAdminMapper.toEntity(productAdminDTO);
-        product.setCode("SP"+ Instant.now().getEpochSecond());
+        product.setCode("SP" + Instant.now().getEpochSecond());
         Optional<Brand> brand = brrp.findById(product.getIdBrand());
         Optional<Material> material = mtrp.findById(product.getIdMaterial());
         Optional<Sole> sole = slrp.findById(product.getIdSole());
@@ -162,7 +163,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         product.setUpdateDate(Instant.now());
         product.setPrice(productAdminDTO.getPrice());
         product = this.prdrp.save(product);
-        if (product != null){
+        if (product != null) {
             for (int i = 0; i < productAdminDTO.getProductDetailAdminDTOList().size(); i++) {
                 ProductDetail productDetail = new ProductDetail();
                 productDetail.setIdProduct(product.getId());
@@ -245,7 +246,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByNameLikeOrCodeLike("%" + param + "%", "%" + param + "%"));
         for (int i = 0; i < list.size(); i++) {
             List<Images> imagesList = imageAdminRepository.findByIdProduct(list.get(i).getId());
-            if(!imagesList.isEmpty()){
+            if (!imagesList.isEmpty()) {
                 list.get(i).setImagesDTOList(imagesAdminMapper.toDto(imagesList));
             }
             SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(list.get(i).getIdSole()).orElse(null));
@@ -265,13 +266,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                 if (null != discountDetail) {
                     if (discountDetail.getDiscountType() == 0) {
                         list.get(i).setReducePrice(discountDetail.getReducedValue());
-                        list.get(i).setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(list.get(i).getPrice(),2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
+                        list.get(i).setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(list.get(i).getPrice(), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
                     }
                     if (discountDetail.getDiscountType() == 1) {
                         BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(list.get(i).getPrice());
-                        if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
+                        if (price.compareTo(discountDetail.getMaxReduced()) >= 0) {
                             list.get(i).setReducePrice(discountDetail.getMaxReduced());
-                        }else {
+                        } else {
                             list.get(i).setReducePrice(discountDetail.getReducedValue());
                         }
                         list.get(i).setPercentageReduce(discountDetail.getReducedValue().intValue());
@@ -444,7 +445,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         int countError = 0;
         int total = 0;
         for (List<String> myRecord : records) {
-            if (myRecord.size() != 15)
+            if (myRecord.size() != 14)
                 return new ServiceResult<>(HttpStatus.BAD_REQUEST, "File không đúng định dạng file mẫu", null);
             ProductAdminDTO dto = processRecord(myRecord, brandList, categoryList, materialList, soleList, typeImport);
             if (!dto.getMessageErr().isEmpty()) {
@@ -454,10 +455,10 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                 Product product = new Product(dto);
                 dataSuccess.add(product);
                 product = prdrp.save(product);
-                if(AppConstant.IMPORT_UPDATE.equals(typeImport)){
+                if (AppConstant.IMPORT_UPDATE.equals(typeImport)) {
                     imageAdminRepository.deleteByIdProduct(product.getId());
                 }
-                for (String str: dto.getImageNameImport().split(",")) {
+                for (String str : dto.getImageNameImport().split(",")) {
                     Images images = new Images();
                     images.setIdProduct(product.getId());
                     images.setCreateDate(Instant.now());
@@ -507,7 +508,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                             "Danh sách kích cỡ",
                             "Danh sách màu sắc"
                     };
-        } else if(AppConstant.EXPORT_ERRORS.equals(exportType)){
+        } else if (AppConstant.EXPORT_ERRORS.equals(exportType)) {
             headerArr =
                     new String[]{
                             "STT",
@@ -519,7 +520,6 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                             "Đế giày (*) \n",
                             "Gía sản phẩm (*) \n (Gía phải là số)",
                             "Mô Tả \n",
-                            "Trạng Thái \n",
                             "Ảnh sản phẩm (*) \n (Link ảnh và cách nhau bởi dấu phẩy)",
                             "Danh sách kích cỡ (*) \n (Nếu có nhiều kích cỡ thì cách nhau bởi dấu phẩy \n và phải nhập là số)",
                             "Danh sách màu sắc (*) \n (Nếu có nhiều màu sắc thì cách nhau bởi dấu phẩy \n và phải nhập các mã màu)",
@@ -539,7 +539,6 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                             "Đế giày (*) \n",
                             "Gía sản phẩm (*) \n (Gía phải là số)",
                             "Mô Tả \n",
-                            "Trạng Thái \n",
                             "Ảnh sản phẩm (*) \n (Link ảnh và cách nhau bởi dấu phẩy)",
                             "Danh sách kích cỡ (*) \n (Nếu có nhiều kích cỡ thì cách nhau bởi dấu phẩy \n và phải nhập là số)",
                             "Danh sách màu sắc (*) \n (Nếu có nhiều màu sắc thì cách nhau bởi dấu phẩy \n và phải nhập các mã màu)",
@@ -572,7 +571,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                     new CellConfigDTO("soleImport", AppConstant.ALIGN_LEFT, lstSole.toArray(new String[0]), 1, 99, 6, 6)
             );
             cellConfigCustomList.add(
-                    new CellConfigDTO("shoeCollarExport", AppConstant.ALIGN_LEFT, lstShoeCollar.toArray(new String[0]), 1, 99, 14, 14)
+                    new CellConfigDTO("shoeCollarExport", AppConstant.ALIGN_LEFT, lstShoeCollar.toArray(new String[0]), 1, 99, 13, 13)
             );
             if (AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
                 for (int i = 1; i < 4; i++) {
@@ -594,30 +593,32 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
-            cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
-            cellConfigList.add(new CellConfigDTO("code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-            cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-            if(AppConstant.EXPORT_DATA.equals(exportType)){
-                cellConfigList.add(new CellConfigDTO("createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-            }
-            cellConfigList.add(new CellConfigDTO("brandName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-            cellConfigList.add(new CellConfigDTO("categoryName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-            cellConfigList.add(new CellConfigDTO("materialName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
+        cellConfigList.add(new CellConfigDTO("code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        if (AppConstant.EXPORT_DATA.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        }
+        cellConfigList.add(new CellConfigDTO("brandName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("categoryName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("materialName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
 
         if (AppConstant.EXPORT_ERRORS.equals(exportType) || AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("soleImport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         }
-            cellConfigList.add(new CellConfigDTO("priceExport", AppConstant.ALIGN_LEFT, AppConstant.DOUBLE));
-            cellConfigList.add(new CellConfigDTO("description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("priceExport", AppConstant.ALIGN_LEFT, AppConstant.DOUBLE));
+        cellConfigList.add(new CellConfigDTO("description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        if (AppConstant.EXPORT_DATA.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        }
         if (AppConstant.EXPORT_ERRORS.equals(exportType) || AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("imagesExportErrors", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         }
-        if(AppConstant.EXPORT_DATA.equals(exportType)){
-                cellConfigList.add(new CellConfigDTO("totalQuantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
-            }
-            cellConfigList.add(new CellConfigDTO("sizeExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-            cellConfigList.add(new CellConfigDTO("colorExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        if (AppConstant.EXPORT_DATA.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("totalQuantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        }
+        cellConfigList.add(new CellConfigDTO("sizeExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        cellConfigList.add(new CellConfigDTO("colorExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
         if (!AppConstant.EXPORT_DATA.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("quantityExport", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
             cellConfigList.add(new CellConfigDTO("shoeCollarExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
@@ -663,18 +664,18 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             messErr.add("Mã phải <= 250 kí tự");
             fieldErr.add("code");
         } else if (AppConstant.IMPORT_UPDATE.equals(typeImport)) {
-            if (null == product){
+            if (null == product) {
                 messErr.add("Mã sản phẩm không tồn tại");
                 fieldErr.add("code");
-            }else {
+            } else {
                 productAdminDTO.setId(product.getId());
                 productAdminDTO.setCreateDate(product.getCreateDate());
             }
-        }else {
-            if(null != product){
+        } else {
+            if (null != product) {
                 messErr.add("Mã đã tồn tại");
                 fieldErr.add("code");
-            }else {
+            } else {
                 productAdminDTO.setCreateDate(Instant.now());
             }
         }
@@ -690,13 +691,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
         String b = myRecord.get(col++);
         productAdminDTO.setBrandName(b);
-        if(StringUtils.isBlank(b)){
+        if (StringUtils.isBlank(b)) {
             messErr.add("Hãng không được để trống");
             fieldErr.add("brandName");
-        }else {
+        } else {
             productAdminDTO.setIdBrand(Long.parseLong(b.split("-")[0]));
             Brand brand = brrp.findById(Long.parseLong(b.split("-")[0])).orElse(null);
-            if(null == brand){
+            if (null == brand) {
                 messErr.add("Hãng không tồn tại");
                 fieldErr.add("brandName");
             }
@@ -704,13 +705,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
         String c = myRecord.get(col++);
         productAdminDTO.setCategoryName(c);
-        if(StringUtils.isBlank(c)){
+        if (StringUtils.isBlank(c)) {
             messErr.add("Danh Mục không được để trống");
             fieldErr.add("categoryName");
-        }else {
+        } else {
             productAdminDTO.setIdCategory(Long.parseLong(c.split("-")[0]));
             Category category = ctrp.findById(Long.parseLong(c.split("-")[0])).orElse(null);
-            if(null == category){
+            if (null == category) {
                 messErr.add("Danh mục không tồn tại");
                 fieldErr.add("categoryName");
             }
@@ -718,13 +719,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
         String m = myRecord.get(col++);
         productAdminDTO.setMaterialName(m);
-        if(StringUtils.isBlank(m)){
+        if (StringUtils.isBlank(m)) {
             messErr.add("Chất Liệu không được để trống");
             fieldErr.add("materialName");
-        }else {
+        } else {
             productAdminDTO.setIdMaterial(Long.parseLong(m.split("-")[0]));
             Material material = mtrp.findById(Long.parseLong(m.split("-")[0])).orElse(null);
-            if(null == material){
+            if (null == material) {
                 messErr.add("Chất Liệu không tồn tại");
                 fieldErr.add("materialName");
             }
@@ -732,13 +733,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
         String s = myRecord.get(col++);
         productAdminDTO.setSoleImport(s);
-        if(StringUtils.isBlank(s)){
+        if (StringUtils.isBlank(s)) {
             messErr.add("Đế giày không được để trống");
             fieldErr.add("soleImport");
-        }else {
+        } else {
             productAdminDTO.setIdSole(Long.parseLong(s.split("-")[0]));
             Sole sole = slrp.findById(Long.parseLong(s.split("-")[0])).orElse(null);
-            if(null == sole){
+            if (null == sole) {
                 messErr.add("Đế giày không tồn tại");
                 fieldErr.add("soleImport");
             }
@@ -747,58 +748,58 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
         String price = myRecord.get(col++);
         productAdminDTO.setPriceExport(price);
-        if(StringUtils.isBlank(price)){
+        if (StringUtils.isBlank(price)) {
             messErr.add("Giá không được để trống");
             fieldErr.add("priceExport");
-        }else if(!price.matches(regex)){
+        } else if (!price.matches(regex)) {
             messErr.add("Vui lòng nhập giá là số");
             fieldErr.add("priceExport");
-        }else if(Double.parseDouble(price) < 0){
+        } else if (Double.parseDouble(price) < 0) {
             messErr.add("Vui lòng nhập giá lớn hơn 0");
             fieldErr.add("priceExport");
-        }else {
+        } else {
             productAdminDTO.setPrice(new BigDecimal(price));
         }
         String mota = myRecord.get(col++);
         productAdminDTO.setDescription(mota);
-        if(mota.length() > 500){
+        if (mota.length() > 500) {
             messErr.add("Vui lòng nhập mô tả không vượt quá 500 kí tự");
             fieldErr.add("description");
         }
         String status = myRecord.get(col++);
-        if(!StringUtils.isBlank(status)){
+        if (!StringUtils.isBlank(status)) {
             productAdminDTO.setStatus(Integer.valueOf(status));
         }
         String anhSanPham = myRecord.get(col++);
         productAdminDTO.setImageNameImport(anhSanPham.trim());
         productAdminDTO.setImagesExportErrors(anhSanPham);
-        if(StringUtils.isBlank(anhSanPham)){
+        if (StringUtils.isBlank(anhSanPham)) {
             messErr.add("Vui lòng điền ảnh của sản phẩm");
             fieldErr.add("imagesExportErrors");
-        }else if(!anhSanPham.matches(regexLink)){
+        } else if (!anhSanPham.matches(regexLink)) {
             messErr.add("Vui lòng điền ảnh của sản phẩm là link");
             fieldErr.add("imagesExportErrors");
         }
         String listSize = myRecord.get(col++);
         productAdminDTO.setSizeExport(listSize);
-        if(StringUtils.isBlank(listSize.trim())){
+        if (StringUtils.isBlank(listSize.trim())) {
             messErr.add("Vui lòng nhập kích cỡ của sản phẩm");
             fieldErr.add("sizeExport");
-        }else{
+        } else {
             String[] arr = listSize.split(",");
             Set<String> lstSizeNew = new HashSet<>();
-            for (int i = 0; i< arr.length; i++){
-                if(!arr[i].trim().matches(regexSize)){
+            for (int i = 0; i < arr.length; i++) {
+                if (!arr[i].trim().matches(regexSize)) {
                     messErr.add("Danh sách kích cỡ không hợp lệ, chỉ được nhập\n chỉ được nhập kích cỡ là số và có 2 chữ số\n");
                     fieldErr.add("sizeExport");
                     break;
-                }else {
+                } else {
                     Size size = sizeAdminReposiotry.findBySizeNumber(arr[i].trim());
-                    if(size == null){
+                    if (size == null) {
                         messErr.add("kích cỡ không tồn tại trong hệ thống");
                         fieldErr.add("sizeExport");
                         break;
-                    }else {
+                    } else {
                         lstSizeNew.add(arr[i].trim());
                     }
                 }
@@ -807,13 +808,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
         String listColor = myRecord.get(col++);
         productAdminDTO.setColorExport(listColor);
-        if(StringUtils.isBlank(listColor.trim())){
+        if (StringUtils.isBlank(listColor.trim())) {
             messErr.add("Vui lòng nhập màu sắc của sản phẩm");
             fieldErr.add("colorExport");
-        }else {
+        } else {
             String[] arr = listColor.split(",");
             Set<String> lstColorNew = new HashSet<>();
-            for (int i = 0; i< arr.length; i++){
+            for (int i = 0; i < arr.length; i++) {
                 Color color = colorAdminRepository.findByCode(arr[i].trim());
                 if (color == null) {
                     messErr.add("Mã màu sắc không tồn tại trong hệ thống");
@@ -827,24 +828,24 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
         String quantity = myRecord.get(col++).trim();
         productAdminDTO.setQuantityExport(quantity);
-        if(StringUtils.isBlank(quantity)){
+        if (StringUtils.isBlank(quantity)) {
             messErr.add("Vui lòng nhập số lượng của sản phẩm");
             fieldErr.add("quantityExport");
-        }else if(!quantity.matches(regexQuantity)){
+        } else if (!quantity.matches(regexQuantity)) {
             messErr.add("Vui lòng nhập số lượng phải là số và lớn hơn 0");
             fieldErr.add("quantityExport");
-        }else {
+        } else {
             productAdminDTO.setQuantity(Integer.valueOf(quantity));
         }
         String shoeCollar = myRecord.get(col++).trim();
         productAdminDTO.setShoeCollarExport(shoeCollar);
-        if(StringUtils.isBlank(shoeCollar)){
+        if (StringUtils.isBlank(shoeCollar)) {
             messErr.add("Vui lòng nhập cổ giày của sản phẩm");
             fieldErr.add("shoeCollarExport");
-        }else {
-            if(shoeCollar.equals("LowCollar")){
+        } else {
+            if (shoeCollar.equals("LowCollar")) {
                 productAdminDTO.setShoeCollarImport(0);
-            }else {
+            } else {
                 productAdminDTO.setShoeCollarImport(1);
             }
         }
