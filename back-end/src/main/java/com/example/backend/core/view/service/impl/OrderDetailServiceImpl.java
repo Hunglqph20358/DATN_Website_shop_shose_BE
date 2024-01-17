@@ -150,10 +150,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             OrderDetail orderDetail = new OrderDetail();
             Optional<ProductDetail> productDetail = productDetailRepository.findById(orderDetailDTO.getIdProductDetail());
             if (productDetail.isPresent()) {
-//                if(discount != null && discountDetail != null){
-//                    Integer quantityDiscount = discount.getQuantity();
-//
-//                }
                 orderDetail.setIdOrder(orderDetailDTO.getIdOrder());
                 orderDetail.setIdProductDetail(orderDetailDTO.getIdProductDetail());
                 orderDetail.setPrice(orderDetailDTO.getPrice());
@@ -161,13 +157,19 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 if(orderDetailDTO.getCodeDiscount() != null){
                     orderDetail.setCodeDiscount(orderDetailDTO.getCodeDiscount());
                 }
-                productDetail.get().setQuantity(productDetail.get().getQuantity() - orderDetailDTO.getQuantity());
-                orderDetail.setStatus(0);
-                orderDetailRepository.save(orderDetail);
-                productDetailRepository.save(productDetail.get());
-                result.setStatus(HttpStatus.OK);
-                result.setMessage("Success");
-                result.setData(orderDetailDTO);
+                if(orderDetailDTO.getQuantity() > productDetail.get().getQuantity()){
+                    result.setStatus(HttpStatus.OK);
+                    result.setMessage("Số lượng trong kho không đủ");
+                    result.setData(orderDetailDTO);
+                }else {
+                    productDetail.get().setQuantity(productDetail.get().getQuantity() - orderDetailDTO.getQuantity());
+                    orderDetail.setStatus(0);
+                    orderDetailRepository.save(orderDetail);
+                    productDetailRepository.save(productDetail.get());
+                    result.setStatus(HttpStatus.OK);
+                    result.setMessage("Success");
+                    result.setData(orderDetailDTO);
+                }
             }
         }
         return result;
