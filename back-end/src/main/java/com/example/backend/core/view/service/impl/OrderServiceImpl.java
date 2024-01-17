@@ -190,38 +190,26 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = orderRepository.findById(orderDTO.getId()).orElse(null);
         if (order != null) {
-            result.setData(null);
-            result.setStatus(HttpStatus.BAD_REQUEST);
-            result.setMessage("Đã có lỗi xảy ra khi bạn đang thao tác!");
-            return result;
+            order.setStatus(AppConstant.HUY_DON_HANG);
+            order = orderRepository.save(order);
+            List<OrderDetail> orderDetailList = orderDetailRepository.findByIdOrder(order.getId());
+            for (int i = 0; i < orderDetailList.size(); i++) {
+                ProductDetail productDetail = productDetailRepository.findById(orderDetailList.get(i).getIdProductDetail()).orElse(null);
+                productDetail.setQuantity(productDetail.getQuantity() + orderDetailList.get(i).getQuantity());
+                productDetailRepository.save(productDetail);
+            }
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setStatus(AppConstant.HUY_HISTORY);
+            orderHistory.setCreateDate(Instant.now());
+            orderHistory.setIdOrder(order.getId());
+            orderHistory.setIdCustomer(orderDTO.getIdCustomer());
+            orderHistory.setNote(orderDTO.getNote());
+            orderHistoryRepository.save(orderHistory);
+            result.setData(orderMapper.toDto(order));
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Success");
         }
-        if(order.getStatus() == AppConstant.HUY_DON_HANG){
-            result.setData(null);
-            result.setStatus(HttpStatus.BAD_REQUEST);
-            result.setMessage("Đã có lỗi xảy ra khi bạn đang thao tác!");
-            return result;
-        }else {
-                order.setStatus(AppConstant.HUY_DON_HANG);
-                order = orderRepository.save(order);
-                List<OrderDetail> orderDetailList = orderDetailRepository.findByIdOrder(order.getId());
-                for (int i = 0; i < orderDetailList.size(); i++) {
-                    ProductDetail productDetail = productDetailRepository.findById(orderDetailList.get(i).getIdProductDetail()).orElse(null);
-                    productDetail.setQuantity(productDetail.getQuantity() + orderDetailList.get(i).getQuantity());
-                    productDetailRepository.save(productDetail);
-                }
-                OrderHistory orderHistory = new OrderHistory();
-                orderHistory.setStatus(AppConstant.HUY_HISTORY);
-                orderHistory.setCreateDate(Instant.now());
-                orderHistory.setIdOrder(order.getId());
-                orderHistory.setIdCustomer(orderDTO.getIdCustomer());
-                orderHistory.setNote(orderDTO.getNote());
-                orderHistoryRepository.save(orderHistory);
-                result.setData(orderMapper.toDto(order));
-                result.setStatus(HttpStatus.OK);
-                result.setMessage("Success");
-
-            return result;
-        }
+        return result;
     }
 
     @Override
