@@ -19,6 +19,7 @@ public interface VoucherFSAdminService {
     List<VoucherFreeShipDTO> getVouchersByTimeRange(String fromDate, String toDate);
     List<VoucherFreeShipDTO> getVouchersByKeyword(String keyword);
     ServiceResult<VoucherFreeShipDTO> KichHoat(Long idVoucher);
+    ServiceResult<VoucherFreeShipDTO> setIdel(Long idVoucher);
     VoucherFreeShipDTO getDetailVoucher(Long id);
     List<VoucherFreeShipDTO> getVouchersByCustomer(String searchTerm);
     List<VoucherFreeShipDTO> getAllKhongKH();

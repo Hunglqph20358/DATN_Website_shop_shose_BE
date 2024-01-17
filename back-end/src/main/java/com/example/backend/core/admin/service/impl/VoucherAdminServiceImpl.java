@@ -11,6 +11,7 @@ import com.example.backend.core.admin.service.VoucherAdminService;
 import com.example.backend.core.commons.*;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Customer;
+import com.example.backend.core.model.Discount;
 import com.example.backend.core.model.Order;
 import com.example.backend.core.model.Voucher;
 import jakarta.mail.MessagingException;
@@ -360,6 +361,29 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         }
         return serviceResult;
     }
+    @Override
+    public ServiceResult<VoucherAdminDTO> setIdel(Long idVoucher) {
+        ServiceResult<VoucherAdminDTO> serviceResult = new ServiceResult<>();
+        Optional<Voucher> optionalVoucher = voucherAdminRepository.findById(idVoucher);
+
+        if (optionalVoucher.isPresent()) {
+            Voucher voucher = optionalVoucher.get();
+            voucher.setIdel(0);
+            voucher =  voucherAdminRepository.save(voucher);
+            VoucherAdminDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+            serviceResult.setData(voucherAdminDTO);
+            serviceResult.setStatus(HttpStatus.OK);
+            serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
+
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+            serviceResult.setData(null);
+        }
+
+        return serviceResult;
+    }
+
     @Override
     public byte[] exportExcelVoucher() throws IOException {
         List<SheetConfigDTO> sheetConfigList = new ArrayList<>();

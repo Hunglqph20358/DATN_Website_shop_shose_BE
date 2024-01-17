@@ -248,7 +248,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
         if (optionalDiscount.isPresent()) {
                 Discount discount = optionalDiscount.get();
-                discount.setIdel(discount.getIdel() == 1 ? 0 : 1);
+                discount.setIdel(0);
                 discount =  discountAdminRepository.save(discount);
                 DiscountAdminDTO voucherAdminDTO = discountAdminMapper.toDto(discount);
                 serviceResult.setData(voucherAdminDTO);
