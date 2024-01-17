@@ -91,7 +91,7 @@
                 <td th:text="${voucher.startDate}"></td>
                 <td th:text="${voucher.endDate}"></td>
                 <td>
-                    <span th:if="${voucher.voucherType == 1}">Theo %</span>
+                    <span th:if="${voucher.voucherType == 0}">Theo %</span>
                     <span th:if="${voucher.voucherType != 1}">Theo Tiền</span>
                 </td>
                 <td th:text="${voucher.reducedValue}"></td>
@@ -102,7 +102,7 @@
                     <span th:if="${voucher.apply == 1}">Mua online</span>
                     <span th:if="${voucher.apply == 2}">Tất cả mọi nơi</span>
                 </td>
-                <td th:if="${voucher.voucherType == 0}" th:text="${voucher.maxReduced}"></td>
+                <td th:if="${voucher.voucherType == 1}" th:text="${voucher.maxReduced}"></td>
             </tr>
             </tbody>
         </table>

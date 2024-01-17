@@ -57,6 +57,10 @@ public class VoucherAdminController {
     public ResponseEntity<?> kichHoat(@PathVariable Long id) throws MessagingException {
         return ResponseEntity.ok(voucherAdminService.KichHoat(id));
     }
+    @PutMapping("/setIdel/{id}")
+    public ResponseEntity<?> setIdel(@PathVariable Long id) throws MessagingException {
+        return ResponseEntity.ok(voucherAdminService.setIdel(id));
+    }
     @GetMapping("/customer")
     public ResponseEntity<?> getAllCustomer(){
         return ResponseEntity.ok(voucherAdminService.getAllCustomer());
