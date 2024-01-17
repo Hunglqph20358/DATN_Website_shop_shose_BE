@@ -8,10 +8,7 @@ import com.example.backend.core.admin.repository.OrderAdminRepository;
 import com.example.backend.core.admin.repository.VoucherAdminCustomRepository;
 import com.example.backend.core.admin.repository.VoucherAdminRepository;
 import com.example.backend.core.admin.service.VoucherAdminService;
-import com.example.backend.core.commons.CellConfigDTO;
-import com.example.backend.core.commons.FileExportUtil;
-import com.example.backend.core.commons.ServiceResult;
-import com.example.backend.core.commons.SheetConfigDTO;
+import com.example.backend.core.commons.*;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
@@ -174,8 +171,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
         voucher.setDescription(voucherAdminDTO.getDescription());
         voucher.setApply(voucherAdminDTO.getApply());
         voucher.setCreateName(voucherAdminDTO.getCreateName());
-        voucher.setStartDate(voucherAdminDTO.getStartDate());
-        voucher.setEndDate(voucherAdminDTO.getEndDate());
+        voucher.setStartDate(DateUtil.formatDate(voucherAdminDTO.getStartDate()));
+        voucher.setEndDate(DateUtil.formatDate(voucherAdminDTO.getEndDate()));
         voucher.setAllow(voucherAdminDTO.getAllow());
         if (voucherAdminDTO.getVoucherType() == 0) {
             voucher.setMaxReduced(voucher.getMaxReduced());
@@ -229,8 +226,8 @@ public class VoucherAdminServiceImpl implements VoucherAdminService {
             voucher.setDescription(voucherAdminDTO.getDescription());
             voucher.setApply(voucherAdminDTO.getApply());
             voucher.setCreateName(voucherAdminDTO.getCreateName());
-            voucher.setStartDate(voucherAdminDTO.getStartDate());
-            voucher.setEndDate(voucherAdminDTO.getEndDate());
+            voucher.setStartDate(DateUtil.formatDate(voucherAdminDTO.getStartDate()));
+            voucher.setEndDate(DateUtil.formatDate(voucherAdminDTO.getEndDate()));
             voucher.setReducedValue(voucherAdminDTO.getReducedValue());
             voucher.setVoucherType(voucherAdminDTO.getVoucherType());
             voucher.setAllow(voucherAdminDTO.getAllow());
