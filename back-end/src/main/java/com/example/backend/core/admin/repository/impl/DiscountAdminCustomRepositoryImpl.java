@@ -694,17 +694,39 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
 
     public List<ProductAdminDTO> getAllProduct() {
         try {
-            String sql = "SELECT p.id, p.code, p.name, b.name as brand_name, c.name as category_name, IFNULL(SUM(od.quantity), 0) AS total_sold , p.price\n" +
-                    "                    FROM product p\n" +
-                    "                    LEFT JOIN discount_detail dd ON p.id = dd.id_product\n" +
-                    "\t\t\t\t\tLEFT JOIN discount d ON d.id = dd.id_discount AND d.idel = 0\n" +
-                    "                  LEFT  JOIN product_detail pd ON p.id = pd.id_product\n" +
-                    "                    LEFT JOIN order_detail od ON od.id_product_detail = pd.id\n" +
-                    "\t\t\t\t\tLEFT JOIN brand b ON p.id_brand = b.id\n" +
-                    "                    LEFT JOIN category c ON p.id_category = c.id\n" +
-                    "                    WHERE dd.id IS NULL\n" +
-                    "                    GROUP BY p.id, p.code, p.name, brand_name, category_name\n" +
-                    "                    ORDER BY total_sold;";
+            String sql = "SELECT\n" +
+                    "    p.id,\n" +
+                    "    p.code,\n" +
+                    "    p.name,\n" +
+                    "    b.name AS brand_name,\n" +
+                    "    c.name AS category_name,\n" +
+                    "    IFNULL(SUM(od.quantity), 0) AS total_sold,\n" +
+                    "    p.price\n" +
+                    "FROM\n" +
+                    "    product p\n" +
+                    "LEFT JOIN\n" +
+                    "    product_detail pd ON p.id = pd.id_product\n" +
+                    "LEFT JOIN\n" +
+                    "    order_detail od ON od.id_product_detail = pd.id\n" +
+                    "LEFT JOIN\n" +
+                    "    brand b ON p.id_brand = b.id\n" +
+                    "LEFT JOIN\n" +
+                    "    category c ON p.id_category = c.id\n" +
+                    "WHERE\n" +
+                    "    Not EXISTS (\n" +
+                    "        SELECT 1\n" +
+                    "        FROM discount_detail dd\n" +
+                    "        JOIN discount d ON dd.id_discount = d.id\n" +
+                    "        WHERE p.id = dd.id_product AND ( d.idel = 1 and d.dele =0)  \n" +
+                    "    )\n" +
+                    "GROUP BY\n" +
+                    "    p.id,\n" +
+                    "    p.code,\n" +
+                    "    p.name,\n" +
+                    "    brand_name,\n" +
+                    "    category_name\n" +
+                    "ORDER BY\n" +
+                    "    total_sold;\n";
             Query query = entityManager.createNativeQuery(sql);
             List<Object[]> resultList = query.getResultList();
             List<ProductAdminDTO> productDTOList = new ArrayList<>();
@@ -730,6 +752,71 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
             return productDTOList;
         } catch (PersistenceException e) {
             e.printStackTrace(); // Handle the exception properly, e.g., log it or throw a custom exception
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductAdminDTO> getAllProductKickHoat() {
+        try {
+            String sql = "SELECT\n" +
+                    "    p.id,\n" +
+                    "    p.code,\n" +
+                    "    p.name,\n" +
+                    "    b.name AS brand_name,\n" +
+                    "    c.name AS category_name,\n" +
+                    "    IFNULL(SUM(od.quantity), 0) AS total_sold,\n" +
+                    "    p.price\n" +
+                    "FROM\n" +
+                    "    product p\n" +
+                    "LEFT JOIN\n" +
+                    "    product_detail pd ON p.id = pd.id_product\n" +
+                    "LEFT JOIN\n" +
+                    "    order_detail od ON od.id_product_detail = pd.id\n" +
+                    "LEFT JOIN\n" +
+                    "    brand b ON p.id_brand = b.id\n" +
+                    "LEFT JOIN\n" +
+                    "    category c ON p.id_category = c.id\n" +
+                    "WHERE\n" +
+                    "    EXISTS (\n" +
+                    "        SELECT 1\n" +
+                    "        FROM discount_detail dd\n" +
+                    "        JOIN discount d ON dd.id_discount = d.id\n" +
+                    "        WHERE p.id = dd.id_product AND ( d.idel = 1 and d.dele =0)  \n" +
+                    "    )\n" +
+                    "GROUP BY\n" +
+                    "    p.id,\n" +
+                    "    p.code,\n" +
+                    "    p.name,\n" +
+                    "    brand_name,\n" +
+                    "    category_name\n" +
+                    "ORDER BY\n" +
+                    "    total_sold;\n";
+            Query query = entityManager.createNativeQuery(sql);
+            List<Object[]> resultList = query.getResultList();
+            List<ProductAdminDTO> productDTOList = new ArrayList<>();
+
+            for (Object[] row : resultList) {
+                ProductAdminDTO product = new ProductAdminDTO();
+                product.setId(((Number) row[0]).longValue());
+                product.setCode((String) row[1]);
+                product.setName((String) row[2]);
+                product.setPrice(new BigDecimal(row[6].toString()));
+                BrandAdminDTO brand = new BrandAdminDTO();
+                brand.setName((String) row[3]);
+                product.setBrandAdminDTO(brand);
+
+                CategoryAdminDTO category = new CategoryAdminDTO();
+                category.setName((String) row[4]);
+                product.setCategoryAdminDTO(category);
+                product.setTotalQuantity((((Number) row[5]).intValue()));
+
+                productDTOList.add(product);
+            }
+
+            return productDTOList;
+        } catch (PersistenceException e) {
+            e.printStackTrace();
             return null;
         }
     }

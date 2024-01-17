@@ -221,21 +221,85 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         Optional<Discount> optionalDiscount = discountAdminRepository.findById(idDiscount);
 
         if (optionalDiscount.isPresent()) {
-            Discount discount = optionalDiscount.get();
+            boolean flag = false;
+            List<ProductAdminDTO> lstProduct = discountAdminCustomRepository.getAllProductKickHoat();
+            DiscountAdminDTO discountAdminDTO = getDetailDiscount(optionalDiscount.get().getId());
+            for (int i = 0; i < lstProduct.size(); i++) {
+                for (int j = 0; j < discountAdminDTO.getProductDTOList().size(); j++) {
+                    if(lstProduct.get(i).getId() == discountAdminDTO.getProductDTOList().get(j).getId()){
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            if(!flag){
+                Discount discount = optionalDiscount.get();
+                discount.setIdel(discount.getIdel() == 1 ? 0 : 1);
+                discount =  discountAdminRepository.save(discount);
+                DiscountAdminDTO voucherAdminDTO = discountAdminMapper.toDto(discount);
+                serviceResult.setData(voucherAdminDTO);
+                serviceResult.setStatus(HttpStatus.OK);
+                serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
+            }else {
+                serviceResult.setMessage("Sản phẩm trong khuyến mãi này đang được áp dụng ở nơi khác");
+                serviceResult.setStatus(HttpStatus.BAD_REQUEST);
+                serviceResult.setData(null);
+            }
 
-            discount.setIdel(discount.getIdel() == 1 ? 0 : 1);
-            discount =  discountAdminRepository.save(discount);
-            DiscountAdminDTO voucherAdminDTO = discountAdminMapper.toDto(discount);
-            serviceResult.setData(voucherAdminDTO);
-            serviceResult.setStatus(HttpStatus.OK);
-            serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
         } else {
             serviceResult.setMessage("Không tìm thấy khuyến mãi");
             serviceResult.setStatus(HttpStatus.NOT_FOUND);
+            serviceResult.setData(null);
         }
 
         return serviceResult;
     }
+    @Override
+    public ServiceResult<DiscountAdminDTO> setIdel(Long idDiscount) {
+        ServiceResult<DiscountAdminDTO> serviceResult = new ServiceResult<>();
+        Optional<Discount> optionalDiscount = discountAdminRepository.findById(idDiscount);
+
+        if (optionalDiscount.isPresent()) {
+                Discount discount = optionalDiscount.get();
+                discount.setIdel(discount.getIdel() == 1 ? 0 : 1);
+                discount =  discountAdminRepository.save(discount);
+                DiscountAdminDTO voucherAdminDTO = discountAdminMapper.toDto(discount);
+                serviceResult.setData(voucherAdminDTO);
+                serviceResult.setStatus(HttpStatus.OK);
+                serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
+
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+            serviceResult.setData(null);
+        }
+
+        return serviceResult;
+    }
+
+    private DiscountAdminDTO getDetailKickHoat(Long id){
+        Discount discount = discountAdminRepository.findById(id).get();
+        if (discount == null) {
+            return null;
+        }
+        DiscountAdminDTO discountAdminDTO = discountAdminMapper.toDto(discount);
+        List<DiscountDetail> discountDetailList = discountDetailRepository.findAllByDiscount(discount.getId());
+
+        List<ProductAdminDTO> lstPruct = new ArrayList<>();
+        if (discountDetailList.size() > 0) {
+            for (int i = 0; i < discountDetailList.size(); i++) {
+                ProductAdminDTO productAdminDTO = productAdminMapper.toDto(productAdminRepository.findById(discountDetailList.get(i).getIdProduct()).orElse(null));
+                lstPruct.add(productAdminDTO);
+
+            }
+            discountAdminDTO.setReducedValue(discountDetailList.get(0).getReducedValue());
+            discountAdminDTO.setDiscountType(discountDetailList.get(0).getDiscountType());
+            discountAdminDTO.setMaxReduced(discountDetailList.get(0).getMaxReduced());
+            discountAdminDTO.setProductDTOList(lstPruct);
+        }
+        return discountAdminDTO;
+    }
+
 
 
     @Override
@@ -267,6 +331,7 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
         List<ProductAdminDTO> list= discountAdminCustomRepository.getAllProduct();
         return list;
     }
+
     @Override
     public byte[] exportExcelDiscount() throws IOException {
         List<SheetConfigDTO> sheetConfigList = new ArrayList<>();
