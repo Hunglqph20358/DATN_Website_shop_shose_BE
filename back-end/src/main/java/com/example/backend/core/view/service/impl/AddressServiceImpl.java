@@ -69,11 +69,13 @@ public class AddressServiceImpl implements AddressService {
             result.setMessage("Error!");
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setData(null);
+            return result;
         }
         if (null == addressDTO.getIdCustomer()) {
             result.setMessage("Error!");
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setData(null);
+            return result;
         }
         addressRepository.updateConfigByCustomer(addressDTO.getIdCustomer());
         address.setConfig(0);
@@ -92,6 +94,7 @@ public class AddressServiceImpl implements AddressService {
             result.setMessage("Error!");
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setData(null);
+            return result;
         }
         result.setMessage("Success!");
         result.setStatus(HttpStatus.OK);

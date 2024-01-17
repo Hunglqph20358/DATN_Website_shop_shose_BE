@@ -36,8 +36,8 @@ public class StatisticalAdminCustomRepositoryImpl implements StatisticalAdminCus
                     ")\n");
             sql.append("  SELECT \n" +
                     "    DateRange.DateValue,\n" +
-                    "    count(o.id) AS totalQuantity,\n" +
-                    "    coalesce(SUM(o.total_payment), 0.00) AS TotalPayment,  COALESCE(SUM(od.quantity), 0) AS TotalQuantity  \n" +
+                    "    COALESCE(COUNT(DISTINCT o.id), 0) AS totalQuantity,\n" +
+                    "    coalesce(SUM(DISTINCT o.total_payment), 0.00) AS TotalPayment,  COALESCE(SUM(od.quantity), 0) AS TotalQuantity  \n" +
                     "FROM DateRange  ");
             sql.append("  LEFT JOIN `order` o ON DATE(o.payment_date) = DateRange.DateValue and o.status = 3\n" +
                     "LEFT JOIN order_detail od ON o.id = od.id_order  GROUP BY DateRange.DateValue\n" +
@@ -70,9 +70,13 @@ public class StatisticalAdminCustomRepositoryImpl implements StatisticalAdminCus
         int currentYear = currentDate.getYear();
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("SELECT COALESCE(COUNT(o.id), 0) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment, ifnull(sum(od.quantity),0) as totalQuantityProduct\n" +
-                    "FROM `order` o left join order_detail od on o.id = od.id_order\n" +
-                    "WHERE o.status = 3 AND YEAR(o.payment_date) = YEAR(NOW()) and month(o.payment_date) = :month");
+            sql.append("SELECT\n" +
+                    "    COALESCE(COUNT(DISTINCT o.id), 0) AS totalQuantity,\n" +
+                    "    COALESCE(SUM(DISTINCT o.total_payment), 0.00) AS totalPayment,\n" +
+                    "    COALESCE(SUM(od.quantity), 0) AS totalQuantityProduct\n" +
+                    "FROM `order` o\n" +
+                    "LEFT JOIN order_detail od ON o.id = od.id_order\n" +
+                    "WHERE o.status = 3 AND YEAR(o.payment_date) = YEAR(NOW()) AND MONTH(o.payment_date) = :month");
             StringBuilder sql2 = new StringBuilder();
             sql2.append("SELECT COALESCE(COUNT(o.id), 0) as totalQuantity,  coalesce(SUM(o.total_payment), 0.00) AS totalPayment\n" +
                     "FROM `order` o\n" +
