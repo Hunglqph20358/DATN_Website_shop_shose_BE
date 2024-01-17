@@ -155,7 +155,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                     if (null != discountDetai) {
                         if (discountDetai.getDiscountType() == 0) {
                             productDTO.setReducePrice(discountDetai.getReducedValue());
-                            productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+                            productDTO.setPercentageReduce(Math.round(discountDetai.getReducedValue().divide(productDTO.getPrice(), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
                         }
                         if (discountDetai.getDiscountType() == 1) {
                             productDTO.setReducePrice(discountDetai.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice()));
