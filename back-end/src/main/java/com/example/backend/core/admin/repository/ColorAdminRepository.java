@@ -11,4 +11,6 @@ import java.util.Optional;
 @Transactional
 public interface ColorAdminRepository extends JpaRepository<Color ,Long> {
 
+    Color findByCode(String code);
+
 }
