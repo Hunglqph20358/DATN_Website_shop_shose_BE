@@ -134,18 +134,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
     @Override
     public ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO discountDetailAdminDTO) {
         ServiceResult<DiscountDetailAdminDTO> serviceResult = new ServiceResult<>();
-        for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
-            ProductAdminDTO productDTO1 = discountDetailAdminDTO.getProductDTOList().get(i);
-            BigDecimal reducedValue1 = discountDetailAdminDTO.getReducedValue();
-
-            if (reducedValue1 == null && reducedValue1.doubleValue() > productDTO1.getPrice().doubleValue()) {
-                serviceResult.setData(null);
-                serviceResult.setMessage("ERROR");
-                serviceResult.setStatus(HttpStatus.BAD_REQUEST);
-                return serviceResult;
-
-            }
-        }
         // Chuyển DTO sang Entity cho DiscountAdmin
         Discount discountAdminEntity = discountAdminMapper.toEntity(discountDetailAdminDTO.getDiscountAdminDTO());
         discountAdminEntity.setCode("GG" + Instant.now().getEpochSecond());
@@ -157,7 +145,6 @@ public class DiscountDetailAdminServiceImpl implements DiscountDetailAdminServic
 
         discountAdminEntity.setStartDate(DateUtil.formatDate(discountDetailAdminDTO.getDiscountAdminDTO().getStartDate()));
         discountAdminEntity.setEndDate(DateUtil.formatDate(discountDetailAdminDTO.getDiscountAdminDTO().getEndDate()));
-
         discountAdminEntity = discountAdminRepository.save(discountAdminEntity);
         for (int i = 0; i < discountDetailAdminDTO.getProductDTOList().size(); i++) {
             DiscountDetail discountDetail = new DiscountDetail();
