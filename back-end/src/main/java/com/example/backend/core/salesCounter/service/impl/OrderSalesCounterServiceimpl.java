@@ -64,9 +64,10 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     public ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO) {
         ServiceResult<OrderSalesDTO> result = new ServiceResult<>();
         Order order = new Order();
-        if (orderSalesDTO.getIdCustomer() == 0) {
+        if (orderSalesDTO.getIdCustomer() == null) {
             order.setCode("HD" + Instant.now().getEpochSecond());
             order.setIdStaff(orderSalesDTO.getIdStaff());
+            order.setIdCustomer(null);
             order.setCreateDate(Instant.now());
             order.setPaymentDate(Instant.now());
             order.setAddressReceived(orderSalesDTO.getAddressReceived());
