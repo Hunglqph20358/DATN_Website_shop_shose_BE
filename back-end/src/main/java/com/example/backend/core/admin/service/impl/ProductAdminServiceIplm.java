@@ -18,6 +18,7 @@ import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.*;
 import com.example.backend.core.salesCounter.mapper.ProductSCMapper;
 import com.example.backend.core.salesCounter.repository.DiscountSCRepository;
+import com.example.backend.core.view.dto.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
@@ -37,8 +38,10 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProductAdminServiceIplm implements ProductAdminService {
@@ -83,10 +86,16 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     private MaterialAdminService materialAdminService;
     @Autowired
     private SoleAdminService soleAdminService;
-
+    @Autowired
+    private ColorAdminMapper colorAdminMapper;
+    @Autowired
+    private SizeAdminMapper sizeAdminMapper;
     @Autowired
     FileExportUtil fileExportUtil;
-
+    @Autowired
+    private ColorAdminRepository colorAdminRepository;
+    @Autowired
+    private SizeAdminReposiotry sizeAdminReposiotry;
     @Autowired
     private ImageAdminRepository imageAdminRepository;
     @Autowired
@@ -117,11 +126,13 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(list.get(i).getIdCategory()).orElse(null));
             list.get(i).setCategoryAdminDTO(categoryAdminDTO);
             List<Images> imagesList = imageAdminRepository.findByIdProduct(list.get(i).getId());
+            List<ProductDetail> productDetails = productDetailAdminRepository.findByIdProduct(list.get(i).getId());
             if(!imagesList.isEmpty()){
                 list.get(i).setImagesDTOList(imagesAdminMapper.toDto(imagesList));
             }
-//          StaffDTO staffDTO = staffMapper.toDto(strp.findById(list.get(i).getStaffDTO().getId()).get());
-//            list.get(i).setStaffDTO(staffDTO);
+            if(!productDetails.isEmpty()){
+                list.get(i).setProductDetailAdminDTOList(productDetailMapper.toDto(productDetails));
+            }
         }
         return list;
     }
@@ -135,8 +146,8 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         Optional<Sole> sole = slrp.findById(product.getIdSole());
         Optional<Category> category = ctrp.findById(product.getIdCategory());
         MaterialAdminDTO materialDTO = materialAdminMapper.toDto(material.orElse(null));
-        SoleAdminDTO soleDTO = soleAdminMapper.toDto(sole.get());
-        CategoryAdminDTO categoryDTO = categoryAdminMapper.toDto(category.get());
+        SoleAdminDTO soleDTO = soleAdminMapper.toDto(sole.orElse(null));
+        CategoryAdminDTO categoryDTO = categoryAdminMapper.toDto(category.orElse(null));
         BrandAdminDTO brandDTO = brandAdminMapper.toDto(brand.orElse(null));
         product.setIdBrand(brandDTO.getId());
         product.setIdCategory(categoryDTO.getId());
@@ -149,14 +160,18 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         product.setCreateDate(Instant.now());
         product.setUpdateDate(Instant.now());
         product.setPrice(productAdminDTO.getPrice());
-//        product.setCreateName(staffDTO.getFullname());
-       product = this.prdrp.save(product);
-//        MultipartFile imageFile = productAdminDTO.getImageFile();
-//        Images images = new Images();
-//        images.setIdProduct(product.getId());
-//        images.setCreateDate(Instant.now());
-//        images.setImageName(imageFile.getOriginalFilename().trim());
-//        images = imageAdminRepository.save(images);
+        product = this.prdrp.save(product);
+        if (product != null){
+            for (int i = 0; i < productAdminDTO.getProductDetailAdminDTOList().size(); i++) {
+                ProductDetail productDetail = new ProductDetail();
+                productDetail.setIdProduct(product.getId());
+                productDetail.setIdColor(productAdminDTO.getProductDetailAdminDTOList().get(i).getColorDTO().getId());
+                productDetail.setIdSize(productAdminDTO.getProductDetailAdminDTOList().get(i).getSizeDTO().getId());
+                productDetail.setShoeCollar(productAdminDTO.getProductDetailAdminDTOList().get(i).getShoeCollar());
+                productDetail.setQuantity(productAdminDTO.getProductDetailAdminDTOList().get(i).getQuantity());
+                this.productDetailAdminRepository.save(productDetail);
+            }
+        }
         result.setStatus(HttpStatus.OK);
         result.setMessage("Them thanh cong");
         result.setData(productAdminMapper.toDto(product));
@@ -225,25 +240,6 @@ public class ProductAdminServiceIplm implements ProductAdminService {
     }
 
     @Override
-    public List<ProductAdminDTO> getProduct(String code, String name) {
-        try {
-            String jpql = "SELECT NEW com.example.backend.core.admin.dto.ProductAdminDTO(p.id, p.code, p.name,p.price,pd.quantity) " +
-                    "FROM Product p, ProductDetail pd " +  // Sử dụng CROSS JOIN
-                    "WHERE p.name LIKE :productName AND p.code LIKE :productCode";
-
-
-            TypedQuery<ProductAdminDTO> query = entityManager.createQuery(jpql, ProductAdminDTO.class);
-            query.setParameter("productName", "%" + name + "%");
-            query.setParameter("productCode", "%" + code + "%");
-            return query.getResultList();
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
-    @Override
     public List<ProductAdminDTO> findByNameLikeOrCodeLike(String param) {
         List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByNameLikeOrCodeLike("%" + param + "%", "%" + param + "%"));
         for (int i = 0; i < list.size(); i++) {
@@ -262,34 +258,151 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             System.out.println(list.get(i).getId());
             List<ProductDetailAdminDTO> productDetailAdminDTO = productDetailMapper.toDto(productDetailAdminRepository.findByIdProduct(list.get(i).getId()));
             list.get(i).setProductDetailDTOList(productDetailAdminDTO);
-            List<Discount> discountList = discountSCRepository.getDiscountConApDung();
-            for (int j = 0; j < discountList.size(); j++) {
-                DiscountDetail discountDetail = discountDetailAdminRepository.findByIdDiscountAndIdProduct(discountList.get(j).getId(), list.get(i).getId());
-                if (null != discountDetail) {
-                    if (discountDetail.getDiscountType() == 0) {
-                        list.get(i).setReducePrice(discountDetail.getReducedValue());
-                        list.get(i).setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(list.get(i).getPrice(),2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).floatValue()));
-                    }
-                    if (discountDetail.getDiscountType() == 1) {
-                        BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(list.get(i).getPrice());
-                        if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
-                            list.get(i).setReducePrice(discountDetail.getMaxReduced());
-                        }else {
-                            list.get(i).setReducePrice(discountDetail.getReducedValue());
-                        }
-                        list.get(i).setPercentageReduce(discountDetail.getReducedValue().intValue());
-                    }
-                }
-
-            }
         }
         return list;
     }
 
+    public List<ProductAdminDTO> getAllProductsWithDetailsAndImages() {
+        List<Product> products = prdrp.findAll();
+        List<ProductAdminDTO> productAdminDTOS = new ArrayList<>();
+
+        for (Product product : products) {
+            List<ProductDetailAdminDTO> productDetailAdminDTOs = getProductDetailAdminDTOs(product.getId());
+            List<ImagesAdminDTO> imagesAdminDTOs = getImagesAdminDTOs(product.getId());
+
+            ProductAdminDTO productAdminDTO = new ProductAdminDTO();
+            productAdminDTO.setId(product.getId());
+            productAdminDTO.setCreateName(product.getCreateName());
+            productAdminDTO.setUpdateName(product.getUpdateName());
+            productAdminDTO.setCode(product.getCode());
+            productAdminDTO.setDescription(product.getDescription());
+            productAdminDTO.setPrice(product.getPrice());
+            productAdminDTO.setStatus(product.getStatus());
+            productAdminDTO.setCreateDate(product.getCreateDate());
+            productAdminDTO.setUpdateDate(product.getUpdateDate());
+            productAdminDTO.setName(product.getName());
+            productAdminDTO.setProductDetailDTOList(productDetailAdminDTOs);
+            productAdminDTO.setImagesDTOList(imagesAdminDTOs);
+
+            SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(slrp.findById(product.getIdSole()).orElse(null));
+            productAdminDTO.setSoleAdminDTO(soleAdminDTO);
+
+            MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(mtrp.findById(product.getIdMaterial()).orElse(null));
+            productAdminDTO.setMaterialAdminDTO(materialAdminDTO);
+
+            BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brrp.findById(product.getIdBrand()).orElse(null));
+            productAdminDTO.setBrandAdminDTO(brandAdminDTO);
+
+            CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(ctrp.findById(product.getIdCategory()).orElse(null));
+            productAdminDTO.setCategoryAdminDTO(categoryAdminDTO);
+
+            productAdminDTOS.add(productAdminDTO);
+        }
+
+        return productAdminDTOS;
+    }
+
     @Override
-    public List<ProductAdminDTO> findByName(String name) {
-        List<ProductAdminDTO> list = productAdminMapper.toDto(prdrp.findByName(name));
-        return list;
+    public List<Product> searchProducts(String keyword) {
+        return prdrp.searchByNameOrCode(keyword);
+    }
+
+    public List<ProductDetailAdminDTO> getProductDetailAdminDTOs(Long productId) {
+        List<ProductDetail> productDetails = productDetailAdminRepository.findByIdProduct(productId);
+        List<ProductDetailAdminDTO> productDetailAdminDTOs = new ArrayList<>();
+
+        for (ProductDetail productDetail : productDetails) {
+            ProductDetailAdminDTO productDetailAdminDTO = new ProductDetailAdminDTO();
+            productDetailAdminDTO.setId(productDetail.getId());
+            productDetailAdminDTO.setQuantity(productDetail.getQuantity());
+            productDetailAdminDTO.setShoeCollar(productDetail.getShoeCollar());
+
+            ColorAdminDTO colorAdminDTO = colorAdminMapper.toDto(colorAdminRepository.findById(productDetail.getIdColor()).orElse(null));
+            productDetailAdminDTO.setColorDTO(colorAdminDTO);
+
+            SizeAdminDTO sizeAdminDTO = sizeAdminMapper.toDto(sizeAdminReposiotry.findById(productDetail.getIdSize()).orElse(null));
+            productDetailAdminDTO.setSizeDTO(sizeAdminDTO);
+
+
+            productDetailAdminDTOs.add(productDetailAdminDTO);
+        }
+
+        return productDetailAdminDTOs;
+    }
+
+
+    public List<ImagesAdminDTO> getImagesAdminDTOs(Long productId) {
+        List<Images> images = imageAdminRepository.findByIdProduct(productId);
+        List<ImagesAdminDTO> imagesAdminDTOs = new ArrayList<>();
+
+        for (Images image : images) {
+            ImagesAdminDTO imagesAdminDTO = new ImagesAdminDTO();
+            imagesAdminDTO.setIdProduct(image.getIdProduct());
+            imagesAdminDTO.setId(image.getId());
+            imagesAdminDTO.setCreateDate(image.getCreateDate());
+            imagesAdminDTO.setImageName(image.getImageName());
+            imagesAdminDTOs.add(imagesAdminDTO);
+        }
+
+        return imagesAdminDTOs;
+    }
+
+    @Override
+    public ServiceResult<List<ProductAdminDTO>> getDetailProduct(Long idProduct) {
+//        Optional<Product> product = prdrp.findById(idProduct);
+//        ServiceResult<List<ProductAdminDTO>> result = new ServiceResult<>();
+//        Integer totalQuantity = 0;
+//        if (!product.isPresent()) {
+//            result.setStatus(HttpStatus.BAD_REQUEST);
+//            result.setMessage("Product không tồn tại !");
+//            result.setData(null);
+//            return result;
+//        }
+//        ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product.orElse(null));
+//        Optional<Brand> brand = brrp.findById(product.get().getIdBrand());
+//        Optional<Material> material = mtrp.findById(product.get().getIdMaterial());
+//        Optional<Sole> sole = slrp.findById(product.get().getIdSole());
+//        Optional<Category> category = ctrp.findById(product.get().getIdCategory());
+//        List<Images> imageList = imageAdminRepository.findByIdProduct(product.get().getId());
+//        List<ProductDetail> listProductDetail = productDetailAdminRepository.findByIdProduct(idProduct);
+//        MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(material.orElse(null));
+//        SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(sole.orElse(null));
+//        CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(category.orElse(null));
+//        BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brand.orElse(null));
+//        for (ProductDetail pd : listProductDetail) {
+//            totalQuantity += pd.getQuantity();
+//        }
+//        productAdminDTO.setProductDetailDTOList(productDetailMapper.toDto(listProductDetail));
+//        productAdminDTO.setImagesDTOList(imagesAdminMapper.toDto(imageList));
+//        productAdminDTO.setBrandAdminDTO(brandAdminDTO);
+//        productAdminDTO.setMaterialAdminDTO(materialAdminDTO);
+//        productAdminDTO.setSoleAdminDTO(soleAdminDTO);
+//        productAdminDTO.setCategoryAdminDTO(categoryAdminDTO);
+//        productAdminDTO.setTotalQuantity(totalQuantity);
+//        List<Discount> discountList = discountRepository.getDiscountConApDung();
+//        for (int i = 0; i < discountList.size(); i++) {
+//            DiscountDetail discountDetail = discountDetailRepository.findByIdDiscountAndIdProduct(discountList.get(i).getId(), productDTO.getId());
+//            if (null != discountDetail) {
+//                if (discountDetail.getDiscountType() == 0) {
+//                    productDTO.setReducePrice(discountDetail.getReducedValue());
+//                    productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
+//                }
+//                if (discountDetail.getDiscountType() == 1) {
+//                    BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());
+//                    if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
+//                        productDTO.setReducePrice(discountDetail.getMaxReduced());
+//                    }else {
+//                        productDTO.setReducePrice(discountDetail.getReducedValue());
+//                    }
+//                    productDTO.setPercentageReduce(discountDetail.getReducedValue().intValue());
+//                }
+//            }
+//
+//        }
+//        result.setStatus(HttpStatus.OK);
+//        result.setMessage("Success");
+//        result.setData(productDTO);
+        return null;
     }
 
     @Override
@@ -348,7 +461,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         int countError = 0;
         int total = 0;
         for (List<String> myRecord : records) {
-            if (myRecord.size() != 11)
+            if (myRecord.size() != 15)
                 return new ServiceResult<>(HttpStatus.BAD_REQUEST, "File không đúng định dạng file mẫu", null);
             ProductAdminDTO dto = processRecord(myRecord, brandList, categoryList, materialList, soleList, typeImport);
             if (!dto.getMessageErr().isEmpty()) {
@@ -404,10 +517,12 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                             "Hãng",
                             "Danh Mục",
                             "Chất Liệu",
-                            "Đế giày",
                             "Gía sản phẩm",
                             "Mô Tả",
                             "Trạng Thái",
+                            "Tổng số lượng",
+                            "Danh sách kích cỡ",
+                            "Danh sách màu sắc"
                     };
         } else if(AppConstant.EXPORT_ERRORS.equals(exportType)){
             headerArr =
@@ -423,6 +538,10 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                             "Mô Tả \n",
                             "Trạng Thái \n",
                             "Ảnh sản phẩm (*) \n (Link ảnh và cách nhau bởi dấu phẩy)",
+                            "Danh sách kích cỡ (*) \n (Nếu có nhiều kích cỡ thì cách nhau bởi dấu phẩy \n và phải nhập là số)",
+                            "Danh sách màu sắc (*) \n (Nếu có nhiều màu sắc thì cách nhau bởi dấu phẩy \n và phải nhập các mã màu)",
+                            "Số lượng (*) \n (Số lượng là số)",
+                            "Cổ giày (*)",
                             "Mô tả lỗi"
                     };
         } else {
@@ -439,6 +558,10 @@ public class ProductAdminServiceIplm implements ProductAdminService {
                             "Mô Tả \n",
                             "Trạng Thái \n",
                             "Ảnh sản phẩm (*) \n (Link ảnh và cách nhau bởi dấu phẩy)",
+                            "Danh sách kích cỡ (*) \n (Nếu có nhiều kích cỡ thì cách nhau bởi dấu phẩy \n và phải nhập là số)",
+                            "Danh sách màu sắc (*) \n (Nếu có nhiều màu sắc thì cách nhau bởi dấu phẩy \n và phải nhập các mã màu)",
+                            "Số lượng (*) \n (Số lượng là số)",
+                            "Cổ giày (*)"
                     };
         }
         sheetConfig.setSheetName(sheetName);
@@ -450,17 +573,23 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             List<String> lstCategory = categoryAdminService.getAllListExport();
             List<String> lstMaterial = materialAdminService.getAllListExport();
             List<String> lstSole = soleAdminService.getAllListExport();
+            List<String> lstShoeCollar = new ArrayList<>();
+            lstShoeCollar.add("LowCollar");
+            lstShoeCollar.add("HighCollar");
             cellConfigCustomList.add(
-                    new CellConfigDTO("brand", AppConstant.ALIGN_LEFT, listBrand.toArray(new String[0]), 1, 99, 3, 3)
+                    new CellConfigDTO("brandName", AppConstant.ALIGN_LEFT, listBrand.toArray(new String[0]), 1, 99, 3, 3)
             );
             cellConfigCustomList.add(
-                    new CellConfigDTO("category", AppConstant.ALIGN_LEFT, lstCategory.toArray(new String[0]), 1, 99, 4, 4)
+                    new CellConfigDTO("categoryName", AppConstant.ALIGN_LEFT, lstCategory.toArray(new String[0]), 1, 99, 4, 4)
             );
             cellConfigCustomList.add(
-                    new CellConfigDTO("material", AppConstant.ALIGN_LEFT, lstMaterial.toArray(new String[0]), 1, 99, 5, 5)
+                    new CellConfigDTO("materialName", AppConstant.ALIGN_LEFT, lstMaterial.toArray(new String[0]), 1, 99, 5, 5)
             );
             cellConfigCustomList.add(
-                    new CellConfigDTO("sole", AppConstant.ALIGN_LEFT, lstSole.toArray(new String[0]), 1, 99, 6, 6)
+                    new CellConfigDTO("soleImport", AppConstant.ALIGN_LEFT, lstSole.toArray(new String[0]), 1, 99, 6, 6)
+            );
+            cellConfigCustomList.add(
+                    new CellConfigDTO("shoeCollarExport", AppConstant.ALIGN_LEFT, lstShoeCollar.toArray(new String[0]), 1, 99, 14, 14)
             );
             if (AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
                 for (int i = 1; i < 4; i++) {
@@ -482,18 +611,33 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
         List<CellConfigDTO> cellConfigList = new ArrayList<>();
         sheetConfig.setList(listDataSheet);
-        cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
-        cellConfigList.add(new CellConfigDTO("code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("brandName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("categoryName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("materialName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("soleHeight", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("price", AppConstant.ALIGN_LEFT, AppConstant.DOUBLE));
-        cellConfigList.add(new CellConfigDTO("description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
-        if (AppConstant.EXPORT_DATA.equals(exportType) || AppConstant.EXPORT_ERRORS.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("recordNo", AppConstant.ALIGN_LEFT, AppConstant.NO));
+            cellConfigList.add(new CellConfigDTO("code", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            cellConfigList.add(new CellConfigDTO("name", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            if(AppConstant.EXPORT_DATA.equals(exportType)){
+                cellConfigList.add(new CellConfigDTO("createDate", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            }
+            cellConfigList.add(new CellConfigDTO("brandName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            cellConfigList.add(new CellConfigDTO("categoryName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            cellConfigList.add(new CellConfigDTO("materialName", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+
+        if (AppConstant.EXPORT_ERRORS.equals(exportType) || AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("soleImport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        }
+            cellConfigList.add(new CellConfigDTO("priceExport", AppConstant.ALIGN_LEFT, AppConstant.DOUBLE));
+            cellConfigList.add(new CellConfigDTO("description", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            cellConfigList.add(new CellConfigDTO("status", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+        if (AppConstant.EXPORT_ERRORS.equals(exportType) || AppConstant.EXPORT_TEMPLATE.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("imagesExportErrors", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        }
+        if(AppConstant.EXPORT_DATA.equals(exportType)){
+                cellConfigList.add(new CellConfigDTO("totalQuantity", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+            }
+            cellConfigList.add(new CellConfigDTO("sizeExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+            cellConfigList.add(new CellConfigDTO("colorExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        if (AppConstant.EXPORT_ERRORS.equals(exportType)) {
+            cellConfigList.add(new CellConfigDTO("quantityExport", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
+            cellConfigList.add(new CellConfigDTO("shoeCollarExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
         }
         sheetConfig.setHasIndex(false);
@@ -518,6 +662,8 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         List<String> fieldErr = new ArrayList<>();
         String regex = "^[0-9]+$";
         String regexLink = "^(http://|https://).+";
+        String regexSize = "\\d{2}";
+        String regexQuantity = "^[0-9]+$";
         int col = 1;
 
 
@@ -557,7 +703,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             fieldErr.add("name");
         }
         String b = myRecord.get(col++);
-
+        productAdminDTO.setBrandName(b);
         if(StringUtils.isBlank(b)){
             messErr.add("Hãng không được để trống");
             fieldErr.add("brandName");
@@ -571,7 +717,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
 
         String c = myRecord.get(col++);
-
+        productAdminDTO.setCategoryName(c);
         if(StringUtils.isBlank(c)){
             messErr.add("Danh Mục không được để trống");
             fieldErr.add("categoryName");
@@ -585,7 +731,7 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
 
         String m = myRecord.get(col++);
-
+        productAdminDTO.setMaterialName(m);
         if(StringUtils.isBlank(m)){
             messErr.add("Chất Liệu không được để trống");
             fieldErr.add("materialName");
@@ -599,30 +745,31 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
 
         String s = myRecord.get(col++);
+        productAdminDTO.setSoleImport(s);
         if(StringUtils.isBlank(s)){
             messErr.add("Đế giày không được để trống");
-            fieldErr.add("soleHeight");
+            fieldErr.add("soleImport");
         }else {
             productAdminDTO.setIdSole(Long.parseLong(s.split("-")[0]));
             Sole sole = slrp.findById(Long.parseLong(s.split("-")[0])).orElse(null);
             if(null == sole){
                 messErr.add("Đế giày không tồn tại");
-                fieldErr.add("soleHeight");
+                fieldErr.add("soleImport");
             }
         }
 
 
         String price = myRecord.get(col++);
-
+        productAdminDTO.setPriceExport(price);
         if(StringUtils.isBlank(price)){
             messErr.add("Giá không được để trống");
-            fieldErr.add("price");
+            fieldErr.add("priceExport");
         }else if(!price.matches(regex)){
             messErr.add("Vui lòng nhập giá là số");
-            fieldErr.add("price");
+            fieldErr.add("priceExport");
         }else if(Double.parseDouble(price) < 0){
             messErr.add("Vui lòng nhập giá lớn hơn 0");
-            fieldErr.add("price");
+            fieldErr.add("priceExport");
         }else {
             productAdminDTO.setPrice(new BigDecimal(price));
         }
@@ -638,12 +785,82 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
         String anhSanPham = myRecord.get(col++);
         productAdminDTO.setImageNameImport(anhSanPham.trim());
+        productAdminDTO.setImagesExportErrors(anhSanPham);
         if(StringUtils.isBlank(anhSanPham)){
             messErr.add("Vui lòng điền ảnh của sản phẩm");
-            fieldErr.add("images");
+            fieldErr.add("imagesExportErrors");
         }else if(!anhSanPham.matches(regexLink)){
             messErr.add("Vui lòng điền ảnh của sản phẩm là link");
-            fieldErr.add("images");
+            fieldErr.add("imagesExportErrors");
+        }
+        String listSize = myRecord.get(col++);
+        productAdminDTO.setSizeExport(listSize);
+        if(StringUtils.isBlank(listSize.trim())){
+            messErr.add("Vui lòng nhập kích cỡ của sản phẩm");
+            fieldErr.add("sizeExport");
+        }else{
+            String[] arr = listSize.split(",");
+            Set<String> lstSizeNew = new HashSet<>();
+            for (int i = 0; i< arr.length; i++){
+                if(!arr[i].trim().matches(regexSize)){
+                    messErr.add("Danh sách kích cỡ không hợp lệ, chỉ được nhập\n chỉ được nhập kích cỡ là số và có 2 chữ số\n");
+                    fieldErr.add("sizeExport");
+                    break;
+                }else {
+                    Size size = sizeAdminReposiotry.findBySizeNumber(arr[i].trim());
+                    if(size == null){
+                        messErr.add("kích cỡ không tồn tại trong hệ thống");
+                        fieldErr.add("sizeExport");
+                        break;
+                    }else {
+                        lstSizeNew.add(arr[i].trim());
+                    }
+                }
+            }
+            productAdminDTO.setSizeImport(lstSizeNew);
+        }
+        String listColor = myRecord.get(col++);
+        productAdminDTO.setColorExport(listColor);
+        if(StringUtils.isBlank(listColor.trim())){
+            messErr.add("Vui lòng nhập màu sắc của sản phẩm");
+            fieldErr.add("colorExport");
+        }else {
+            String[] arr = listColor.split(",");
+            Set<String> lstColorNew = new HashSet<>();
+            for (int i = 0; i< arr.length; i++){
+                Color color = colorAdminRepository.findByCode(arr[i].trim());
+                if (color == null) {
+                    messErr.add("Mã màu sắc không tồn tại trong hệ thống");
+                    fieldErr.add("colorExport");
+                    break;
+                } else {
+                    lstColorNew.add(arr[i].trim());
+                }
+            }
+            productAdminDTO.setColorImport(lstColorNew);
+        }
+        String quantity = myRecord.get(col++).trim();
+        productAdminDTO.setQuantityExport(quantity);
+        if(StringUtils.isBlank(quantity)){
+            messErr.add("Vui lòng nhập số lượng của sản phẩm");
+            fieldErr.add("quantityExport");
+        }else if(!quantity.matches(regexQuantity)){
+            messErr.add("Vui lòng nhập số lượng phải là số và lớn hơn 0");
+            fieldErr.add("quantityExport");
+        }else {
+            productAdminDTO.setQuantity(Integer.valueOf(quantity));
+        }
+        String shoeCollar = myRecord.get(col++).trim();
+        productAdminDTO.setShoeCollarExport(shoeCollar);
+        if(StringUtils.isBlank(shoeCollar)){
+            messErr.add("Vui lòng nhập cổ giày của sản phẩm");
+            fieldErr.add("shoeCollarExport");
+        }else {
+            if(shoeCollar.equals("LowCollar")){
+                productAdminDTO.setShoeCollarImport(0);
+            }else {
+                productAdminDTO.setShoeCollarImport(1);
+            }
         }
         productAdminDTO.setMessageErr(messErr);
         productAdminDTO.setFieldErr(fieldErr);
@@ -652,31 +869,3 @@ public class ProductAdminServiceIplm implements ProductAdminService {
 
 
 }
-//        Instant instant = Instant.now();
-//        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh"); // Múi giờ Việt Nam
-//        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, zoneId);
-//        Instant vietnamInstant = zonedDateTime.toInstant();
-//        Long idsole = productAdminDTO.getIdSole();
-//        ServiceResult<SoleAdminDTO> soleAdminResult = slsv.findbyid(idsole);
-//        Long idbrand = productAdminDTO.getIdBrand();
-//        ServiceResult<BrandAdminDTO> brandAdminResult = brsv.findbyid(idbrand);
-//        Long idcategory = productAdminDTO.getIdCategory();
-//        ServiceResult<CategoryAdminDTO> categoryAdminResult = ctsv.findbyid(idcategory);
-//        Long idmaterial = productAdminDTO.getIdMaterial();
-//        ServiceResult<MaterialAdminDTO> materialAdminResult = mtsv.findbyid(idmaterial);
-//        if (soleAdminResult.getStatus() != HttpStatus.OK) {
-//            return ResponseEntity.status(soleAdminResult.getStatus()).build();
-//        }
-//        if (brandAdminResult.getStatus() != HttpStatus.OK) {
-//            return ResponseEntity.status(brandAdminResult.getStatus()).build();
-//        }
-//        if (categoryAdminResult.getStatus() != HttpStatus.OK) {
-//            return ResponseEntity.status(categoryAdminResult.getStatus()).build();
-//        }
-//        if (materialAdminResult.getStatus() != HttpStatus.OK) {
-//            return ResponseEntity.status(materialAdminResult.getStatus()).build();
-//        }
-//        SoleAdminDTO soleAdminDTO = soleAdminResult.getData();
-//        BrandAdminDTO brandAdminDTO = brandAdminResult.getData();
-//        CategoryAdminDTO categoryAdminDTO = categoryAdminResult.getData();
-//        MaterialAdminDTO materialAdminDTO = materialAdminResult.getData();

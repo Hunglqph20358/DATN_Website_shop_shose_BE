@@ -20,8 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductDetailAdminServiceIplm implements ProductDetailAdminService {
@@ -47,11 +49,11 @@ public class ProductDetailAdminServiceIplm implements ProductDetailAdminService 
     public List<ProductDetailAdminDTO> getAll() {
         List<ProductDetailAdminDTO> list = productDetailAdminMapper.toDto(productDetailAdminRepository.findAll());
         for (int i = 0; i < list.size(); i++) {
-            ColorAdminDTO colorAdminDTO = colorAdminMapper.toDto(colorAdminRepository.findById(list.get(i).getIdColor()).get());
+            ColorAdminDTO colorAdminDTO = colorAdminMapper.toDto(colorAdminRepository.findById(list.get(i).getIdColor()).orElse(null));
             list.get(i).setColorDTO(colorAdminDTO);
-            SizeAdminDTO sizeAdminDTO = sizeAdminMapper.toDto(sizeAdminReposiotry.findById(list.get(i).getIdSize()).get());
+            SizeAdminDTO sizeAdminDTO = sizeAdminMapper.toDto(sizeAdminReposiotry.findById(list.get(i).getIdSize()).orElse(null));
             list.get(i).setSizeDTO(sizeAdminDTO);
-            ProductAdminDTO productAdminDTO = productAdminMapper.toDto(productAdminRepository.findById(list.get(i).getIdProduct()).get());
+            ProductAdminDTO productAdminDTO = productAdminMapper.toDto(productAdminRepository.findById(list.get(i).getIdProduct()).orElse(null));
             list.get(i).setProductDTO(productAdminDTO);
         }
         return list;
@@ -63,16 +65,14 @@ public class ProductDetailAdminServiceIplm implements ProductDetailAdminService 
         Optional<Color> color = colorAdminRepository.findById(productDetail.getIdColor());
         Optional<Size> size = sizeAdminReposiotry.findById(productDetail.getIdSize());
         Optional<Product> product = productAdminRepository.findById(productDetail.getIdProduct());
-        ColorAdminDTO colorAdminDTO = colorAdminMapper.toDto(color.get());
-        SizeAdminDTO sizeAdminDTO = sizeAdminMapper.toDto(size.get());
-        ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product.get());
+        ColorAdminDTO colorAdminDTO = colorAdminMapper.toDto(color.orElse(null));
+        SizeAdminDTO sizeAdminDTO = sizeAdminMapper.toDto(size.orElse(null));
+        ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product.orElse(null));
         productDetail.setIdProduct(productAdminDTO.getId());
         productDetail.setIdColor(colorAdminDTO.getId());
         productDetail.setIdSize(sizeAdminDTO.getId());
         productDetail.setQuantity(productDetailAdminDTO.getQuantity());
         productDetail.setShoeCollar(productDetailAdminDTO.getShoeCollar());
-        productDetail.setCreateDate(Instant.now());
-        productDetail.setUpdateDate(Instant.now());
         productDetailAdminDTO.setProductDTO(productAdminDTO);
         productDetailAdminDTO.setColorDTO(colorAdminDTO);
         productDetailAdminDTO.setSizeDTO(sizeAdminDTO);
@@ -92,7 +92,6 @@ public class ProductDetailAdminServiceIplm implements ProductDetailAdminService 
             productDetail.setIdProduct(productDetailAdminDTO.getIdProduct());
             productDetail.setIdColor(productDetailAdminDTO.getIdColor());
             productDetail.setIdSize(productDetailAdminDTO.getIdSize());
-            productDetail.setUpdateDate(Instant.now());
             productDetail.setQuantity(productDetailAdminDTO.getQuantity());
             productDetail.setShoeCollar(productDetailAdminDTO.getShoeCollar());
             productDetail = this.productDetailAdminRepository.save(productDetail);
@@ -137,5 +136,21 @@ public class ProductDetailAdminServiceIplm implements ProductDetailAdminService 
         }
 
         return result;
+    }
+
+    @Override
+    public List<ProductDetailAdminDTO> getProductDetails(int idColor, int idSize) {
+        List<ProductDetailAdminDTO> productDetailAdminDTOS = new ArrayList<>();
+        return productDetailAdminDTOS.stream()
+                .filter(detail -> detail.getIdColor() == idColor && detail.getIdSize() == idSize)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDetailAdminDTO> getProductDetailsByProductId(int idProduct) {
+        List<ProductDetailAdminDTO> productDetailAdminDTOSs = new ArrayList<>();
+        return productDetailAdminDTOSs.stream()
+                .filter(detail -> detail.getIdProduct() == idProduct)
+                .collect(Collectors.toList());
     }
 }

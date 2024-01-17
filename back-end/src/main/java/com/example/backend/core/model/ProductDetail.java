@@ -27,11 +27,6 @@ public class ProductDetail implements Serializable {
     private Long idSize;
     @Column(name = "quantity")
     private Integer quantity;
-    
-    @Column(name = "create_date")
-    private Instant createDate;
-    @Column(name = "update_date")
-    private Instant updateDate;
     @Column(name = "shoe_collar")
     private Integer shoeCollar;
 

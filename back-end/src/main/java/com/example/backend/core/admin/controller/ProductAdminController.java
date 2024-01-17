@@ -7,6 +7,7 @@ import com.example.backend.core.commons.FileExportUtil;
 import com.example.backend.core.commons.ResponseImportDTO;
 import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.constant.AppConstant;
+import com.example.backend.core.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,25 +27,19 @@ import java.util.List;
 public class ProductAdminController {
     @Autowired
     private ProductAdminService prdsv;
-    @Autowired
-    private ProductAdminMapper productAdminMapper;
-    @Autowired
-    private MaterialAdminService mtsv;
-    @Autowired
-    private SoleAdminService slsv;
-    @Autowired
-    private BrandAdminService brsv;
-    @Autowired
-    private CategoryAdminService ctsv;
     private static final Logger log = LoggerFactory.getLogger(ProductAdminDTO.class);
     @Autowired
     private FileExportUtil fileExportUtil;
+
 
     @GetMapping("product/hien-thi")
     public ResponseEntity<List<ProductAdminDTO>> hienthi() {
         return ResponseEntity.ok(prdsv.getAll());
     }
-
+    @GetMapping("product/hien-thii")
+    public ResponseEntity<List<ProductAdminDTO>> hienthiall() {
+        return ResponseEntity.ok(prdsv.getAllProductsWithDetailsAndImages());
+    }
     @PostMapping("product/add")
     public ResponseEntity<?> add(@RequestBody ProductAdminDTO productAdminDTO) {
         return ResponseEntity.ok(prdsv.add(productAdminDTO));
