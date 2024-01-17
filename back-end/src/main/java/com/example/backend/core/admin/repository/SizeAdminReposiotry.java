@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SizeAdminReposiotry extends JpaRepository<Size,Long> {
+
+    Size findBySizeNumber(String sizeNumber);
+
 }

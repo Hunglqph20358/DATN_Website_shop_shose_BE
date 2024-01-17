@@ -16,6 +16,7 @@ public interface DiscountDetailAdminService {
     ServiceResult<DiscountDetailAdminDTO> createDiscount(DiscountDetailAdminDTO khuyenMaiDTO);
     ServiceResult<DiscountDetailAdminDTO> updateDiscount( DiscountDetailAdminDTO discountDetailAdminDTO);
     ServiceResult<DiscountAdminDTO> KichHoat(Long idDiscount);
+    ServiceResult<DiscountAdminDTO> setIdel(Long idDiscount);
     List<ProductAdminDTO> getAllProduct();
     DiscountAdminDTO getDetailDiscount(Long id);
      List<DiscountAdminDTO> getAllKichHoat();

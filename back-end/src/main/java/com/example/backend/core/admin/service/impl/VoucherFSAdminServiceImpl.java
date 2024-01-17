@@ -8,10 +8,7 @@ import com.example.backend.core.admin.repository.OrderAdminRepository;
 import com.example.backend.core.admin.repository.VoucherFSCustomerRepository;
 import com.example.backend.core.admin.repository.VoucherFreeShipAdminRepository;
 import com.example.backend.core.admin.service.VoucherFSAdminService;
-import com.example.backend.core.commons.CellConfigDTO;
-import com.example.backend.core.commons.FileExportUtil;
-import com.example.backend.core.commons.ServiceResult;
-import com.example.backend.core.commons.SheetConfigDTO;
+import com.example.backend.core.commons.*;
 import com.example.backend.core.constant.AppConstant;
 import com.example.backend.core.model.Customer;
 import com.example.backend.core.model.Order;
@@ -165,8 +162,8 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
         voucher.setConditionApply(voucherAdminDTO.getConditionApply());
         voucher.setDescription(voucherAdminDTO.getDescription());
         voucher.setCreateName(voucherAdminDTO.getCreateName());
-        voucher.setStartDate(voucherAdminDTO.getStartDate());
-        voucher.setEndDate(voucherAdminDTO.getEndDate());
+        voucher.setStartDate(DateUtil.formatDate(voucherAdminDTO.getStartDate()));
+        voucher.setEndDate(DateUtil.formatDate(voucherAdminDTO.getEndDate()));
         if (voucherAdminDTO.getOptionCustomer() == 0) {
             voucher.setIdCustomer(null);
         } else {
@@ -218,8 +215,8 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
             voucher.setName(voucherAdminDTO.getName());
             voucher.setLimitCustomer(voucherAdminDTO.getLimitCustomer());
             voucher.setReducedValue(voucherAdminDTO.getReducedValue());
-            voucher.setStartDate(voucherAdminDTO.getStartDate());
-            voucher.setEndDate(voucherAdminDTO.getEndDate());
+            voucher.setStartDate(DateUtil.formatDate(voucherAdminDTO.getStartDate()));
+            voucher.setEndDate(DateUtil.formatDate(voucherAdminDTO.getEndDate()));
             if (voucherAdminDTO.getOptionCustomer() == 0) {
                 voucher.setIdCustomer(null);
             } else {
@@ -345,6 +342,7 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
 
         return serviceResult;
     }
+
     @Override
     public byte[] exportExcelVoucher() throws IOException {
         List<SheetConfigDTO> sheetConfigList = new ArrayList<>();
