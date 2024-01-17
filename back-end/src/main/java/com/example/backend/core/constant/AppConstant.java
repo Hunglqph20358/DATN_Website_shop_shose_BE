@@ -130,6 +130,8 @@ public class AppConstant {
                 "/sales-counter/api/get-all-order",
                 "/api/sales-couter/create-payment",
                 "sales-counter/product/get-all",
+                "/api/sc-voucher/get-all-voucher",
+                "/api/sc-voucher/get-voucher",
 
         };
         public static final String[] API_STAFF = {
