@@ -63,6 +63,10 @@ public class DiscountDetailAdminController {
     public ResponseEntity<?> kichHoat(@PathVariable Long id) {
         return ResponseEntity.ok(discountService.KichHoat(id));
     }
+    @PutMapping("/setIdel/{id}")
+    public ResponseEntity<?> setIdel(@PathVariable Long id) {
+        return ResponseEntity.ok(discountService.setIdel(id));
+    }
 
     @GetMapping("/{idDiscount}")
     public ResponseEntity<?> getDetailDiscount(@PathVariable Long idDiscount) {

@@ -61,6 +61,7 @@ public class AppConstant {
                 "/api/admin/discount/searchByProduct*",
                 "/api/admin/discount/searchByBrand*",
                 "/api/admin/discount/kichHoat/*",
+                "/api/admin/discount/setIdel/*",
                 "/api/admin/discount/KH",
                 "/api/admin/discount/KKH",
                 "/api/admin/discount/discount/export-data",
