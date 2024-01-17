@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @CrossOrigin("*")
@@ -37,8 +38,12 @@ public class ProductAdminController {
         return ResponseEntity.ok(prdsv.getAll());
     }
     @GetMapping("product/hien-thii")
-    public ResponseEntity<List<ProductAdminDTO>> hienthiall() {
-        return ResponseEntity.ok(prdsv.getAllProductsWithDetailsAndImages());
+    public ResponseEntity<List<ProductAdminDTO>> hienthiall(@RequestParam(value = "search", required = false, defaultValue = "") String search) {
+        if (search != null && !search.isEmpty()) {
+            return ResponseEntity.ok(prdsv.getAllProductsWithDetailsAndImages(search));
+        } else {
+            return ResponseEntity.ok(prdsv.getAllProductsWithDetailsAndImages(null));
+        }
     }
     @PostMapping("product/add")
     public ResponseEntity<?> add(@RequestBody ProductAdminDTO productAdminDTO) {
@@ -48,6 +53,15 @@ public class ProductAdminController {
     @PutMapping("product/update/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody ProductAdminDTO productAdminDTO) {
         return ResponseEntity.ok(prdsv.update(productAdminDTO, id));
+    }
+    @PutMapping("product/{id}/activate")
+    public void activateProduct(@PathVariable("id") Long id) {
+        prdsv.activateProduct(id);
+    }
+
+    @PutMapping("product/{id}/deactivate")
+    public void deactivateProduct(@PathVariable("id") Long id) {
+        prdsv.deactivateProduct(id);
     }
 
     @DeleteMapping("product/delete/{id}")

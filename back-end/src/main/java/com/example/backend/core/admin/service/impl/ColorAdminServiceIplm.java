@@ -50,6 +50,7 @@ public class ColorAdminServiceIplm implements ColorAdminService {
             Color color = optional.get();
             color.setId(id);
             color.setName(colorAdminDTO.getName());
+            color.setCode(colorAdminDTO.getCode());
             color  = clrp.save(color);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Sua thanh cong");

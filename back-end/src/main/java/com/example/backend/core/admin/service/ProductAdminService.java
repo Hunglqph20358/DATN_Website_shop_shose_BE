@@ -20,11 +20,10 @@ public interface ProductAdminService {
     ServiceResult<ProductAdminDTO> delete(Long id);
     ServiceResult<ProductAdminDTO> getById(Long id);
     List<ProductAdminDTO> findByNameLikeOrCodeLike(String param);
-    List<ProductAdminDTO> getAllProductsWithDetailsAndImages();
+    List<ProductAdminDTO> getAllProductsWithDetailsAndImages(String keyword);
     List<Product> searchProducts(String keyword);
-//    List<ProductDetailAdminDTO> getProductDetailAdminDTOs(Long productId);
-//    List<ImagesAdminDTO> getImagesAdminDTOs(Long productId);
-    ServiceResult<List<ProductAdminDTO>> getDetailProduct(Long idProduct);
+    void activateProduct(Long productId);
+    void deactivateProduct(Long productId);
     byte[] exportExcelProduct() throws IOException;
 
     byte[] exportExcelTemplateProduct() throws IOException;

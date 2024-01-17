@@ -40,6 +40,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -282,10 +283,14 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         return list;
     }
 
-    public List<ProductAdminDTO> getAllProductsWithDetailsAndImages() {
+    public List<ProductAdminDTO> getAllProductsWithDetailsAndImages(String search) {
         List<Product> products = prdrp.findAll();
         List<ProductAdminDTO> productAdminDTOS = new ArrayList<>();
-
+        if (search != null && !search.isEmpty()) {
+            products = prdrp.searchByNameOrCode(search.toUpperCase());
+        } else {
+            products = prdrp.findAll();
+        }
         for (Product product : products) {
             List<ProductDetailAdminDTO> productDetailAdminDTOs = getProductDetailAdminDTOs(product.getId());
             List<ImagesAdminDTO> imagesAdminDTOs = getImagesAdminDTOs(product.getId());
@@ -327,6 +332,22 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         return prdrp.searchByNameOrCode(keyword);
     }
 
+    @Override
+    public void activateProduct(Long productId) {
+        Product product = prdrp.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + productId));
+        product.setStatus(0);
+        prdrp.save(product);
+    }
+
+    @Override
+    public void deactivateProduct(Long productId) {
+        Product product = prdrp.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + productId));
+        product.setStatus(1);
+        prdrp.save(product);
+    }
+
     public List<ProductDetailAdminDTO> getProductDetailAdminDTOs(Long productId) {
         List<ProductDetail> productDetails = productDetailAdminRepository.findByIdProduct(productId);
         List<ProductDetailAdminDTO> productDetailAdminDTOs = new ArrayList<>();
@@ -365,64 +386,6 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         }
 
         return imagesAdminDTOs;
-    }
-
-    @Override
-    public ServiceResult<List<ProductAdminDTO>> getDetailProduct(Long idProduct) {
-//        Optional<Product> product = prdrp.findById(idProduct);
-//        ServiceResult<List<ProductAdminDTO>> result = new ServiceResult<>();
-//        Integer totalQuantity = 0;
-//        if (!product.isPresent()) {
-//            result.setStatus(HttpStatus.BAD_REQUEST);
-//            result.setMessage("Product không tồn tại !");
-//            result.setData(null);
-//            return result;
-//        }
-//        ProductAdminDTO productAdminDTO = productAdminMapper.toDto(product.orElse(null));
-//        Optional<Brand> brand = brrp.findById(product.get().getIdBrand());
-//        Optional<Material> material = mtrp.findById(product.get().getIdMaterial());
-//        Optional<Sole> sole = slrp.findById(product.get().getIdSole());
-//        Optional<Category> category = ctrp.findById(product.get().getIdCategory());
-//        List<Images> imageList = imageAdminRepository.findByIdProduct(product.get().getId());
-//        List<ProductDetail> listProductDetail = productDetailAdminRepository.findByIdProduct(idProduct);
-//        MaterialAdminDTO materialAdminDTO = materialAdminMapper.toDto(material.orElse(null));
-//        SoleAdminDTO soleAdminDTO = soleAdminMapper.toDto(sole.orElse(null));
-//        CategoryAdminDTO categoryAdminDTO = categoryAdminMapper.toDto(category.orElse(null));
-//        BrandAdminDTO brandAdminDTO = brandAdminMapper.toDto(brand.orElse(null));
-//        for (ProductDetail pd : listProductDetail) {
-//            totalQuantity += pd.getQuantity();
-//        }
-//        productAdminDTO.setProductDetailDTOList(productDetailMapper.toDto(listProductDetail));
-//        productAdminDTO.setImagesDTOList(imagesAdminMapper.toDto(imageList));
-//        productAdminDTO.setBrandAdminDTO(brandAdminDTO);
-//        productAdminDTO.setMaterialAdminDTO(materialAdminDTO);
-//        productAdminDTO.setSoleAdminDTO(soleAdminDTO);
-//        productAdminDTO.setCategoryAdminDTO(categoryAdminDTO);
-//        productAdminDTO.setTotalQuantity(totalQuantity);
-//        List<Discount> discountList = discountRepository.getDiscountConApDung();
-//        for (int i = 0; i < discountList.size(); i++) {
-//            DiscountDetail discountDetail = discountDetailRepository.findByIdDiscountAndIdProduct(discountList.get(i).getId(), productDTO.getId());
-//            if (null != discountDetail) {
-//                if (discountDetail.getDiscountType() == 0) {
-//                    productDTO.setReducePrice(discountDetail.getReducedValue());
-//                    productDTO.setPercentageReduce(Math.round(discountDetail.getReducedValue().divide(productDTO.getPrice()).multiply(new BigDecimal(100)).floatValue()));
-//                }
-//                if (discountDetail.getDiscountType() == 1) {
-//                    BigDecimal price = discountDetail.getReducedValue().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(productDTO.getPrice());
-//                    if(price.compareTo(discountDetail.getMaxReduced()) >= 0){
-//                        productDTO.setReducePrice(discountDetail.getMaxReduced());
-//                    }else {
-//                        productDTO.setReducePrice(discountDetail.getReducedValue());
-//                    }
-//                    productDTO.setPercentageReduce(discountDetail.getReducedValue().intValue());
-//                }
-//            }
-//
-//        }
-//        result.setStatus(HttpStatus.OK);
-//        result.setMessage("Success");
-//        result.setData(productDTO);
-        return null;
     }
 
     @Override
