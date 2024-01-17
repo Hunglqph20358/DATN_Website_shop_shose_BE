@@ -103,9 +103,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     e.printStackTrace();
                     continue;
                 }
-                if (discount.getStatus() == 1) {
-                    discount.setIdel(0);//Nếu hết hạn thì sẽ thành ko hiển thị
-                }
                 discounts.add(discountDetailAdminDTO);
             }
             return discounts;
@@ -171,9 +168,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     e.printStackTrace();
                     continue;
                 }
-                if (discount.getStatus() == 1) {
-                    discount.setIdel(0);//Nếu hết hạn thì sẽ thành ko hiển thị
-                }
                 discounts.add(discount);
 
             }
@@ -237,9 +231,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         e.printStackTrace();
                         continue;
                     }
-                    if (discount.getStatus() == 1) {
-                        discount.setIdel(0);//Nếu hết hạn thì sẽ thành ko hiển thị
-                    }
 
                     discounts.add(discount);
                 }
@@ -301,9 +292,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     } catch (ParseException e) {
                         e.printStackTrace();
                         continue;
-                    }
-                    if (discount.getStatus() == 1) {
-                        discount.setIdel(0);//Nếu hết hạn thì sẽ thành ko hiển thị
                     }
 
                     discounts.add(discount);
@@ -378,11 +366,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         continue;
                     }
 
-                    if (discount.getStatus() == 1) {
-                        discount.setIdel(0); // Nếu hết hạn thì sẽ thành không hiển thị
-                    } else {
-                        discount.setIdel(1);
-                    }
 
                     discounts.add(discount);
                 }
@@ -456,12 +439,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                         continue;
                     }
 
-                    if (discount.getStatus() == 1) {
-                        discount.setIdel(0); // Nếu hết hạn thì sẽ thành không hiển thị
-                    } else {
-                        discount.setIdel(1);
-                    }
-
                     discounts.add(discount);
                 }
 
@@ -524,12 +501,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     } catch (ParseException e) {
                         e.printStackTrace();
                         continue;
-                    }
-
-                    if (discount.getStatus() == 1) {
-                        discount.setIdel(0); // Nếu hết hạn thì sẽ thành không hiển thị
-                    } else {
-                        discount.setIdel(1);
                     }
 
                     discounts.add(discount);
@@ -595,12 +566,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                     } catch (ParseException e) {
                         e.printStackTrace();
                         continue;
-                    }
-
-                    if (discount.getStatus() == 1) {
-                        discount.setIdel(0); // Nếu hết hạn thì sẽ thành không hiển thị
-                    } else {
-                        discount.setIdel(1);
                     }
 
                     discounts.add(discount);
@@ -673,12 +638,6 @@ public class DiscountAdminCustomRepositoryImpl implements DiscountAdminCustomRep
                 } catch (ParseException e) {
                     e.printStackTrace();
                     continue;
-                }
-
-                if (discount.getStatus() == 1) {
-                    discount.setIdel(0); // Nếu hết hạn thì sẽ thành không hiển thị
-                } else {
-                    discount.setIdel(1);
                 }
 
                 discounts.add(discount);
