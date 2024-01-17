@@ -12,4 +12,6 @@ public interface ProductDetailAdminService {
     ServiceResult<ProductDetailAdminDTO> update(ProductDetailAdminDTO productDetailAdminDTO,Long id);
     ServiceResult<ProductDetailAdminDTO> delete(Long id);
     ServiceResult<ProductDetailAdminDTO> getById(Long id);
+    List<ProductDetailAdminDTO> getProductDetails(int idColor, int idSize);
+    List<ProductDetailAdminDTO> getProductDetailsByProductId(int idProduct);
 }

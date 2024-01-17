@@ -236,6 +236,7 @@ public class OrderServiceImpl implements OrderService {
         order.setReceiverPhone(orderDTO.getReceiverPhone());
         order.setAddressReceived(orderDTO.getAddressReceived());
         order.setEmail(orderDTO.getEmail());
+        order.setType(0);
         if (orderDTO.getPaymentType() == 1) {
             order.setPaymentType(orderDTO.getPaymentType());
             order.setTotalPayment(orderDTO.getTotalPayment());
@@ -282,7 +283,7 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<OrderDTO> result = new ServiceResult<>();
         if(StringUtils.isBlank(orderDTO.getCode())){
             result.setData(null);
-            result.setMessage("Mã đơn hàng không tồn tại");
+            result.setMessage("Vui lòng nhập mã đơn hàng");
             result.setStatus(HttpStatus.BAD_REQUEST);
             return result;
         }
@@ -308,6 +309,11 @@ public class OrderServiceImpl implements OrderService {
             result.setData(dto);
             result.setMessage("Success");
             result.setStatus(HttpStatus.OK);
+        }else {
+            result.setData(null);
+            result.setMessage("Mã đơn hàng không tồn tại!");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            return result;
         }
         return result;
     }

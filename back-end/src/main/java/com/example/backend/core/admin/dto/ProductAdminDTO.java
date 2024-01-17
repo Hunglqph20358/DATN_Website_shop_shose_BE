@@ -9,6 +9,8 @@ import com.example.backend.core.commons.ExportDTO;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -29,8 +31,10 @@ public class ProductAdminDTO extends ExportDTO {
     private Long idSole;
     private String description;
     private Integer status;
+    private List<ProductDetailAdminDTO> productDetailAdminDTOList;
     private List<ImagesAdminDTO> imagesDTOList;
     private Integer idel;
+    private ProductDetailAdminDTO productDetailAdminDTO;
     private StaffAdminDTO staffAdminDTO;
     private Integer totalQuantity;
     private List<ProductDetailAdminDTO> productDetailDTOList;
@@ -38,11 +42,23 @@ public class ProductAdminDTO extends ExportDTO {
     private CategoryAdminDTO categoryAdminDTO;
     private MaterialAdminDTO materialAdminDTO;
     private SoleAdminDTO soleAdminDTO;
-    private ProductDetailAdminDTO productDetailAdminDTO;
     private ImagesAdminDTO imagesAdminDTO;
     private String brandName;
     private String categoryName;
     private String materialName;
+    private String sizeExport;
+    private String colorExport;
+    private String soleImport;;
+    private String imagesExportErrors;
+    private Set<String> sizeImport;
+    private Set<String> colorImport;
+    private Integer quantity;
+    private String quantityExport;
+    private Integer shoeCollarImport;
+    private String shoeCollarExport;
+    private String priceExport;
+    private ColorAdminDTO colorDTO;
+    private SizeAdminDTO sizeDTO;
     private String soleHeight;
 
     private String imageNameImport;

@@ -64,43 +64,50 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
     public ServiceResult<OrderSalesDTO> createOrderSales(OrderSalesDTO orderSalesDTO) {
         ServiceResult<OrderSalesDTO> result = new ServiceResult<>();
         Order order = new Order();
-        if (orderSalesDTO.getIdCustomer() == 0){
+        if (orderSalesDTO.getIdCustomer() == 0) {
             order.setCode("HD" + Instant.now().getEpochSecond());
             order.setIdStaff(orderSalesDTO.getIdStaff());
             order.setCreateDate(Instant.now());
             order.setPaymentDate(Instant.now());
-            order.setPaymentType(AppConstant.DA_THANH_TOAN);
+            order.setAddressReceived(orderSalesDTO.getAddressReceived());
+            order.setPaymentType(orderSalesDTO.getPaymentType());
             order.setStatusPayment(orderSalesDTO.getStatusPayment());
             order.setTotalPrice(orderSalesDTO.getTotalPrice());
             order.setTotalPayment(orderSalesDTO.getTotalPayment());
-            order.setStatus(AppConstant.HOAN_THANH);
-            order.setType(1);
+            order.setStatus(orderSalesDTO.getStatus());
+            order.setType(orderSalesDTO.getType());
+            order.setShipPrice(orderSalesDTO.getShipPrice());
+            order.setReceiver(orderSalesDTO.getReceiver());
+            order.setReceiverPhone(orderSalesDTO.getReceiverPhone());
             order.setEmail(orderSalesDTO.getEmail());
             order = orderSalesCountRepository.save(order);
             orderSalesDTO = orderSalesCounterMapper.toDto(order);
             result.setData(orderSalesDTO);
             result.setStatus(HttpStatus.OK);
             result.setMessage("Success");
-        }
-        else {
-                order.setCode("HD" + Instant.now().getEpochSecond());
-                order.setCreateDate(Instant.now());
-                order.setPaymentDate(Instant.now());
-                order.setReceiver(orderSalesDTO.getReceiver());
-                order.setIdCustomer(orderSalesDTO.getIdCustomer());
-                order.setIdStaff(orderSalesDTO.getIdStaff());
-                order.setPaymentType(AppConstant.DA_THANH_TOAN);
-                order.setStatusPayment(orderSalesDTO.getStatusPayment());
-                order.setTotalPrice(orderSalesDTO.getTotalPrice());
-                order.setTotalPayment(orderSalesDTO.getTotalPayment());
-                order.setStatus(AppConstant.HOAN_THANH);
-                order.setType(1);
-                order.setEmail(orderSalesDTO.getEmail());
-                order = orderSalesCountRepository.save(order);
-                orderSalesDTO = orderSalesCounterMapper.toDto(order);
-                result.setData(orderSalesDTO);
-                result.setStatus(HttpStatus.OK);
-                result.setMessage("Success");
+        } else {
+            order.setCode("HD" + Instant.now().getEpochSecond());
+            order.setCreateDate(Instant.now());
+            order.setPaymentDate(Instant.now());
+            order.setAddressReceived(orderSalesDTO.getAddressReceived());
+            order.setReceiver(orderSalesDTO.getReceiver());
+            order.setIdCustomer(orderSalesDTO.getIdCustomer());
+            order.setIdStaff(orderSalesDTO.getIdStaff());
+            order.setPaymentType(orderSalesDTO.getPaymentType());
+            order.setStatusPayment(orderSalesDTO.getStatusPayment());
+            order.setTotalPrice(orderSalesDTO.getTotalPrice());
+            order.setTotalPayment(orderSalesDTO.getTotalPayment());
+            order.setStatus(orderSalesDTO.getStatus());
+            order.setType(orderSalesDTO.getType());
+            order.setReceiver(orderSalesDTO.getReceiver());
+            order.setReceiverPhone(orderSalesDTO.getReceiverPhone());
+            order.setShipPrice(orderSalesDTO.getShipPrice());
+            order.setEmail(orderSalesDTO.getEmail());
+            order = orderSalesCountRepository.save(order);
+            orderSalesDTO = orderSalesCounterMapper.toDto(order);
+            result.setData(orderSalesDTO);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Success");
         }
 
         return result;

@@ -96,6 +96,7 @@ public class AppConstant {
                 "/api/admin/PrdDetail/*",
                 "/api/admin/PrdDetail/hien-thi",
                 "/api/admin/PrdDetail/*/*",
+                "/api/admin/PrdDetail/*/*/*",
                 "/api/admin/material/*",
                 "/api/admin/material/*/*",
                 "/api/admin/color/*",
@@ -127,7 +128,9 @@ public class AppConstant {
                 "/api/admin/staff-getall",
                 "/api/admin/staff-update/*",
                 "/api/admin/staff-search/*",
+
                 "/sales-counter/api/get-all-order",
+                "/api/sales-couter/create-payment"
 
         };
         public static final String[] API_STAFF = {
