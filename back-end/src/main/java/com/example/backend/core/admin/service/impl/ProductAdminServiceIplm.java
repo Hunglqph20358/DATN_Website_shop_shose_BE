@@ -647,9 +647,12 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             }
             cellConfigList.add(new CellConfigDTO("sizeExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
             cellConfigList.add(new CellConfigDTO("colorExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
-        if (AppConstant.EXPORT_ERRORS.equals(exportType)) {
+        if (!AppConstant.EXPORT_DATA.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("quantityExport", AppConstant.ALIGN_LEFT, AppConstant.NUMBER));
             cellConfigList.add(new CellConfigDTO("shoeCollarExport", AppConstant.ALIGN_LEFT, AppConstant.STRING));
+        }
+
+        if (AppConstant.EXPORT_ERRORS.equals(exportType)) {
             cellConfigList.add(new CellConfigDTO("messageStr", AppConstant.ALIGN_LEFT, AppConstant.ERRORS));
         }
         sheetConfig.setHasIndex(false);
