@@ -70,6 +70,7 @@ public class AppConstant {
                 "/api/admin/voucher/*",
                 "/api/admin/voucher/searchByDate*",
                 "/api/admin/voucher/kichHoat/*",
+                "/api/admin/voucher/setIdel/*",
                 "/api/admin/voucher/searchByCustomer*",
                 "/api/admin/voucher/searchByVoucher*",
                 "/api/admin/voucher/KH",
@@ -83,6 +84,7 @@ public class AppConstant {
                 "/api/admin/voucherFS/searchByVoucherFS*",
                 "/api/admin/voucherFS/searchByCustomer*",
                 "/api/admin/voucherFS/kichHoat/*",
+                "/api/admin/voucherFS/setIdel/*",
                 "/api/admin/voucherFS/KH",
                 "/api/admin/voucherFS/KKH",
                 "/api/admin/voucherFS/sendEmail",
@@ -130,7 +132,10 @@ public class AppConstant {
                 "/api/admin/staff-search/*",
 
                 "/sales-counter/api/get-all-order",
-                "/api/sales-couter/create-payment"
+                "/api/sales-couter/create-payment",
+                "sales-counter/product/get-all",
+                "/api/sc-voucher/get-all-voucher",
+                "/api/sc-voucher/get-voucher",
 
         };
         public static final String[] API_STAFF = {

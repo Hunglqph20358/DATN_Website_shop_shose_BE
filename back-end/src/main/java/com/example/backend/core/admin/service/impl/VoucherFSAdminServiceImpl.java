@@ -254,6 +254,29 @@ public class VoucherFSAdminServiceImpl implements VoucherFSAdminService {
 
         return serviceResult;
     }
+    @Override
+    public ServiceResult<VoucherFreeShipDTO> setIdel(Long idVoucher) {
+        ServiceResult<VoucherFreeShipDTO> serviceResult = new ServiceResult<>();
+        Optional<VoucherFreeShip> optionalVoucher = voucherFreeShipAdminRepository.findById(idVoucher);
+
+        if (optionalVoucher.isPresent()) {
+            VoucherFreeShip voucher = optionalVoucher.get();
+            voucher.setIdel(0);
+            voucher =  voucherFreeShipAdminRepository.save(voucher);
+            VoucherFreeShipDTO voucherAdminDTO = voucherAdminMapper.toDto(voucher);
+            serviceResult.setData(voucherAdminDTO);
+            serviceResult.setStatus(HttpStatus.OK);
+            serviceResult.setMessage("Thành công");// Lưu lại thay đổi vào cơ sở dữ liệu
+
+        } else {
+            serviceResult.setMessage("Không tìm thấy khuyến mãi");
+            serviceResult.setStatus(HttpStatus.NOT_FOUND);
+            serviceResult.setData(null);
+        }
+
+        return serviceResult;
+    }
+
 
 
     @Override

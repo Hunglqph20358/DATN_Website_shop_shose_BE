@@ -17,6 +17,7 @@ public class OrderSalesDTO {
     private Long idCustomer;
     private Long idStaff;
     private String codeVoucher;
+    private String codeVoucherShip;
     private Instant createDate;
     private Instant paymentDate;
     private Date deliveryDate;

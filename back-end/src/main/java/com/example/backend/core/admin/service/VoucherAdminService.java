@@ -14,6 +14,7 @@ public interface VoucherAdminService {
     ServiceResult<VoucherAdminDTO> updateVoucher(Long id, VoucherAdminDTO updatedVoucherAdminDTO);
     ServiceResult<Void> deleteVoucher(Long voucherId);
     ServiceResult<VoucherAdminDTO> KichHoat(Long idVoucher) throws MessagingException;
+    ServiceResult<VoucherAdminDTO> setIdel(Long idVoucher) ;
     VoucherAdminDTO getDetailVoucher(Long id);
 //    List<VoucherAdminDTO> detailById(Long voucherId);
     List<VoucherAdminDTO> getAllVouchers();

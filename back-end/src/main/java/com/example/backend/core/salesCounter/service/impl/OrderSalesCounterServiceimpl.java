@@ -77,6 +77,8 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
             order.setStatus(orderSalesDTO.getStatus());
             order.setType(orderSalesDTO.getType());
             order.setShipPrice(orderSalesDTO.getShipPrice());
+            order.setCodeVoucher(orderSalesDTO.getCodeVoucher());
+            order.setCodeVoucherShip(orderSalesDTO.getCodeVoucherShip());
             order.setReceiver(orderSalesDTO.getReceiver());
             order.setReceiverPhone(orderSalesDTO.getReceiverPhone());
             order.setEmail(orderSalesDTO.getEmail());
@@ -101,6 +103,8 @@ public class OrderSalesCounterServiceimpl implements OrderSalesCounterService {
             order.setType(orderSalesDTO.getType());
             order.setReceiver(orderSalesDTO.getReceiver());
             order.setReceiverPhone(orderSalesDTO.getReceiverPhone());
+            order.setCodeVoucher(orderSalesDTO.getCodeVoucher());
+            order.setCodeVoucherShip(orderSalesDTO.getCodeVoucherShip());
             order.setShipPrice(orderSalesDTO.getShipPrice());
             order.setEmail(orderSalesDTO.getEmail());
             order = orderSalesCountRepository.save(order);

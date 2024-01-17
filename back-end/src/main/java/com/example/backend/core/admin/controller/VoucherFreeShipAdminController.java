@@ -55,6 +55,10 @@ public class VoucherFreeShipAdminController {
     public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
         return ResponseEntity.ok(voucherFSService.KichHoat(id));
     }
+    @PutMapping("/setIdel/{id}")
+    public ResponseEntity<?> setIdel(@PathVariable Long id) {
+        return ResponseEntity.ok(voucherFSService.setIdel(id));
+    }
     @GetMapping("/customer")
     public ResponseEntity<?> getAllCustomer(){
         return ResponseEntity.ok(voucherFSService.getAllCustomer());
