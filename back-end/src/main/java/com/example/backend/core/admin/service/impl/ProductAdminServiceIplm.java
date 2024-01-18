@@ -454,9 +454,30 @@ public class ProductAdminServiceIplm implements ProductAdminService {
             } else {
                 Product product = new Product(dto);
                 dataSuccess.add(product);
+                product.setStatus(0);
                 product = prdrp.save(product);
                 if (AppConstant.IMPORT_UPDATE.equals(typeImport)) {
                     imageAdminRepository.deleteByIdProduct(product.getId());
+                }
+                if(AppConstant.IMPORT_UPDATE.equals(typeImport)){
+                    productDetailAdminRepository.deleteByIdProduct(product.getId());
+                }
+                for (String s: dto.getSizeImport()) {
+                    Size size = sizeAdminReposiotry.findBySizeNumber(s);
+                    if(size != null){
+                        for (String c: dto.getColorImport()) {
+                            Color color = colorAdminRepository.findByCode(c);
+                            if(color != null) {
+                                ProductDetail productDetail = new ProductDetail();
+                                productDetail.setIdProduct(product.getId());
+                                productDetail.setIdColor(color.getId());
+                                productDetail.setQuantity(dto.getQuantity());
+                                productDetail.setIdSize(size.getId());
+                                productDetail.setShoeCollar(dto.getShoeCollarImport());
+                                productDetailAdminRepository.save(productDetail);
+                            }
+                        }
+                    }
                 }
                 for (String str : dto.getImageNameImport().split(",")) {
                     Images images = new Images();
@@ -765,10 +786,6 @@ public class ProductAdminServiceIplm implements ProductAdminService {
         if (mota.length() > 500) {
             messErr.add("Vui lòng nhập mô tả không vượt quá 500 kí tự");
             fieldErr.add("description");
-        }
-        String status = myRecord.get(col++);
-        if (!StringUtils.isBlank(status)) {
-            productAdminDTO.setStatus(Integer.valueOf(status));
         }
         String anhSanPham = myRecord.get(col++);
         productAdminDTO.setImageNameImport(anhSanPham.trim());
