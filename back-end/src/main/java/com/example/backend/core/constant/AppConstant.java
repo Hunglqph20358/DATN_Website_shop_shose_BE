@@ -111,6 +111,7 @@ public class AppConstant {
                 "/api/admin/sole/*/*",
                 "admin/api/staff",
                 "/api/admin/get-all-order",
+                "/api/admin/total-status-order",
                 "/api/admin/get-order-detail/by-order/*",
                 "/api/admin/cancel-order",
                 "api/admin/product/search/*",

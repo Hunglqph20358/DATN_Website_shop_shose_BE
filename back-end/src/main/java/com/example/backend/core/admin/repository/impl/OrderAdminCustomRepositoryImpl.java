@@ -14,7 +14,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional
@@ -90,6 +92,46 @@ public class OrderAdminCustomRepositoryImpl implements OrderAdminCustomerReposit
             return null;
         }
         return lstOrderAdminDTOS;
+    }
+
+    @Override
+    public Map<String, Integer> totalStatusOrder(OrderAdminDTO orderAdminDTO) {
+        Map<String, Integer> map = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("");
+            sql.append("SELECT\n" +
+                    "  SUM(CASE WHEN o.status = 0 AND o.type = 0 THEN 1 ELSE 0 END) AS tongDonHangXacNhan,\n" +
+                    "  SUM(CASE WHEN o.status = 1 AND o.type = 0 THEN 1 ELSE 0 END) AS tongDonHangXuLy,\n" +
+                    "  SUM(CASE WHEN o.status = 2 AND o.type = 0 THEN 1 ELSE 0 END) AS tongDonHangGiaoHang,\n" +
+                    "  SUM(CASE WHEN o.status = 3 AND o.type = 0 THEN 1 ELSE 0 END) AS tongDonHangHoanThanh,\n" +
+                    "  SUM(CASE WHEN o.status = 4 AND o.type = 0 THEN 1 ELSE 0 END) AS tongDonHangHuy\n" +
+                    "FROM `order` AS o\n" +
+                    "WHERE o.type = 0  ");
+            if (StringUtils.isNotBlank(orderAdminDTO.getDateFrom())) {
+                sql.append("  and (:dateFrom is null or STR_TO_DATE(DATE_FORMAT(o.create_date, '%Y/%m/%d'), '%Y/%m/%d') >= STR_TO_DATE(:dateFrom , '%d/%m/%Y'))  ");
+            }
+            if (StringUtils.isNotBlank(orderAdminDTO.getDateTo())) {
+                sql.append("  and (:dateTo is null or STR_TO_DATE(DATE_FORMAT(o.create_date, '%Y/%m/%d'), '%Y/%m/%d') <= STR_TO_DATE(:dateTo , '%d/%m/%Y')) ");
+            }
+            Query query = entityManager.createNativeQuery(sql.toString());
+            if (StringUtils.isNotBlank(orderAdminDTO.getDateFrom())) {
+                query.setParameter("dateFrom", orderAdminDTO.getDateFrom());
+            }
+            if (StringUtils.isNotBlank(orderAdminDTO.getDateTo())) {
+                query.setParameter("dateTo", orderAdminDTO.getDateTo());
+            }
+            List<Object[]> list = query.getResultList();
+            for (Object[] obj: list) {
+                map.put("xacNhan", ((BigDecimal) obj[0]).intValue());
+                map.put("xuLy", ((BigDecimal) obj[1]).intValue());
+                map.put("giaoHang", ((BigDecimal) obj[2]).intValue());
+                map.put("hoanThanh", ((BigDecimal) obj[3]).intValue());
+                map.put("huy", ((BigDecimal) obj[4]).intValue());
+            }
+            return map;
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Override

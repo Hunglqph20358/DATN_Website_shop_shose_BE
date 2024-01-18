@@ -19,6 +19,10 @@ public class OrderAdminController {
     public ResponseEntity<?> getAllOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
         return ResponseEntity.ok(orderAdminService.getAllOrderAdmin(orderAdminDTO));
     }
+    @PostMapping("/total-status-order")
+    public ResponseEntity<?> totalStatusOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
+        return ResponseEntity.ok(orderAdminService.totalStatusOrderAdmin(orderAdminDTO));
+    }
 
     @PostMapping("/cancel-order")
     public ResponseEntity<?> cancelOrderAdmin(@RequestBody OrderAdminDTO orderAdminDTO){
