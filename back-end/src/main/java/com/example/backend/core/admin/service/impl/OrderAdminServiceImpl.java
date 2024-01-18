@@ -19,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,6 +72,11 @@ public class OrderAdminServiceImpl implements OrderAdminService {
             }
             return c;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Integer> totalStatusOrderAdmin(OrderAdminDTO orderAdminDTO) {
+        return orderAdminCustomerRepository.totalStatusOrder(orderAdminDTO);
     }
 
 

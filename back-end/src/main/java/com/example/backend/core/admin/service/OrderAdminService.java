@@ -5,10 +5,12 @@ import com.example.backend.core.commons.ServiceResult;
 import com.example.backend.core.model.Order;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderAdminService {
 
     List<OrderAdminDTO> getAllOrderAdmin(OrderAdminDTO orderAdminDTO);
+    Map<String, Integer> totalStatusOrderAdmin(OrderAdminDTO orderAdminDTO);
 
     ServiceResult<OrderAdminDTO> updateStatusChoXuLy(OrderAdminDTO orderAdminDTO);
 
